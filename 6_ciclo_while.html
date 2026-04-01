@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Ciclo While en Python</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e1a;
+    --surface: #111422;
+    --surface2: #181c2e;
+    --border: #252d45;
+    --text: #dde3f8;
+    --muted: #5f6e94;
+    --accent: #f97316;
+    --accent2: #38bdf8;
+    --accent3: #34d399;
+    --red: #f87171;
+    --mauve: #a78bfa;
+    --yellow: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(249,115,22,0.07) 0%, transparent 45%),
+      radial-gradient(ellipse at 100% 100%, rgba(56,189,248,0.05) 0%, transparent 45%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 64px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  .header {
+    margin-bottom: 64px;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .pill {
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.28);
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 14px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .pill-2 {
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.25);
+    color: var(--mauve);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 14px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .lead {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 300;
+    font-style: italic;
+    max-width: 540px;
+  }
+
+  /* INDEX */
+  .index {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 64px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 6px;
+  }
+
+  .index-title {
+    grid-column: 1 / -1;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .index-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .index-item:hover { color: var(--accent); }
+
+  .index-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    opacity: 0.6;
+    min-width: 24px;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 60px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+
+  h2 { font-size: 1.55rem; font-weight: 700; }
+
+  h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.92rem;
+    color: var(--yellow);
+    margin: 28px 0 10px;
+    font-weight: 700;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin-bottom: 14px;
+  }
+
+  p strong { color: var(--text); font-weight: 600; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.84em;
+    background: rgba(249,115,22,0.1);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* FOR vs WHILE comparison */
+  .compare-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .compare-card:hover { border-color: var(--accent); }
+  .compare-card.active { border-color: rgba(249,115,22,0.4); background: rgba(249,115,22,0.04); }
+
+  .compare-card-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .compare-card-label.for-label { color: var(--accent2); }
+  .compare-card-label.while-label { color: var(--accent); }
+
+  .compare-card h3 {
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .compare-card p { font-size: 0.88rem; margin: 0; }
+
+  .compare-card .example {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border-left: 2px solid var(--border);
+  }
+
+  /* Anatomía */
+  .anatomy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin: 24px 0;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .anatomy-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .token {
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .t-kw    { background: rgba(249,115,22,0.15); color: var(--accent); }
+  .t-cond  { background: rgba(56,189,248,0.12); color: var(--accent2); }
+  .t-body  { background: rgba(52,211,153,0.12); color: var(--accent3); }
+  .t-punc  { color: var(--muted); font-size: 1.1rem; }
+
+  .anatomy-indent {
+    margin-left: 60px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .anatomy-labels {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .anatomy-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .label-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Diagrama de flujo simple */
+  .flowchart {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .flow-box {
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    text-align: center;
+    font-weight: 600;
+    min-width: 200px;
+  }
+
+  .flow-start  { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.3); color: var(--mauve); }
+  .flow-cond   { background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: var(--accent2); border-radius: 50px; }
+  .flow-body   { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.3); color: var(--accent3); }
+  .flow-end    { background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.3); color: var(--accent); }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 4px 0;
+  }
+
+  .flow-arrow-line {
+    color: var(--border);
+    font-size: 1.2rem;
+  }
+
+  .flow-side {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 4px 0;
+  }
+
+  .flow-yes { color: var(--accent3); font-size: 0.72rem; font-family: 'IBM Plex Mono', monospace; margin-right: 8px; }
+  .flow-no  { color: var(--red); font-size: 0.72rem; font-family: 'IBM Plex Mono', monospace; margin-left: 8px; }
+
+  /* CODE */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    background: var(--surface2);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .code-title {
+    margin-left: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  pre {
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.83rem;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .kw  { color: #f97316; }
+  .fn  { color: #38bdf8; }
+  .str { color: #34d399; }
+  .cm  { color: #334060; font-style: italic; }
+  .num { color: #a78bfa; }
+  .var { color: #dde3f8; }
+  .mt  { color: #f472b6; }
+  .op  { color: #fbbf24; }
+
+  .output {
+    background: rgba(52,211,153,0.05);
+    border-top: 1px solid rgba(52,211,153,0.12);
+    padding: 14px 24px;
+  }
+
+  .output-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .output pre {
+    padding: 0;
+    color: var(--accent3);
+    font-size: 0.82rem;
+  }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .callout-warn {
+    background: rgba(251,191,36,0.07);
+    border: 1px solid rgba(251,191,36,0.2);
+  }
+
+  .callout-danger {
+    background: rgba(248,113,113,0.07);
+    border: 1px solid rgba(248,113,113,0.22);
+  }
+
+  .callout-info {
+    background: rgba(56,189,248,0.07);
+    border: 1px solid rgba(56,189,248,0.2);
+  }
+
+  .callout-icon { font-size: 1.1rem; line-height: 1.7; flex-shrink: 0; }
+  .callout p { color: var(--text); font-size: 0.92rem; margin: 0; }
+  .callout strong { color: var(--yellow); }
+  .callout-danger strong { color: var(--red); }
+  .callout-info strong { color: var(--accent2); }
+
+  /* CASOS ESPECIALES */
+  .special-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .special-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .special-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .special-card::before {
+    content: '';
+    display: block;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .card-break::before  { background: var(--accent); }
+  .card-cont::before   { background: var(--accent2); }
+  .card-else::before   { background: var(--accent3); }
+  .card-infin::before  { background: var(--red); }
+
+  .special-keyword {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .card-break  .special-keyword { color: var(--accent); }
+  .card-cont   .special-keyword { color: var(--accent2); }
+  .card-else   .special-keyword { color: var(--accent3); }
+  .card-infin  .special-keyword { color: var(--red); }
+
+  .special-desc {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+  }
+
+  .special-example {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    background: var(--surface2);
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* TABLA */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.85rem;
+  }
+
+  .ref-table th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ref-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .ref-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .td-kw   { color: var(--accent); font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; }
+  .td-desc { color: var(--muted); }
+  .td-ex   { color: var(--accent3); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  .footer {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .compare-hero { grid-template-columns: 1fr; }
+    .anatomy-indent { margin-left: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-meta">
+      <span class="pill">Python · CS50P · Guía #4</span>
+      <span class="pill-2">Bucles</span>
+    </div>
+    <h1>El Ciclo<br><em>while</em></h1>
+    <p class="lead">Repite mientras una condición sea verdadera. No sabe cuántas veces — solo cuándo parar.</p>
+  </div>
+
+  <!-- INDEX -->
+  <div class="index">
+    <div class="index-title">Contenido</div>
+    <a class="index-item" href="#s1"><span class="index-num">01</span> for vs while</a>
+    <a class="index-item" href="#s2"><span class="index-num">02</span> Anatomía</a>
+    <a class="index-item" href="#s3"><span class="index-num">03</span> Diagrama de flujo</a>
+    <a class="index-item" href="#s4"><span class="index-num">04</span> Ejemplos básicos</a>
+    <a class="index-item" href="#s5"><span class="index-num">05</span> break y continue</a>
+    <a class="index-item" href="#s6"><span class="index-num">06</span> while True</a>
+    <a class="index-item" href="#s7"><span class="index-num">07</span> while / else</a>
+    <a class="index-item" href="#s8"><span class="index-num">08</span> Bucle infinito</a>
+    <a class="index-item" href="#s9"><span class="index-num">09</span> Ejemplos reales</a>
+    <a class="index-item" href="#s10"><span class="index-num">10</span> Tabla de referencia</a>
+  </div>
+
+  <!-- 01 FOR VS WHILE -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>for vs while — ¿cuándo usar cada uno?</h2>
+    </div>
+    <p>Ambos repiten código, pero tienen un propósito distinto:</p>
+
+    <div class="compare-hero">
+      <div class="compare-card">
+        <div class="compare-card-label for-label">Bucle for</div>
+        <h3>Sabes cuántas veces</h3>
+        <p>Recorre una secuencia conocida: una lista, un string, un rango de números.</p>
+        <div class="example">
+          for letra in "python":<br>
+          &nbsp;&nbsp;print(letra)<br><br>
+          <span style="color:#334060"># Sabe que son 6 vueltas</span>
+        </div>
+      </div>
+      <div class="compare-card active">
+        <div class="compare-card-label while-label">Bucle while</div>
+        <h3>No sabes cuántas veces</h3>
+        <p>Repite hasta que algo cambie. No sabe de antemano cuántas vueltas dará.</p>
+        <div class="example">
+          while intento != secreto:<br>
+          &nbsp;&nbsp;intento = input("?")<br><br>
+          <span style="color:#334060"># Depende del usuario</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <p><strong>Regla práctica:</strong> si puedes contar las repeticiones antes de empezar → usa <code>for</code>. Si dependes de una condición que puede cambiar en cualquier momento → usa <code>while</code>.</p>
+    </div>
+  </div>
+
+  <!-- 02 ANATOMÍA -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Anatomía del ciclo while</h2>
+    </div>
+
+    <div class="anatomy">
+      <div class="anatomy-line">
+        <span class="token t-kw">while</span>
+        <span class="token t-cond">condición</span>
+        <span class="t-punc">:</span>
+      </div>
+      <div class="anatomy-indent">
+        <span class="token t-body">instrucciones</span>
+      </div>
+      <div class="anatomy-labels">
+        <div class="anatomy-label"><div class="label-dot" style="background:#f97316"></div> palabra reservada</div>
+        <div class="anatomy-label"><div class="label-dot" style="background:#38bdf8"></div> expresión True/False</div>
+        <div class="anatomy-label"><div class="label-dot" style="background:#34d399"></div> lo que se repite (indentado)</div>
+      </div>
+    </div>
+
+    <p>El ciclo evalúa la <strong>condición</strong> antes de cada vuelta. Si es <code>True</code>, ejecuta las instrucciones. Si es <code>False</code>, se detiene y el programa continúa.</p>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Importante:</strong> algo dentro del bucle debe eventualmente hacer que la condición se vuelva <code>False</code>. Si no, el bucle corre para siempre.</p>
+    </div>
+  </div>
+
+  <!-- 03 DIAGRAMA -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Diagrama de flujo</h2>
+    </div>
+
+    <div class="flowchart">
+      <div class="flow-box flow-start">INICIO</div>
+      <div class="flow-arrow"><span class="flow-arrow-line">↓</span></div>
+      <div class="flow-box flow-cond">¿condición es True?</div>
+
+      <div style="display:flex; gap:48px; align-items:flex-start; margin:4px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <span class="flow-yes">✓ SÍ</span>
+          <div class="flow-arrow"><span class="flow-arrow-line">↓</span></div>
+          <div class="flow-box flow-body">Ejecutar instrucciones</div>
+          <div class="flow-arrow"><span class="flow-arrow-line">↓</span></div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--muted); text-align:center;">vuelve a evaluar<br>la condición ↑</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:28px;">
+          <span class="flow-no">✗ NO</span>
+          <div class="flow-arrow"><span class="flow-arrow-line">↓</span></div>
+          <div class="flow-box flow-end">Salir del while<br>continuar programa</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 04 EJEMPLOS BÁSICOS -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Ejemplos básicos</h2>
+    </div>
+
+    <h3>Ejemplo 1 — Contador simple</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">contador.py</span></div>
+      <pre><span class="var">n</span> = <span class="num">1</span>
+
+<span class="kw">while</span> <span class="var">n</span> <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="str">f"Vuelta </span><span class="var">{n}</span><span class="str">"</span>)
+    <span class="var">n</span> = <span class="var">n</span> + <span class="num">1</span>   <span class="cm"># ← sin esto, loop infinito</span>
+
+<span class="fn">print</span>(<span class="str">"Fin"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Vuelta 1
+Vuelta 2
+Vuelta 3
+Vuelta 4
+Vuelta 5
+Fin</pre>
+      </div>
+    </div>
+
+    <h3>Ejemplo 2 — Validar input del usuario</h3>
+    <p>El uso más común del <code>while</code>: seguir pidiendo datos hasta que el usuario ingrese algo válido.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">validar_input.py</span></div>
+      <pre><span class="var">edad</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Ingresa tu edad: "</span>))
+
+<span class="kw">while</span> <span class="var">edad</span> < <span class="num">0</span> <span class="kw">or</span> <span class="var">edad</span> > <span class="num">120</span>:
+    <span class="fn">print</span>(<span class="str">"Edad inválida. Intenta de nuevo."</span>)
+    <span class="var">edad</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Ingresa tu edad: "</span>))
+
+<span class="fn">print</span>(<span class="str">f"Edad registrada: </span><span class="var">{edad}</span><span class="str">"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output (si ingresa -5, luego 200, luego 25)</div>
+        <pre>Edad inválida. Intenta de nuevo.
+Edad inválida. Intenta de nuevo.
+Edad registrada: 25</pre>
+      </div>
+    </div>
+
+    <h3>Ejemplo 3 — Adivina el número</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">adivina.py</span></div>
+      <pre><span class="var">secreto</span> = <span class="num">42</span>
+<span class="var">adivinado</span> = <span class="kw">False</span>
+
+<span class="kw">while</span> <span class="var">adivinado</span> == <span class="kw">False</span>:
+    <span class="var">intento</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Adivina: "</span>))
+    <span class="kw">if</span> <span class="var">intento</span> == <span class="var">secreto</span>:
+        <span class="fn">print</span>(<span class="str">"¡Correcto!"</span>)
+        <span class="var">adivinado</span> = <span class="kw">True</span>
+    <span class="kw">elif</span> <span class="var">intento</span> > <span class="var">secreto</span>:
+        <span class="fn">print</span>(<span class="str">"Muy alto"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Muy bajo"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Muy alto   (ingresó 80)
+Muy bajo   (ingresó 20)
+¡Correcto! (ingresó 42)</pre>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 05 BREAK Y CONTINUE -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>break y continue</h2>
+    </div>
+    <p>Dos palabras reservadas que controlan el flujo dentro de cualquier bucle:</p>
+
+    <div class="special-grid">
+      <div class="special-card card-break">
+        <div class="special-keyword">break</div>
+        <div class="special-desc">Sale del bucle inmediatamente, sin importar si la condición sigue siendo True.</div>
+        <div class="special-example">
+          <span style="color:#f97316">while</span> <span style="color:#a78bfa">True</span>:<br>
+          &nbsp;&nbsp;n = int(input(":"))<br>
+          &nbsp;&nbsp;<span style="color:#f97316">if</span> n == 0:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f97316">break</span> <span style="color:#334060"># sale aquí</span><br>
+          print("Listo")
+        </div>
+      </div>
+      <div class="special-card card-cont">
+        <div class="special-keyword">continue</div>
+        <div class="special-desc">Salta el resto de la vuelta actual y vuelve a evaluar la condición.</div>
+        <div class="special-example">
+          <span style="color:#f97316">while</span> n < 10:<br>
+          &nbsp;&nbsp;n += 1<br>
+          &nbsp;&nbsp;<span style="color:#f97316">if</span> n % 2 == 0:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#38bdf8">continue</span> <span style="color:#334060"># salta pares</span><br>
+          &nbsp;&nbsp;print(n) <span style="color:#334060"># solo impares</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>break — ejemplo completo</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">break_ejemplo.py</span></div>
+      <pre><span class="cm"># Pedir números hasta que el usuario escriba "salir"</span>
+<span class="var">suma</span> = <span class="num">0</span>
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="var">entrada</span> = <span class="fn">input</span>(<span class="str">"Número (o 'salir'): "</span>)
+    <span class="kw">if</span> <span class="var">entrada</span> == <span class="str">"salir"</span>:
+        <span class="kw">break</span>
+    <span class="var">suma</span> = <span class="var">suma</span> + <span class="fn">int</span>(<span class="var">entrada</span>)
+
+<span class="fn">print</span>(<span class="str">f"Suma total: </span><span class="var">{suma}</span><span class="str">"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output (ingresó 3, 7, 2, salir)</div>
+        <pre>Suma total: 12</pre>
+      </div>
+    </div>
+
+    <h3>continue — ejemplo completo</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">continue_ejemplo.py</span></div>
+      <pre><span class="cm"># Imprimir solo números impares del 1 al 10</span>
+<span class="var">n</span> = <span class="num">0</span>
+
+<span class="kw">while</span> <span class="var">n</span> < <span class="num">10</span>:
+    <span class="var">n</span> += <span class="num">1</span>
+    <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>:
+        <span class="kw">continue</span>   <span class="cm"># salta los pares, vuelve al while</span>
+    <span class="fn">print</span>(<span class="var">n</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>1
+3
+5
+7
+9</pre>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 06 WHILE TRUE -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>while True — el bucle infinito controlado</h2>
+    </div>
+
+    <p><code>while True</code> es un patrón muy común en Python. La condición siempre es <code>True</code>, así que el bucle nunca termina por sí solo — <strong>depende de un <code>break</code> interno</strong> para salir.</p>
+
+    <p>Es útil cuando quieres que el bucle corra al menos una vez antes de evaluar si debe continuar:</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">while_true.py</span></div>
+      <pre><span class="cm"># Pedir contraseña hasta que sea correcta</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="var">password</span> = <span class="fn">input</span>(<span class="str">"Contraseña: "</span>)
+    <span class="kw">if</span> <span class="var">password</span> == <span class="str">"python123"</span>:
+        <span class="fn">print</span>(<span class="str">"Acceso concedido ✓"</span>)
+        <span class="kw">break</span>
+    <span class="fn">print</span>(<span class="str">"Contraseña incorrecta, intenta de nuevo."</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Contraseña incorrecta, intenta de nuevo.  (ingresó "1234")
+Contraseña incorrecta, intenta de nuevo.  (ingresó "qwerty")
+Acceso concedido ✓                        (ingresó "python123")</pre>
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <p><strong>while True vs while condición:</strong> usa <code>while True + break</code> cuando la condición de salida se evalúa <em>después</em> de ejecutar las instrucciones. Usa <code>while condición</code> cuando la evaluación va <em>antes</em>.</p>
+    </div>
+  </div>
+
+  <!-- 07 WHILE ELSE -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>while / else — el caso especial de Python</h2>
+    </div>
+
+    <p>Python permite agregar un bloque <code>else</code> al <code>while</code>. El <code>else</code> se ejecuta <strong>solo si el bucle terminó normalmente</strong> (la condición se volvió False), <strong>no si salió con un <code>break</code></strong>.</p>
+
+    <div class="special-card card-else" style="margin-bottom:20px;">
+      <div class="special-keyword">while / else</div>
+      <div class="special-desc">El else corre si el while terminó sin break. Si hubo break, el else se salta.</div>
+      <div class="special-example">
+        <span style="color:#f97316">while</span> condicion:<br>
+        &nbsp;&nbsp;...<br>
+        &nbsp;&nbsp;<span style="color:#f97316">if</span> algo: <span style="color:#f97316">break</span><br>
+        <span style="color:#34d399">else</span>:<br>
+        &nbsp;&nbsp;print("terminó sin break")
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">while_else.py</span></div>
+      <pre><span class="cm"># Buscar un número negativo en una lista de inputs</span>
+<span class="var">intentos</span> = <span class="num">3</span>
+
+<span class="kw">while</span> <span class="var">intentos</span> > <span class="num">0</span>:
+    <span class="var">n</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Ingresa un número: "</span>))
+    <span class="kw">if</span> <span class="var">n</span> < <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">"Encontraste un negativo. ¡Lograste!"</span>)
+        <span class="kw">break</span>
+    <span class="var">intentos</span> -= <span class="num">1</span>
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"Se acabaron los intentos sin encontrar negativos."</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output A (encontró negativo)</div>
+        <pre>Encontraste un negativo. ¡Lograste!</pre>
+      </div>
+      <div class="output" style="border-top: 1px solid rgba(52,211,153,0.12);">
+        <div class="output-label">Output B (se acabaron los intentos)</div>
+        <pre>Se acabaron los intentos sin encontrar negativos.</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 BUCLE INFINITO -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>⚠️ El bucle infinito — el error más común</h2>
+    </div>
+
+    <div class="callout callout-danger">
+      <span class="callout-icon">🚨</span>
+      <p><strong>Un bucle infinito</strong> ocurre cuando la condición del <code>while</code> nunca se vuelve <code>False</code>. El programa se congela y nunca termina. En Jupyter puedes pararlo con el botón ⏹ o presionando <code>I, I</code> (dos veces la tecla I).</p>
+    </div>
+
+    <h3>Causas comunes</h3>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">infinito_error.py</span></div>
+      <pre><span class="cm"># ❌ ERROR 1: olvidaste actualizar la variable</span>
+<span class="var">n</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">n</span> <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="var">n</span>)
+    <span class="cm"># n nunca cambia → loop infinito</span>
+
+<span class="cm"># ❌ ERROR 2: la condición siempre es True</span>
+<span class="var">x</span> = <span class="num">10</span>
+<span class="kw">while</span> <span class="var">x</span> > <span class="num">0</span>:
+    <span class="fn">print</span>(<span class="var">x</span>)
+    <span class="var">x</span> += <span class="num">1</span>   <span class="cm"># x crece → nunca llega a 0</span>
+
+<span class="cm"># ❌ ERROR 3: break dentro de un if que nunca se cumple</span>
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="var">n</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">":"</span>))
+    <span class="kw">if</span> <span class="var">n</span> == <span class="str">"salir"</span>:  <span class="cm"># comparando int con str → nunca True</span>
+        <span class="kw">break</span></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">infinito_correcto.py</span></div>
+      <pre><span class="cm"># ✅ CORRECTO: la variable se actualiza en cada vuelta</span>
+<span class="var">n</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">n</span> <= <span class="num">5</span>:
+    <span class="fn">print</span>(<span class="var">n</span>)
+    <span class="var">n</span> += <span class="num">1</span>   <span class="cm"># ← esto hace que eventualmente n > 5</span></pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>1
+2
+3
+4
+5</pre>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 09 EJEMPLOS REALES -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Ejemplos reales combinados</h2>
+    </div>
+
+    <h3>Ejemplo — Menú de opciones</h3>
+    <p>Un patrón clásico: mostrar un menú y repetir hasta que el usuario elija salir.</p>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">menu.py</span></div>
+      <pre><span class="kw">while</span> <span class="kw">True</span>:
+    <span class="fn">print</span>(<span class="str">"\n1. Saludar"</span>)
+    <span class="fn">print</span>(<span class="str">"2. Despedirse"</span>)
+    <span class="fn">print</span>(<span class="str">"3. Salir"</span>)
+    <span class="var">opcion</span> = <span class="fn">input</span>(<span class="str">"Elige: "</span>)
+
+    <span class="kw">if</span> <span class="var">opcion</span> == <span class="str">"1"</span>:
+        <span class="fn">print</span>(<span class="str">"¡Hola!"</span>)
+    <span class="kw">elif</span> <span class="var">opcion</span> == <span class="str">"2"</span>:
+        <span class="fn">print</span>(<span class="str">"¡Adiós!"</span>)
+    <span class="kw">elif</span> <span class="var">opcion</span> == <span class="str">"3"</span>:
+        <span class="fn">print</span>(<span class="str">"Saliendo..."</span>)
+        <span class="kw">break</span>
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Opción inválida"</span>)</pre>
+    </div>
+
+    <h3>Ejemplo — Contador de intentos</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-title">intentos.py</span></div>
+      <pre><span class="var">secreto</span> = <span class="num">42</span>
+<span class="var">intentos</span> = <span class="num">0</span>
+<span class="var">max_intentos</span> = <span class="num">5</span>
+
+<span class="kw">while</span> <span class="var">intentos</span> < <span class="var">max_intentos</span>:
+    <span class="var">n</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">f"Intento </span><span class="var">{intentos + 1}</span><span class="str">/</span><span class="var">{max_intentos}</span><span class="str">: "</span>))
+    <span class="var">intentos</span> += <span class="num">1</span>
+    <span class="kw">if</span> <span class="var">n</span> == <span class="var">secreto</span>:
+        <span class="fn">print</span>(<span class="str">f"¡Correcto en </span><span class="var">{intentos}</span><span class="str"> intento/s!"</span>)
+        <span class="kw">break</span>
+    <span class="kw">elif</span> <span class="var">n</span> > <span class="var">secreto</span>:
+        <span class="fn">print</span>(<span class="str">"Muy alto"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"Muy bajo"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">f"Sin intentos. El número era </span><span class="var">{secreto}</span><span class="str">"</span>)</pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 10 TABLA -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Tabla de referencia rápida</h2>
+    </div>
+
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Keyword</th>
+          <th>Descripción</th>
+          <th>Ejemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-kw">while condición:</td>
+          <td class="td-desc">Repite mientras la condición sea True</td>
+          <td class="td-ex">while n &lt; 10:</td>
+        </tr>
+        <tr>
+          <td class="td-kw">while True:</td>
+          <td class="td-desc">Bucle infinito controlado, requiere break</td>
+          <td class="td-ex">while True: ... break</td>
+        </tr>
+        <tr>
+          <td class="td-kw">break</td>
+          <td class="td-desc">Sale del bucle inmediatamente</td>
+          <td class="td-ex">if n == 0: break</td>
+        </tr>
+        <tr>
+          <td class="td-kw">continue</td>
+          <td class="td-desc">Salta al siguiente ciclo sin ejecutar el resto</td>
+          <td class="td-ex">if par: continue</td>
+        </tr>
+        <tr>
+          <td class="td-kw">else:</td>
+          <td class="td-desc">Se ejecuta solo si el while terminó sin break</td>
+          <td class="td-ex">while ...: ... else: print()</td>
+        </tr>
+        <tr>
+          <td class="td-kw">variable += 1</td>
+          <td class="td-desc">Atajo para variable = variable + 1</td>
+          <td class="td-ex">n += 1 &nbsp;/&nbsp; n -= 1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">ciclo_while.py · Python · CS50P Harvard</div>
+
+</div>
+</body>
+</html>
