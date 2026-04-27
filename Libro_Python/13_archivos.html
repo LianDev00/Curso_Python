@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archivos · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:#09090b; --bg2:#0f0f12; --bg3:#141418;
+  --line:#1d1d24; --line2:#252532; --text:#d0d0e0; --dim:#464660; --faint:#14141c;
+  --a:#38bdf8; --a-bg:#020b14; --a-bd:#09283d;
+  --b:#4ade80; --b-bg:#021209; --b-bd:#0d3518;
+  --c:#fb923c; --c-bg:#120700; --c-bd:#3d1f06;
+  --d:#e879f9; --d-bg:#110514; --d-bd:#380d3f;
+  --e:#fbbf24; --e-bg:#120d02; --e-bd:#3d2d06;
+  --f:#f87171; --f-bg:#120505; --f-bd:#3d1010;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; }
+
+nav { position:sticky; top:0; z-index:100; background:rgba(9,9,11,.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); height:44px; display:flex; align-items:center; padding:0 24px; overflow-x:auto; gap:0; }
+nav::-webkit-scrollbar { display:none; }
+.nav-brand { font-family:'Unbounded',sans-serif; font-size:10px; font-weight:700; color:var(--dim); letter-spacing:1px; white-space:nowrap; margin-right:20px; flex-shrink:0; }
+.nav-links { display:flex; gap:2px; flex-shrink:0; }
+.nav-links a { font-size:10px; text-decoration:none; padding:6px 10px; border-radius:3px; white-space:nowrap; color:var(--dim); transition:all .15s; }
+.nav-links a:hover { color:var(--text); background:var(--line); }
+.na { color:var(--a) !important; } .nb2 { color:var(--b) !important; }
+.nc { color:var(--c) !important; } .nd { color:var(--d) !important; }
+.ne2 { color:var(--e) !important; } .nf { color:var(--f) !important; }
+
+.page { max-width:900px; margin:0 auto; padding:60px 22px 100px; }
+
+.hero { margin-bottom:60px; }
+.hero-eyebrow { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-bottom:16px; }
+.hero h1 { font-family:'Unbounded',sans-serif; font-size:clamp(30px,6vw,56px); font-weight:900; line-height:1; letter-spacing:-2px; color:#fff; }
+.hero h1 em { font-style:normal; color:var(--b); }
+.hero-sub { margin-top:16px; font-size:12px; color:var(--dim); max-width:520px; line-height:1.85; }
+
+/* mode grid */
+.mode-grid { margin-top:24px; display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; }
+.mode-card { padding:10px 13px; border-radius:3px; }
+.mode-sym { font-size:17px; font-weight:700; font-family:'Unbounded',sans-serif; margin-bottom:3px; }
+.mode-name { font-size:9px; letter-spacing:1px; text-transform:uppercase; margin-bottom:5px; opacity:.6; }
+.mode-desc { font-size:10.5px; line-height:1.5; }
+.mc-r  { background:var(--b-bg); border:1px solid var(--b-bd); color:var(--b); }
+.mc-w  { background:var(--f-bg); border:1px solid var(--f-bd); color:var(--f); }
+.mc-a  { background:var(--c-bg); border:1px solid var(--c-bd); color:var(--c); }
+.mc-x  { background:var(--d-bg); border:1px solid var(--d-bd); color:var(--d); }
+.mc-rb { background:var(--a-bg); border:1px solid var(--a-bd); color:var(--a); }
+.mc-wb { background:var(--e-bg); border:1px solid var(--e-bd); color:var(--e); }
+
+.section { margin-bottom:62px; }
+.section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.s-icon { width:36px; height:36px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:9px; font-weight:900; flex-shrink:0; }
+.i-a { background:var(--a-bg); border:1px solid var(--a-bd); color:var(--a); }
+.i-b { background:var(--b-bg); border:1px solid var(--b-bd); color:var(--b); }
+.i-c { background:var(--c-bg); border:1px solid var(--c-bd); color:var(--c); }
+.i-d { background:var(--d-bg); border:1px solid var(--d-bd); color:var(--d); }
+.i-e { background:var(--e-bg); border:1px solid var(--e-bd); color:var(--e); }
+.i-f { background:var(--f-bg); border:1px solid var(--f-bd); color:var(--f); }
+.section-title { font-family:'Unbounded',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:-.5px; }
+.section-type { font-size:10px; letter-spacing:2px; color:var(--dim); margin-top:2px; }
+
+p { color:var(--text); font-size:12.5px; line-height:1.85; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+p code { background:var(--faint); padding:1px 5px; border-radius:2px; font-size:12px; color:#c084fc; }
+
+.cb { background:var(--bg2); border:1px solid var(--line2); border-radius:4px; margin:14px 0; overflow:hidden; }
+.cb-label { background:var(--bg3); border-bottom:1px solid var(--line); padding:6px 14px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
+.cb pre { padding:16px 18px; overflow-x:auto; font-size:12.5px; line-height:1.8; }
+.cb pre::-webkit-scrollbar { height:4px; }
+.cb pre::-webkit-scrollbar-thumb { background:var(--line2); border-radius:2px; }
+
+.k  { color:var(--a); } .kg { color:var(--b); } .ko { color:var(--c); }
+.kp { color:var(--d); } .ky { color:var(--e); } .ks { color:var(--f); }
+.n  { color:#c084fc; } .s  { color:#86efac; } .nm { color:#fb923c; }
+.c  { color:#303048; font-style:italic; } .v  { color:var(--text); }
+
+.callout { padding:13px 16px; border-radius:3px; margin:14px 0; font-size:12px; line-height:1.8; }
+.ca { background:var(--a-bg); border-left:2px solid var(--a); color:#8dd4f8; }
+.cb2{ background:var(--b-bg); border-left:2px solid var(--b); color:#a8f0c0; }
+.cc { background:var(--c-bg); border-left:2px solid var(--c); color:#f0c8a8; }
+.cd { background:var(--d-bg); border-left:2px solid var(--d); color:#eeaaff; }
+.ce { background:var(--e-bg); border-left:2px solid var(--e); color:#f0d898; }
+.cw { background:#120c02; border-left:2px solid #ca8a04; color:#e8cc88; }
+.callout b { font-weight:700; color:#fff; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+@media(max-width:580px){ .two-col { grid-template-columns:1fr; } }
+
+footer { border-top:1px solid var(--line); padding-top:22px; margin-top:20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · Archivos</div>
+  <div class="nav-links">
+    <a href="#open"   class="na">open</a>
+    <a href="#leer"   class="nb2">leer</a>
+    <a href="#escribir" class="nc">escribir</a>
+    <a href="#errores" class="nd">errores</a>
+    <a href="#csv"    class="ne2">csv</a>
+    <a href="#pathlib" class="nf">pathlib</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Guía · Python · Manejo de archivos</div>
+    <h1>Archivos<br><em>de texto</em><br>y binarios</h1>
+    <p class="hero-sub">Abrir, leer, escribir y cerrar archivos de forma segura. Con el context manager <code>with</code>, CSV, y pathlib.</p>
+
+    <div class="mode-grid" style="margin-top:28px">
+      <div class="mode-card mc-r">
+        <div class="mode-sym">"r"</div>
+        <div class="mode-name">read</div>
+        <div class="mode-desc">Solo lectura. Error si no existe.</div>
+      </div>
+      <div class="mode-card mc-w">
+        <div class="mode-sym">"w"</div>
+        <div class="mode-name">write</div>
+        <div class="mode-desc">Escritura. Crea o sobreescribe.</div>
+      </div>
+      <div class="mode-card mc-a">
+        <div class="mode-sym">"a"</div>
+        <div class="mode-name">append</div>
+        <div class="mode-desc">Agrega al final. Crea si no existe.</div>
+      </div>
+      <div class="mode-card mc-x">
+        <div class="mode-sym">"x"</div>
+        <div class="mode-name">exclusive</div>
+        <div class="mode-desc">Crea. Error si ya existe.</div>
+      </div>
+      <div class="mode-card mc-rb">
+        <div class="mode-sym">"rb"</div>
+        <div class="mode-name">read binary</div>
+        <div class="mode-desc">Lectura binaria (imágenes, PDFs).</div>
+      </div>
+      <div class="mode-card mc-wb">
+        <div class="mode-sym">"wb"</div>
+        <div class="mode-name">write binary</div>
+        <div class="mode-desc">Escritura binaria.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN / WITH -->
+  <div class="section" id="open">
+    <div class="section-header">
+      <div class="s-icon i-a">open</div>
+      <div>
+        <div class="section-title">open() y with</div>
+        <div class="section-type">abrir archivos · context manager · cierre automático</div>
+      </div>
+    </div>
+
+    <p><code>open()</code> abre un archivo y retorna un objeto de archivo. <b>Siempre</b> usa <code>with</code> para abrirlos — garantiza que el archivo se cierre aunque ocurra un error, sin necesidad de llamar <code>f.close()</code> manualmente.</p>
+
+    <div class="two-col">
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Sin with — peligroso</div>
+        <pre><span class="v">f</span> <span class="op2">=</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>)
+<span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="v">f</span>.<span class="n">close</span>()   <span class="c"># si hay error arriba,</span>
+            <span class="c"># esto nunca se ejecuta</span>
+            <span class="c"># → archivo queda abierto</span></pre>
+      </div>
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Con with — correcto</div>
+        <pre><span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="c"># archivo cerrado automáticamente</span>
+<span class="c"># pase lo que pase dentro del with</span></pre>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Parámetros de open()</div>
+      <pre><span class="nb">open</span>(<span class="v">file</span>, <span class="v">mode</span><span class="op2">=</span><span class="s">"r"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="b">None</span>, <span class="v">errors</span><span class="op2">=</span><span class="b">None</span>)
+
+<span class="c"># encoding — siempre especificarlo para texto</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>: ...
+
+<span class="c"># si no especificas encoding, usa el del sistema operativo</span>
+<span class="c"># → puede dar problemas con ñ, tildes en Windows</span>
+
+<span class="c"># errors — qué hacer con caracteres que no se pueden decodificar</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>, <span class="v">errors</span><span class="op2">=</span><span class="s">"ignore"</span>) <span class="k">as</span> <span class="v">f</span>: ...
+<span class="c"># "strict" (default) → raise UnicodeDecodeError</span>
+<span class="c"># "ignore"           → salta caracteres inválidos</span>
+<span class="c"># "replace"          → reemplaza con ?</span>
+
+<span class="c"># dos archivos en el mismo with</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"entrada.txt"</span>) <span class="k">as</span> <span class="v">fin</span>, <span class="nb">open</span>(<span class="s">"salida.txt"</span>, <span class="s">"w"</span>) <span class="k">as</span> <span class="v">fout</span>:
+    <span class="v">fout</span>.<span class="n">write</span>(<span class="v">fin</span>.<span class="n">read</span>())</pre>
+    </div>
+  </div>
+
+  <!-- LEER -->
+  <div class="section" id="leer">
+    <div class="section-header">
+      <div class="s-icon i-b">read</div>
+      <div>
+        <div class="section-title">Leer archivos</div>
+        <div class="section-type">read · readline · readlines · iteración</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Tres formas de leer</div>
+      <pre><span class="c"># read() — lee TODO el archivo como un solo string</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">todo</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()             <span class="c"># string con todo el contenido</span>
+    <span class="v">primeros</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>(<span class="nm">100</span>)      <span class="c"># solo los primeros 100 caracteres</span>
+
+<span class="c"># readline() — lee una línea cada vez</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">linea1</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">readline</span>()       <span class="c"># "primera línea\n"</span>
+    <span class="v">linea2</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">readline</span>()       <span class="c"># "segunda línea\n"</span>
+
+<span class="c"># readlines() — todas las líneas como lista</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">lineas</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">readlines</span>()      <span class="c"># ['línea1\n', 'línea2\n', ...]</span>
+
+<span class="c"># iteración directa — la más eficiente (no carga todo en memoria)</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="k">for</span> <span class="v">linea</span> <span class="k">in</span> <span class="v">f</span>:                <span class="c"># una línea por iteración</span>
+        <span class="nb">print</span>(<span class="v">linea</span>.<span class="n">strip</span>())      <span class="c"># .strip() quita el \n</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Procesar líneas — patrones comunes</div>
+      <pre><span class="c"># leer y limpiar todas las líneas</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"nombres.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">nombres</span> <span class="op2">=</span> [<span class="v">l</span>.<span class="n">strip</span>() <span class="k">for</span> <span class="v">l</span> <span class="k">in</span> <span class="v">f</span> <span class="k">if</span> <span class="v">l</span>.<span class="n">strip</span>()]  <span class="c"># ignora líneas vacías</span>
+
+<span class="c"># contar líneas</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">total</span> <span class="op2">=</span> <span class="nb">sum</span>(<span class="nm">1</span> <span class="k">for</span> <span class="v">_</span> <span class="k">in</span> <span class="v">f</span>)
+
+<span class="c"># buscar líneas que contienen una palabra</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"log.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">errores</span> <span class="op2">=</span> [<span class="v">l</span>.<span class="n">strip</span>() <span class="k">for</span> <span class="v">l</span> <span class="k">in</span> <span class="v">f</span> <span class="k">if</span> <span class="s">"ERROR"</span> <span class="k">in</span> <span class="v">l</span>]
+
+<span class="c"># posición del cursor</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">f</span>.<span class="n">read</span>(<span class="nm">10</span>)
+    <span class="nb">print</span>(<span class="v">f</span>.<span class="n">tell</span>())     <span class="c"># → 10 (posición actual del cursor)</span>
+    <span class="v">f</span>.<span class="n">seek</span>(<span class="nm">0</span>)           <span class="c"># volver al inicio</span>
+    <span class="v">f</span>.<span class="n">seek</span>(<span class="nm">0</span>, <span class="nm">2</span>)        <span class="c"># ir al final (2 = SEEK_END)</span></pre>
+    </div>
+
+    <div class="callout cb2">
+      <b>¿Cuándo usar cuál?</b><br>
+      <code>read()</code> — archivos pequeños que quieres como string completo<br>
+      <code>for linea in f</code> — archivos grandes, procesamiento línea por línea sin cargar todo<br>
+      <code>readlines()</code> — cuando necesitas índice o necesitas la lista completa
+    </div>
+  </div>
+
+  <!-- ESCRIBIR -->
+  <div class="section" id="escribir">
+    <div class="section-header">
+      <div class="s-icon i-c">write</div>
+      <div>
+        <div class="section-title">Escribir archivos</div>
+        <div class="section-type">write · writelines · append · flush</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">write() y writelines()</div>
+      <pre><span class="c"># write() — escribe un string, NO agrega \n automáticamente</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"salida.txt"</span>, <span class="s">"w"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">f</span>.<span class="n">write</span>(<span class="s">"Primera línea\n"</span>)   <span class="c"># debes agregar \n tú mismo</span>
+    <span class="v">f</span>.<span class="n">write</span>(<span class="s">"Segunda línea\n"</span>)
+
+<span class="c"># writelines() — escribe una lista de strings (tampoco agrega \n)</span>
+<span class="v">lineas</span> <span class="op2">=</span> [<span class="s">"Ana\n"</span>, <span class="s">"Luis\n"</span>, <span class="s">"Mía\n"</span>]
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"nombres.txt"</span>, <span class="s">"w"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">f</span>.<span class="n">writelines</span>(<span class="v">lineas</span>)
+
+<span class="c"># agregar al final sin borrar (modo append)</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"log.txt"</span>, <span class="s">"a"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">f</span>.<span class="n">write</span>(<span class="s">"Nueva entrada de log\n"</span>)
+
+<span class="c"># print() redirigido a archivo — agrega \n automáticamente</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"salida.txt"</span>, <span class="s">"w"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="nb">print</span>(<span class="s">"Hola desde print"</span>, <span class="v">file</span><span class="op2">=</span><span class="v">f</span>)
+    <span class="nb">print</span>(<span class="s">"Segunda línea"</span>, <span class="v">file</span><span class="op2">=</span><span class="v">f</span>)
+
+<span class="c"># crear archivo nuevo — falla si ya existe (modo "x")</span>
+<span class="k">try</span>:
+    <span class="k">with</span> <span class="nb">open</span>(<span class="s">"nuevo.txt"</span>, <span class="s">"x"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+        <span class="v">f</span>.<span class="n">write</span>(<span class="s">"contenido inicial"</span>)
+<span class="k">except</span> <span class="n">FileExistsError</span>:
+    <span class="nb">print</span>(<span class="s">"El archivo ya existe"</span>)</pre>
+    </div>
+
+    <div class="callout cc">
+      <b>Modo "w" borra todo lo que había</b> — si el archivo existía, su contenido desaparece al abrirlo en modo "w". Si quieres agregar sin borrar, usa "a". Si quieres protegerte de sobreescritura accidental, usa "x".
+    </div>
+  </div>
+
+  <!-- ERRORES -->
+  <div class="section" id="errores">
+    <div class="section-header">
+      <div class="s-icon i-d">!</div>
+      <div>
+        <div class="section-title">Manejo de errores con archivos</div>
+        <div class="section-type">FileNotFoundError · PermissionError · verificar existencia</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Excepciones comunes y cómo manejarlas</div>
+      <pre><span class="k">import</span> <span class="v">os</span>
+
+<span class="c"># patrón 1: verificar antes de abrir</span>
+<span class="k">if</span> <span class="v">os</span>.<span class="n">path</span>.<span class="n">exists</span>(<span class="s">"datos.txt"</span>):
+    <span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+        <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="k">else</span>:
+    <span class="nb">print</span>(<span class="s">"Archivo no encontrado"</span>)
+
+<span class="c"># patrón 2: try/except (EAFP — más Pythónico)</span>
+<span class="k">try</span>:
+    <span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+        <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="k">except</span> <span class="n">FileNotFoundError</span>:
+    <span class="nb">print</span>(<span class="s">"El archivo no existe"</span>)
+<span class="k">except</span> <span class="n">PermissionError</span>:
+    <span class="nb">print</span>(<span class="s">"Sin permiso para leer el archivo"</span>)
+<span class="k">except</span> <span class="n">UnicodeDecodeError</span>:
+    <span class="nb">print</span>(<span class="s">"El archivo tiene caracteres que no se pueden decodificar"</span>)
+<span class="k">except</span> <span class="n">OSError</span> <span class="k">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="s">f"Error de sistema: {e}"</span>)
+
+<span class="c"># función robusta de lectura</span>
+<span class="k">def</span> <span class="n">leer_archivo</span>(<span class="v">ruta</span>, <span class="v">por_defecto</span><span class="op2">=</span><span class="b">None</span>):
+    <span class="k">try</span>:
+        <span class="k">with</span> <span class="nb">open</span>(<span class="v">ruta</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+            <span class="k">return</span> <span class="v">f</span>.<span class="n">read</span>()
+    <span class="k">except</span> <span class="n">FileNotFoundError</span>:
+        <span class="k">return</span> <span class="v">por_defecto</span></pre>
+    </div>
+  </div>
+
+  <!-- CSV -->
+  <div class="section" id="csv">
+    <div class="section-header">
+      <div class="s-icon i-e">csv</div>
+      <div>
+        <div class="section-title">Módulo csv</div>
+        <div class="section-type">leer · escribir · DictReader · DictWriter</div>
+      </div>
+    </div>
+
+    <p>El módulo <code>csv</code> maneja archivos de valores separados por coma. Mucho mejor que dividir strings manualmente — gestiona comillas, comas dentro de valores, y saltos de línea correctamente.</p>
+
+    <div class="cb">
+      <div class="cb-label">Leer CSV</div>
+      <pre><span class="k">import</span> <span class="v">csv</span>
+
+<span class="c"># csv.reader — cada fila es una lista</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.csv"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">lector</span> <span class="op2">=</span> <span class="v">csv</span>.<span class="n">reader</span>(<span class="v">f</span>)
+    <span class="v">encabezado</span> <span class="op2">=</span> <span class="nb">next</span>(<span class="v">lector</span>)    <span class="c"># primera fila = encabezado</span>
+    <span class="k">for</span> <span class="v">fila</span> <span class="k">in</span> <span class="v">lector</span>:
+        <span class="nb">print</span>(<span class="v">fila</span>)               <span class="c"># ['Ana', '25', 'Lima']</span>
+
+<span class="c"># csv.DictReader — cada fila es un dict {columna: valor}</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.csv"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">lector</span> <span class="op2">=</span> <span class="v">csv</span>.<span class="n">DictReader</span>(<span class="v">f</span>)
+    <span class="k">for</span> <span class="v">fila</span> <span class="k">in</span> <span class="v">lector</span>:
+        <span class="nb">print</span>(<span class="v">fila</span>[<span class="s">"nombre"</span>], <span class="v">fila</span>[<span class="s">"edad"</span>])  <span class="c"># acceso por nombre de columna</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Escribir CSV</div>
+      <pre><span class="k">import</span> <span class="v">csv</span>
+
+<span class="v">personas</span> <span class="op2">=</span> [
+    {<span class="s">"nombre"</span>: <span class="s">"Ana"</span>,  <span class="s">"edad"</span>: <span class="nm">25</span>, <span class="s">"ciudad"</span>: <span class="s">"Lima"</span>},
+    {<span class="s">"nombre"</span>: <span class="s">"Luis"</span>, <span class="s">"edad"</span>: <span class="nm">30</span>, <span class="s">"ciudad"</span>: <span class="s">"Cusco"</span>},
+]
+
+<span class="c"># csv.writer — escribir filas como listas</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"salida.csv"</span>, <span class="s">"w"</span>, <span class="v">newline</span><span class="op2">=</span><span class="s">""</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">escritor</span> <span class="op2">=</span> <span class="v">csv</span>.<span class="n">writer</span>(<span class="v">f</span>)
+    <span class="v">escritor</span>.<span class="n">writerow</span>([<span class="s">"nombre"</span>, <span class="s">"edad"</span>, <span class="s">"ciudad"</span>])  <span class="c"># encabezado</span>
+    <span class="k">for</span> <span class="v">p</span> <span class="k">in</span> <span class="v">personas</span>:
+        <span class="v">escritor</span>.<span class="n">writerow</span>([<span class="v">p</span>[<span class="s">"nombre"</span>], <span class="v">p</span>[<span class="s">"edad"</span>], <span class="v">p</span>[<span class="s">"ciudad"</span>]])
+
+<span class="c"># csv.DictWriter — escribir dicts directamente</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"salida.csv"</span>, <span class="s">"w"</span>, <span class="v">newline</span><span class="op2">=</span><span class="s">""</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">campos</span>   <span class="op2">=</span> [<span class="s">"nombre"</span>, <span class="s">"edad"</span>, <span class="s">"ciudad"</span>]
+    <span class="v">escritor</span> <span class="op2">=</span> <span class="v">csv</span>.<span class="n">DictWriter</span>(<span class="v">f</span>, <span class="v">fieldnames</span><span class="op2">=</span><span class="v">campos</span>)
+    <span class="v">escritor</span>.<span class="n">writeheader</span>()          <span class="c"># escribe la fila de encabezado</span>
+    <span class="v">escritor</span>.<span class="n">writerows</span>(<span class="v">personas</span>)    <span class="c"># escribe todas las filas</span></pre>
+    </div>
+
+    <div class="callout ce">
+      <b>newline=""</b> — siempre pásalo cuando escribas CSV en Windows. Sin él, cada fila tendrá una línea en blanco extra porque el módulo csv ya maneja los saltos de línea internamente.
+    </div>
+  </div>
+
+  <!-- PATHLIB -->
+  <div class="section" id="pathlib">
+    <div class="section-header">
+      <div class="s-icon i-f">Path</div>
+      <div>
+        <div class="section-title">pathlib — rutas orientadas a objetos</div>
+        <div class="section-type">Path · operador / · lectura directa · glob</div>
+      </div>
+    </div>
+
+    <p><code>pathlib.Path</code> es la forma moderna de trabajar con rutas. En vez de strings y <code>os.path</code>, usas objetos con métodos. Más legible, más potente, multiplataforma.</p>
+
+    <div class="cb">
+      <div class="cb-label">pathlib — lo esencial</div>
+      <pre><span class="k">from</span> <span class="v">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+<span class="c"># crear rutas con operador / (multiplataforma)</span>
+<span class="v">base</span>   <span class="op2">=</span> <span class="n">Path</span>(<span class="s">"/home/lian"</span>)
+<span class="v">config</span> <span class="op2">=</span> <span class="v">base</span> <span class="op2">/</span> <span class="s">"proyectos"</span> <span class="op2">/</span> <span class="s">"config.json"</span>
+<span class="c"># → PosixPath('/home/lian/proyectos/config.json')</span>
+
+<span class="c"># directorio actual y rutas relativas</span>
+<span class="n">Path</span>.<span class="n">cwd</span>()              <span class="c"># directorio actual</span>
+<span class="n">Path</span>.<span class="n">home</span>()             <span class="c"># directorio home del usuario</span>
+<span class="n">Path</span>(<span class="s">"datos.txt"</span>)       <span class="c"># ruta relativa</span>
+
+<span class="c"># atributos de la ruta</span>
+<span class="v">p</span> <span class="op2">=</span> <span class="n">Path</span>(<span class="s">"/home/lian/datos/archivo.txt"</span>)
+<span class="v">p</span>.<span class="v">name</span>       <span class="c"># → 'archivo.txt'</span>
+<span class="v">p</span>.<span class="v">stem</span>       <span class="c"># → 'archivo'  (sin extensión)</span>
+<span class="v">p</span>.<span class="v">suffix</span>     <span class="c"># → '.txt'</span>
+<span class="v">p</span>.<span class="v">parent</span>     <span class="c"># → Path('/home/lian/datos')</span>
+<span class="v">p</span>.<span class="v">parents</span>[<span class="nm">1</span>] <span class="c"># → Path('/home/lian')</span>
+
+<span class="c"># verificar existencia y tipo</span>
+<span class="v">p</span>.<span class="n">exists</span>()   <span class="c"># True / False</span>
+<span class="v">p</span>.<span class="n">is_file</span>()  <span class="c"># es archivo?</span>
+<span class="v">p</span>.<span class="n">is_dir</span>()   <span class="c"># es directorio?</span>
+
+<span class="c"># crear directorios</span>
+<span class="n">Path</span>(<span class="s">"nueva/carpeta"</span>).<span class="n">mkdir</span>(<span class="v">parents</span><span class="op2">=</span><span class="b">True</span>, <span class="v">exist_ok</span><span class="op2">=</span><span class="b">True</span>)
+
+<span class="c"># leer y escribir directo desde Path</span>
+<span class="v">contenido</span> <span class="op2">=</span> <span class="n">Path</span>(<span class="s">"datos.txt"</span>).<span class="n">read_text</span>(<span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>)
+<span class="n">Path</span>(<span class="s">"salida.txt"</span>).<span class="n">write_text</span>(<span class="s">"contenido"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>)
+
+<span class="c"># glob — buscar archivos con patrón</span>
+<span class="k">for</span> <span class="v">archivo</span> <span class="k">in</span> <span class="n">Path</span>(<span class="s">"."</span>).<span class="n">glob</span>(<span class="s">"*.txt"</span>):
+    <span class="nb">print</span>(<span class="v">archivo</span>)            <span class="c"># todos los .txt en el directorio actual</span>
+
+<span class="k">for</span> <span class="v">archivo</span> <span class="k">in</span> <span class="n">Path</span>(<span class="s">"."</span>).<span class="n">rglob</span>(<span class="s">"*.py"</span>):
+    <span class="nb">print</span>(<span class="v">archivo</span>)            <span class="c"># todos los .py recursivamente</span>
+
+<span class="c"># renombrar y eliminar</span>
+<span class="n">Path</span>(<span class="s">"viejo.txt"</span>).<span class="n">rename</span>(<span class="s">"nuevo.txt"</span>)
+<span class="n">Path</span>(<span class="s">"borrar.txt"</span>).<span class="n">unlink</span>()         <span class="c"># eliminar archivo</span>
+<span class="n">Path</span>(<span class="s">"carpeta"</span>).<span class="n">rmdir</span>()             <span class="c"># eliminar carpeta vacía</span></pre>
+    </div>
+
+    <div class="callout cd">
+      <b>pathlib vs os.path:</b> ambos hacen lo mismo, pero <code>pathlib</code> es más moderno y legible. <code>Path("a") / "b" / "c.txt"</code> vs <code>os.path.join("a", "b", "c.txt")</code>. Para código nuevo, prefiere pathlib.
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · Archivos</span>
+    <span>open · read · write · csv · pathlib</span>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>try / except · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:      #09090b;
+  --bg2:     #0f0f12;
+  --bg3:     #141418;
+  --line:    #1d1d22;
+  --line2:   #252530;
+  --text:    #d4d4e0;
+  --dim:     #464658;
+  --faint:   #18181f;
+
+  --try:     #38bdf8;
+  --try-bg:  #020b12;
+  --try-bd:  #0a2535;
+
+  --exc:     #f87171;
+  --exc-bg:  #120505;
+  --exc-bd:  #3d1010;
+
+  --els:     #4ade80;
+  --els-bg:  #031209;
+  --els-bd:  #0d3518;
+
+  --fin:     #fbbf24;
+  --fin-bg:  #120d02;
+  --fin-bd:  #3d2d06;
+
+  --rai:     #e879f9;
+  --rai-bg:  #110514;
+  --rai-bd:  #380d3f;
+
+  --exc2:    #fb923c;
+  --exc2-bg: #120700;
+  --exc2-bd: #3d1f06;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(9,9,11,.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  height: 44px;
+  display: flex; align-items: center;
+  padding: 0 28px; gap: 0;
+  overflow-x: auto;
+}
+nav::-webkit-scrollbar { display:none; }
+.nav-brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 10px; font-weight: 700;
+  color: var(--dim); letter-spacing: 1px;
+  white-space: nowrap; margin-right: 24px; flex-shrink: 0;
+}
+.nav-links { display:flex; gap:2px; flex-shrink:0; }
+.nav-links a {
+  font-size: 10px; letter-spacing: 1px;
+  text-decoration: none; padding: 6px 11px;
+  border-radius: 3px; white-space: nowrap;
+  color: var(--dim); transition: all .15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--line); }
+.n-try { color: var(--try) !important; }
+.n-exc { color: var(--exc) !important; }
+.n-els { color: var(--els) !important; }
+.n-fin { color: var(--fin) !important; }
+.n-rai { color: var(--rai) !important; }
+.n-cat { color: var(--exc2) !important; }
+.n-pat { color: #c084fc !important; }
+
+/* LAYOUT */
+.page { max-width: 880px; margin: 0 auto; padding: 60px 22px 100px; }
+
+/* HERO */
+.hero { margin-bottom: 68px; }
+.hero-tag {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 18px;
+}
+.hero h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(34px, 6vw, 62px);
+  font-weight: 900; line-height: 1; letter-spacing: -2px; color: #fff;
+}
+.hero h1 em { font-style: normal; color: var(--exc); }
+.hero-sub {
+  margin-top: 18px; font-size: 12px;
+  color: var(--dim); max-width: 520px; line-height: 1.85;
+}
+
+/* structure diagram in hero */
+.struct-diagram {
+  margin-top: 28px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+.sd-row { display:flex; align-items:center; gap: 10px; }
+.sd-kw {
+  font-weight: 700; font-size: 11px;
+  width: 60px; text-align: right; flex-shrink: 0;
+}
+.sd-desc { color: var(--dim); font-size: 11px; }
+.sd-req { color: var(--exc); font-size: 9px; letter-spacing: 1px; }
+.sd-opt { color: var(--dim); font-size: 9px; letter-spacing: 1px; }
+
+/* SECTION */
+.section { margin-bottom: 60px; }
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 26px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.s-icon {
+  width: 36px; height: 36px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif; font-size: 9px; font-weight: 900;
+  flex-shrink: 0; letter-spacing: .5px;
+}
+.i-try { background:var(--try-bg); border:1px solid var(--try-bd); color:var(--try); }
+.i-exc { background:var(--exc-bg); border:1px solid var(--exc-bd); color:var(--exc); }
+.i-els { background:var(--els-bg); border:1px solid var(--els-bd); color:var(--els); }
+.i-fin { background:var(--fin-bg); border:1px solid var(--fin-bd); color:var(--fin); }
+.i-rai { background:var(--rai-bg); border:1px solid var(--rai-bd); color:var(--rai); }
+.i-cat { background:var(--exc2-bg); border:1px solid var(--exc2-bd); color:var(--exc2); }
+.i-pat { background:#160e22; border:1px solid #3a1f6e; color:#c084fc; }
+
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -.5px;
+}
+.section-type { font-size: 10px; letter-spacing: 2px; color: var(--dim); margin-top: 2px; }
+
+/* PROSE */
+p { color: var(--text); font-size: 12.5px; line-height: 1.85; margin-bottom: 14px; }
+p:last-child { margin-bottom: 0; }
+
+/* CODE */
+.cb {
+  background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 4px; margin: 14px 0; overflow: hidden;
+}
+.cb-label {
+  background: var(--bg3); border-bottom: 1px solid var(--line);
+  padding: 6px 14px; font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim);
+}
+.cb pre {
+  padding: 16px 18px; overflow-x: auto;
+  font-size: 12.5px; line-height: 1.8;
+}
+.cb pre::-webkit-scrollbar { height: 4px; }
+.cb pre::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
+
+/* syntax */
+.k  { color: var(--try); }
+.ke { color: var(--exc); }
+.kg { color: var(--els); }
+.ky { color: var(--fin); }
+.kp { color: var(--rai); }
+.n  { color: #c084fc; }
+.s  { color: #86efac; }
+.nm { color: #fb923c; }
+.c  { color: #383848; font-style: italic; }
+.b  { color: #f472b6; }
+.v  { color: var(--text); }
+.err { color: var(--exc); font-weight: 700; }
+
+/* CALLOUT */
+.callout {
+  padding: 13px 16px; border-radius: 3px;
+  margin: 14px 0; font-size: 12px; line-height: 1.8;
+}
+.c-try { background:var(--try-bg); border-left:2px solid var(--try); color:#8dd4f8; }
+.c-exc { background:var(--exc-bg); border-left:2px solid var(--exc); color:#f8a8a8; }
+.c-els { background:var(--els-bg); border-left:2px solid var(--els); color:#a8f0c0; }
+.c-fin { background:var(--fin-bg); border-left:2px solid var(--fin); color:#f0d8a8; }
+.c-rai { background:var(--rai-bg); border-left:2px solid var(--rai); color:#eeaaff; }
+.c-warn { background:#120c02; border-left:2px solid #ca8a04; color:#e8cc88; }
+.callout b { font-weight:700; color:#fff; }
+
+/* EXCEPTION TABLE */
+.exc-table {
+  width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 11.5px;
+}
+.exc-table th {
+  text-align: left; font-size: 9px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--dim);
+  padding: 7px 12px; border-bottom: 1px solid var(--line2); font-weight:400;
+}
+.exc-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top;
+}
+.exc-table tr:last-child td { border-bottom: none; }
+.exc-table tr:hover td { background: var(--faint); }
+.exc-name { color: var(--exc); font-weight: 700; white-space: nowrap; }
+.exc-when { color: var(--text); }
+.exc-ex   { color: #86a0f8; font-size: 11px; }
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+@media(max-width:600px){ .two-col { grid-template-columns:1fr; } }
+
+/* FLOW DIAGRAM */
+.flow {
+  margin: 18px 0;
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 11px;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+}
+.flow-block {
+  padding: 8px 14px; border-radius: 3px; font-weight: 700;
+  font-size: 11px; white-space: nowrap;
+}
+.fb-try { background:var(--try-bg); border:1px solid var(--try-bd); color:var(--try); }
+.fb-ok  { background:var(--els-bg); border:1px solid var(--els-bd); color:var(--els); }
+.fb-err { background:var(--exc-bg); border:1px solid var(--exc-bd); color:var(--exc); }
+.fb-fin { background:var(--fin-bg); border:1px solid var(--fin-bd); color:var(--fin); }
+.fb-els { background:#0e1a0e; border:1px solid #1a3a1a; color:#60c060; }
+.flow-arrow { color: var(--dim); padding: 0 8px; font-size: 14px; }
+.flow-label { font-size: 10px; color: var(--dim); text-align:center; margin-top:6px; }
+.flow-branch { display:flex; flex-direction:column; gap:6px; }
+.flow-sep { color: var(--dim); padding: 0 6px; }
+
+/* HIERARCHY */
+.hier {
+  font-size: 12px; line-height: 2;
+  background: var(--bg2); border: 1px solid var(--line2);
+  border-radius: 4px; padding: 16px 18px; margin: 14px 0;
+}
+.h-base { color: var(--exc); font-weight:700; }
+.h-mid  { color: #fb923c; }
+.h-leaf { color: #fbbf24; }
+.h-dim  { color: var(--dim); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--line); padding-top: 22px; margin-top: 20px;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--dim); display:flex; justify-content:space-between;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · Errores</div>
+  <div class="nav-links">
+    <a href="#intro"  class="n-try">try/except</a>
+    <a href="#bloques" class="n-exc">los 4 bloques</a>
+    <a href="#catalog" class="n-cat">catálogo</a>
+    <a href="#multi"  class="n-exc">múltiples except</a>
+    <a href="#raise"  class="n-rai">raise</a>
+    <a href="#custom" class="n-rai">excepciones propias</a>
+    <a href="#patron" class="n-pat">patrones</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Guía · Python · Manejo de errores</div>
+    <h1>try /<br><em>except</em></h1>
+    <p class="hero-sub">
+      Los errores son inevitables. Esta guía cubre cómo anticiparlos, atraparlos, clasificarlos, relanzarlos y crear los tuyos propios.
+    </p>
+    <div class="struct-diagram">
+      <div class="sd-row">
+        <span class="sd-kw" style="color:var(--try)">try:</span>
+        <span class="sd-desc">código que puede fallar</span>
+        <span class="sd-req">OBLIGATORIO</span>
+      </div>
+      <div class="sd-row">
+        <span class="sd-kw" style="color:var(--exc)">except:</span>
+        <span class="sd-desc">qué hacer si falla</span>
+        <span class="sd-req">OBLIGATORIO (al menos uno)</span>
+      </div>
+      <div class="sd-row">
+        <span class="sd-kw" style="color:var(--els)">else:</span>
+        <span class="sd-desc">qué hacer si NO falló nada</span>
+        <span class="sd-opt">opcional</span>
+      </div>
+      <div class="sd-row">
+        <span class="sd-kw" style="color:var(--fin)">finally:</span>
+        <span class="sd-desc">se ejecuta SIEMPRE, pase lo que pase</span>
+        <span class="sd-opt">opcional</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INTRO ══ -->
+  <div class="section" id="intro">
+    <div class="section-header">
+      <div class="s-icon i-try">try</div>
+      <div>
+        <div class="section-title">¿Por qué manejar errores?</div>
+        <div class="section-type">excepciones · flujo de control · defensivo vs agresivo</div>
+      </div>
+    </div>
+
+    <p>Cuando Python encuentra algo que no puede ejecutar — dividir por cero, convertir texto a número, abrir un archivo que no existe — lanza una <b>excepción</b>. Sin manejo, el programa se detiene. Con <code>try/except</code>, interceptas ese error y decides qué hacer.</p>
+
+    <div class="two-col">
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Sin manejo — el programa muere</div>
+        <pre><span class="v">n</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="s">"Número: "</span>))
+<span class="c"># usuario escribe "hola"</span>
+<span class="c"># ↓</span>
+<span class="err">ValueError: invalid literal
+for int() with base 10: 'hola'</span>
+<span class="c"># programa terminado</span></pre>
+      </div>
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Con manejo — el programa continúa</div>
+        <pre><span class="k">try</span>:
+    <span class="v">n</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="s">"Número: "</span>))
+<span class="ke">except</span> <span class="n">ValueError</span>:
+    <span class="nb">print</span>(<span class="s">"Eso no es un número"</span>)
+<span class="c"># programa sigue corriendo</span></pre>
+      </div>
+    </div>
+
+    <div class="callout c-try">
+      <b>Filosofía Python — EAFP vs LBYL:</b><br>
+      <b>LBYL</b> (Look Before You Leap) — verificar antes de hacer: <code>if key in dict: use dict[key]</code><br>
+      <b>EAFP</b> (Easier to Ask Forgiveness than Permission) — intentar y atrapar el error.<br>
+      Python favorece EAFP. <code>try/except</code> es la herramienta central de ese estilo.
+    </div>
+  </div>
+
+  <!-- ══ LOS 4 BLOQUES ══ -->
+  <div class="section" id="bloques">
+    <div class="section-header">
+      <div class="s-icon i-exc">4</div>
+      <div>
+        <div class="section-title">Los 4 bloques</div>
+        <div class="section-type">try · except · else · finally</div>
+      </div>
+    </div>
+
+    <!-- flujo visual -->
+    <div class="flow">
+      <div style="font-size:10px;letter-spacing:2px;color:var(--dim);margin-bottom:14px;text-transform:uppercase;">Flujo de ejecución</div>
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;">
+        <div>
+          <div class="flow-block fb-try">try: código</div>
+          <div class="flow-label">siempre entra aquí</div>
+        </div>
+        <div class="flow-arrow" style="margin-top:10px">→</div>
+        <div>
+          <div class="flow-branch">
+            <div class="flow-block fb-ok">sin error</div>
+            <div class="flow-block fb-err">con error</div>
+          </div>
+          <div class="flow-label">bifurcación</div>
+        </div>
+        <div class="flow-arrow" style="margin-top:10px">→</div>
+        <div>
+          <div class="flow-branch">
+            <div class="flow-block fb-els">else: (opcional)</div>
+            <div class="flow-block fb-err">except: atrapa</div>
+          </div>
+          <div class="flow-label">rama correspondiente</div>
+        </div>
+        <div class="flow-arrow" style="margin-top:10px">→</div>
+        <div>
+          <div class="flow-block fb-fin">finally: siempre</div>
+          <div class="flow-label">sin importar qué</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Estructura completa con los 4 bloques</div>
+      <pre><span class="k">try</span>:
+    <span class="c"># código que puede lanzar excepción</span>
+    <span class="v">resultado</span> <span class="op2">=</span> <span class="nm">10</span> <span class="op2">/</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="s">"Divisor: "</span>))
+
+<span class="ke">except</span> <span class="n">ZeroDivisionError</span>:
+    <span class="c"># solo si ocurre ZeroDivisionError</span>
+    <span class="nb">print</span>(<span class="s">"No se puede dividir por cero"</span>)
+
+<span class="ke">except</span> <span class="n">ValueError</span>:
+    <span class="c"># solo si ocurre ValueError</span>
+    <span class="nb">print</span>(<span class="s">"Debes ingresar un número"</span>)
+
+<span class="kg">else</span>:
+    <span class="c"># solo si el try terminó SIN errores</span>
+    <span class="nb">print</span>(<span class="s">f"Resultado: {resultado:.2f}"</span>)
+
+<span class="ky">finally</span>:
+    <span class="c"># se ejecuta SIEMPRE — con o sin error</span>
+    <span class="nb">print</span>(<span class="s">"Operación finalizada"</span>)</pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">except con alias "as e" — capturar el mensaje del error</div>
+      <pre><span class="k">try</span>:
+    <span class="v">x</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="s">"texto"</span>)
+
+<span class="ke">except</span> <span class="n">ValueError</span> <span class="ke">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="s">f"Error capturado: {e}"</span>)
+    <span class="c"># → Error capturado: invalid literal for int() with base 10: 'texto'</span>
+    <span class="nb">print</span>(<span class="nb">type</span>(<span class="v">e</span>))
+    <span class="c"># → &lt;class 'ValueError'&gt;</span>
+    <span class="nb">print</span>(<span class="v">e</span>.args)
+    <span class="c"># → ("invalid literal for int() with base 10: 'texto'",)</span></pre>
+    </div>
+
+    <div class="callout c-els">
+      <b>else vs poner código al final del try:</b><br>
+      Código en <code>else</code> solo corre si el try fue exitoso. Si lo pones al final del <code>try</code>, también se ejecutaría si ocurre un error y hay un <code>except</code> que lo atrapa. <code>else</code> es más preciso.
+    </div>
+
+    <div class="callout c-fin">
+      <b>finally siempre corre</b> — incluso si hay un <code>return</code>, un <code>break</code>, o si el except relanza el error. Su uso principal: cerrar recursos (archivos, conexiones de base de datos) sin importar si algo falló.
+    </div>
+  </div>
+
+  <!-- ══ CATÁLOGO DE EXCEPCIONES ══ -->
+  <div class="section" id="catalog">
+    <div class="section-header">
+      <div class="s-icon i-cat">!</div>
+      <div>
+        <div class="section-title">Catálogo de excepciones</div>
+        <div class="section-type">las más comunes que verás en el día a día</div>
+      </div>
+    </div>
+
+    <table class="exc-table">
+      <thead>
+        <tr><th>Excepción</th><th>Cuándo ocurre</th><th>Ejemplo que la provoca</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="exc-name">ValueError</span></td>
+          <td class="exc-when">Tipo correcto pero valor inválido</td>
+          <td class="exc-ex">int("hola") · int("3.14")</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">TypeError</span></td>
+          <td class="exc-when">Operación entre tipos incompatibles</td>
+          <td class="exc-ex">"texto" + 5 · len(42)</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">ZeroDivisionError</span></td>
+          <td class="exc-when">División o módulo por cero</td>
+          <td class="exc-ex">10 / 0 · 10 % 0</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">IndexError</span></td>
+          <td class="exc-when">Índice fuera del rango de una lista/string</td>
+          <td class="exc-ex">[1,2,3][5] · "abc"[10]</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">KeyError</span></td>
+          <td class="exc-when">Clave que no existe en un diccionario</td>
+          <td class="exc-ex">d["clave_inexistente"]</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">AttributeError</span></td>
+          <td class="exc-when">Atributo o método que no existe en el objeto</td>
+          <td class="exc-ex">(5).upper() · None.split()</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">NameError</span></td>
+          <td class="exc-when">Variable usada sin haber sido definida</td>
+          <td class="exc-ex">print(variable_no_definida)</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">FileNotFoundError</span></td>
+          <td class="exc-when">Abrir un archivo que no existe</td>
+          <td class="exc-ex">open("no_existe.txt")</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">PermissionError</span></td>
+          <td class="exc-when">Acceso denegado a un archivo o recurso</td>
+          <td class="exc-ex">open("/etc/shadow", "w")</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">OverflowError</span></td>
+          <td class="exc-when">Resultado numérico demasiado grande para float</td>
+          <td class="exc-ex">import math; math.exp(999)</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">RecursionError</span></td>
+          <td class="exc-when">Demasiadas llamadas recursivas anidadas</td>
+          <td class="exc-ex">def f(): f() → f()</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">StopIteration</span></td>
+          <td class="exc-when">El iterador se agotó</td>
+          <td class="exc-ex">next(iter([]))</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">NotImplementedError</span></td>
+          <td class="exc-when">Método abstracto que no fue implementado</td>
+          <td class="exc-ex">método definido con raise NotImplementedError</td>
+        </tr>
+        <tr>
+          <td><span class="exc-name">AssertionError</span></td>
+          <td class="exc-when">Falla una sentencia assert</td>
+          <td class="exc-ex">assert 1 == 2</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>La jerarquía de excepciones en Python — todas heredan de <code>BaseException</code>:</p>
+
+    <div class="hier">
+<span class="h-base">BaseException</span>
+  └── <span class="h-base">Exception</span>              <span class="h-dim">← casi siempre capturas desde aquí abajo</span>
+        ├── <span class="h-mid">ValueError</span>
+        ├── <span class="h-mid">TypeError</span>
+        ├── <span class="h-mid">AttributeError</span>
+        ├── <span class="h-mid">NameError</span>
+        ├── <span class="h-mid">RuntimeError</span>
+        │     └── <span class="h-leaf">RecursionError</span>
+        ├── <span class="h-mid">ArithmeticError</span>
+        │     ├── <span class="h-leaf">ZeroDivisionError</span>
+        │     └── <span class="h-leaf">OverflowError</span>
+        ├── <span class="h-mid">LookupError</span>
+        │     ├── <span class="h-leaf">IndexError</span>
+        │     └── <span class="h-leaf">KeyError</span>
+        └── <span class="h-mid">OSError</span>
+              ├── <span class="h-leaf">FileNotFoundError</span>
+              └── <span class="h-leaf">PermissionError</span></div>
+
+    <div class="callout c-warn">
+      <b>Nunca atrapes Exception o BaseException sin motivo.</b> <code>except Exception</code> captura absolutamente todo — incluyendo errores de programación que deberías ver y corregir. Siempre especifica el tipo exacto que esperas.
+    </div>
+  </div>
+
+  <!-- ══ MÚLTIPLES EXCEPT ══ -->
+  <div class="section" id="multi">
+    <div class="section-header">
+      <div class="s-icon i-exc">n</div>
+      <div>
+        <div class="section-title">Múltiples except</div>
+        <div class="section-type">atrapar diferentes errores · orden importa</div>
+      </div>
+    </div>
+
+    <p>Puedes encadenar varios <code>except</code> para manejar distintos tipos de error de forma diferente. Python los evalúa en orden y entra al primero que coincida.</p>
+
+    <div class="cb">
+      <div class="cb-label">Múltiples except independientes</div>
+      <pre><span class="k">try</span>:
+    <span class="v">indice</span>    <span class="op2">=</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="s">"Índice: "</span>))
+    <span class="v">lista</span>     <span class="op2">=</span> [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>]
+    <span class="v">resultado</span> <span class="op2">=</span> <span class="nm">100</span> <span class="op2">/</span> <span class="v">lista</span>[<span class="v">indice</span>]
+
+<span class="ke">except</span> <span class="n">ValueError</span>:
+    <span class="nb">print</span>(<span class="s">"El índice debe ser un número entero"</span>)
+
+<span class="ke">except</span> <span class="n">IndexError</span>:
+    <span class="nb">print</span>(<span class="s">"Índice fuera de rango (0–2)"</span>)
+
+<span class="ke">except</span> <span class="n">ZeroDivisionError</span>:
+    <span class="nb">print</span>(<span class="s">"El valor en esa posición es cero"</span>)
+
+<span class="kg">else</span>:
+    <span class="nb">print</span>(<span class="s">f"100 / lista[{indice}] = {resultado:.2f}"</span>)</pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Atrapar múltiples errores en un solo except con tupla</div>
+      <pre><span class="k">try</span>:
+    <span class="v">n</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="s">"Número: "</span>))
+    <span class="v">r</span> <span class="op2">=</span> <span class="nm">100</span> <span class="op2">/</span> <span class="v">n</span>
+
+<span class="ke">except</span> (<span class="n">ValueError</span>, <span class="n">ZeroDivisionError</span>) <span class="ke">as</span> <span class="v">e</span>:
+    <span class="c"># ambos errores van al mismo bloque</span>
+    <span class="nb">print</span>(<span class="s">f"Entrada inválida: {e}"</span>)</pre>
+    </div>
+
+    <div class="callout c-exc">
+      <b>El orden de los except importa.</b> Siempre pon los más específicos primero. Si pones <code>except Exception</code> antes que <code>except ValueError</code>, el ValueError nunca será alcanzado — <code>Exception</code> lo atrapará primero porque <code>ValueError</code> hereda de <code>Exception</code>.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Orden incorrecto vs correcto</div>
+      <pre><span class="c"># ✗ INCORRECTO — ValueError nunca se alcanza</span>
+<span class="k">try</span>:
+    <span class="nb">int</span>(<span class="s">"abc"</span>)
+<span class="ke">except</span> <span class="n">Exception</span>:          <span class="c"># atrapa TODO</span>
+    <span class="nb">print</span>(<span class="s">"error general"</span>)
+<span class="ke">except</span> <span class="n">ValueError</span>:         <span class="c"># nunca llega aquí</span>
+    <span class="nb">print</span>(<span class="s">"error de valor"</span>)
+
+<span class="c"># ✓ CORRECTO — específico primero</span>
+<span class="k">try</span>:
+    <span class="nb">int</span>(<span class="s">"abc"</span>)
+<span class="ke">except</span> <span class="n">ValueError</span>:         <span class="c"># más específico</span>
+    <span class="nb">print</span>(<span class="s">"error de valor"</span>)
+<span class="ke">except</span> <span class="n">Exception</span>:          <span class="c"># captura el resto</span>
+    <span class="nb">print</span>(<span class="s">"otro error"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ══ RAISE ══ -->
+  <div class="section" id="raise">
+    <div class="section-header">
+      <div class="s-icon i-rai">↑</div>
+      <div>
+        <div class="section-title">raise</div>
+        <div class="section-type">lanzar excepciones · relanzar · raise from</div>
+      </div>
+    </div>
+
+    <p><code>raise</code> lanza una excepción manualmente. Se usa para señalar condiciones inválidas que Python no detectaría por sí solo, o para relanzar un error atrapado después de hacer algo con él.</p>
+
+    <div class="cb">
+      <div class="cb-label">raise — lanzar una excepción nueva</div>
+      <pre><span class="k">def</span> <span class="n">dividir</span>(<span class="v">a</span>, <span class="v">b</span>):
+    <span class="k">if</span> <span class="v">b</span> <span class="op2">==</span> <span class="nm">0</span>:
+        <span class="kp">raise</span> <span class="n">ValueError</span>(<span class="s">"El divisor no puede ser cero"</span>)
+    <span class="k">return</span> <span class="v">a</span> <span class="op2">/</span> <span class="v">b</span>
+
+<span class="k">try</span>:
+    <span class="n">dividir</span>(<span class="nm">10</span>, <span class="nm">0</span>)
+<span class="ke">except</span> <span class="n">ValueError</span> <span class="ke">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="v">e</span>)      <span class="c"># → El divisor no puede ser cero</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">raise sin argumentos — relanzar el error actual</div>
+      <pre><span class="k">try</span>:
+    <span class="v">x</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="s">"texto"</span>)
+
+<span class="ke">except</span> <span class="n">ValueError</span> <span class="ke">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="s">f"Log: ocurrió ValueError → {e}"</span>)
+    <span class="kp">raise</span>           <span class="c"># relanza el mismo error hacia arriba</span>
+                    <span class="c"># útil para loggear y que el error siga propagándose</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">raise ... from — encadenar excepciones con contexto</div>
+      <pre><span class="k">def</span> <span class="n">cargar_config</span>(<span class="v">archivo</span>):
+    <span class="k">try</span>:
+        <span class="v">f</span> <span class="op2">=</span> <span class="nb">open</span>(<span class="v">archivo</span>)
+    <span class="ke">except</span> <span class="n">FileNotFoundError</span> <span class="ke">as</span> <span class="v">e</span>:
+        <span class="kp">raise</span> <span class="n">RuntimeError</span>(<span class="s">f"No se pudo iniciar: falta {archivo}"</span>) <span class="kp">from</span> <span class="v">e</span>
+        <span class="c"># el traceback mostrará AMBOS errores — el original y el nuevo</span>
+
+<span class="c"># traceback resultante:</span>
+<span class="c"># FileNotFoundError: [Errno 2] No such file or directory: 'config.txt'</span>
+<span class="c"># The above exception was the direct cause of the following exception:</span>
+<span class="c"># RuntimeError: No se pudo iniciar: falta config.txt</span></pre>
+    </div>
+
+    <div class="callout c-rai">
+      <b>raise from None</b> — si quieres lanzar un error nuevo sin mostrar el original en el traceback: <code>raise RuntimeError("mensaje") from None</code>. Limpia el output pero oculta el contexto original.
+    </div>
+  </div>
+
+  <!-- ══ EXCEPCIONES PROPIAS ══ -->
+  <div class="section" id="custom">
+    <div class="section-header">
+      <div class="s-icon i-rai">cls</div>
+      <div>
+        <div class="section-title">Excepciones propias</div>
+        <div class="section-type">crear clases de excepción personalizadas</div>
+      </div>
+    </div>
+
+    <p>Puedes crear tus propias excepciones heredando de <code>Exception</code>. Son útiles para dar nombres semánticos a errores específicos de tu dominio — en lugar de usar un <code>ValueError</code> genérico, usas <code>EdadInvalidaError</code> y queda claro qué falló.</p>
+
+    <div class="cb">
+      <div class="cb-label">Excepción personalizada básica</div>
+      <pre><span class="c"># solo heredar de Exception — con eso alcanza</span>
+<span class="k">class</span> <span class="n">EdadInvalidaError</span>(<span class="n">Exception</span>):
+    <span class="kp">pass</span>
+
+<span class="k">def</span> <span class="n">registrar</span>(<span class="v">edad</span>):
+    <span class="k">if</span> <span class="v">edad</span> <span class="op2"><</span> <span class="nm">0</span> <span class="k">or</span> <span class="v">edad</span> <span class="op2">></span> <span class="nm">120</span>:
+        <span class="kp">raise</span> <span class="n">EdadInvalidaError</span>(<span class="s">f"Edad fuera de rango: {edad}"</span>)
+    <span class="nb">print</span>(<span class="s">f"Registrado con edad {edad}"</span>)
+
+<span class="k">try</span>:
+    <span class="n">registrar</span>(<span class="op2">-</span><span class="nm">5</span>)
+<span class="ke">except</span> <span class="n">EdadInvalidaError</span> <span class="ke">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="s">f"Error: {e}"</span>)
+    <span class="c"># → Error: Edad fuera de rango: -5</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Excepción con atributos adicionales</div>
+      <pre><span class="k">class</span> <span class="n">SaldoInsuficienteError</span>(<span class="n">Exception</span>):
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="v">self</span>, <span class="v">saldo</span>, <span class="v">monto</span>):
+        <span class="v">self</span>.<span class="v">saldo</span> <span class="op2">=</span> <span class="v">saldo</span>
+        <span class="v">self</span>.<span class="v">monto</span> <span class="op2">=</span> <span class="v">monto</span>
+        <span class="nb">super</span>().<span class="n">__init__</span>(
+            <span class="s">f"Saldo insuficiente: tienes {saldo}, intentas retirar {monto}"</span>
+        )
+
+<span class="k">def</span> <span class="n">retirar</span>(<span class="v">saldo</span>, <span class="v">monto</span>):
+    <span class="k">if</span> <span class="v">monto</span> <span class="op2">></span> <span class="v">saldo</span>:
+        <span class="kp">raise</span> <span class="n">SaldoInsuficienteError</span>(<span class="v">saldo</span>, <span class="v">monto</span>)
+    <span class="k">return</span> <span class="v">saldo</span> <span class="op2">-</span> <span class="v">monto</span>
+
+<span class="k">try</span>:
+    <span class="n">retirar</span>(<span class="nm">100</span>, <span class="nm">250</span>)
+<span class="ke">except</span> <span class="n">SaldoInsuficienteError</span> <span class="ke">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="v">e</span>)                       <span class="c"># mensaje completo</span>
+    <span class="nb">print</span>(<span class="s">f"Faltaron: {e.monto - e.saldo}"</span>)  <span class="c"># acceso a atributos</span></pre>
+    </div>
+  </div>
+
+  <!-- ══ PATRONES COMUNES ══ -->
+  <div class="section" id="patron">
+    <div class="section-header">
+      <div class="s-icon i-pat">⊞</div>
+      <div>
+        <div class="section-title">Patrones y casos especiales</div>
+        <div class="section-type">input seguro · loop con retry · context manager · assert</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Patrón: pedir input hasta obtener un valor válido</div>
+      <pre><span class="k">def</span> <span class="n">pedir_entero</span>(<span class="v">mensaje</span>):
+    <span class="k">while</span> <span class="b">True</span>:
+        <span class="k">try</span>:
+            <span class="k">return</span> <span class="nb">int</span>(<span class="nb">input</span>(<span class="v">mensaje</span>))
+        <span class="ke">except</span> <span class="n">ValueError</span>:
+            <span class="nb">print</span>(<span class="s">"Ingresa solo números enteros."</span>)
+
+<span class="v">edad</span> <span class="op2">=</span> <span class="n">pedir_entero</span>(<span class="s">"Tu edad: "</span>)
+<span class="c"># no sale del while hasta que el usuario ingrese un int válido</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Patrón: with statement — context manager (cierre automático)</div>
+      <pre><span class="c"># sin with — el archivo puede quedar abierto si hay error</span>
+<span class="v">f</span> <span class="op2">=</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>)
+<span class="k">try</span>:
+    <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="ky">finally</span>:
+    <span class="v">f</span>.<span class="n">close</span>()    <span class="c"># cierre manual en finally</span>
+
+<span class="c"># con with — cierre automático, más limpio</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="c"># el archivo se cierra solo al salir del bloque, incluso si hay excepción</span>
+
+<span class="c"># combinado con try/except</span>
+<span class="k">try</span>:
+    <span class="k">with</span> <span class="nb">open</span>(<span class="s">"datos.txt"</span>) <span class="k">as</span> <span class="v">f</span>:
+        <span class="v">contenido</span> <span class="op2">=</span> <span class="v">f</span>.<span class="n">read</span>()
+<span class="ke">except</span> <span class="n">FileNotFoundError</span>:
+    <span class="nb">print</span>(<span class="s">"Archivo no encontrado"</span>)</pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">assert — verificaciones de desarrollo</div>
+      <pre><span class="c"># assert condicion, "mensaje si falla"</span>
+<span class="c"># lanza AssertionError si la condición es False</span>
+
+<span class="k">def</span> <span class="n">calcular_promedio</span>(<span class="v">notas</span>):
+    <span class="k">assert</span> <span class="nb">len</span>(<span class="v">notas</span>) <span class="op2">></span> <span class="nm">0</span>, <span class="s">"La lista no puede estar vacía"</span>
+    <span class="k">return</span> <span class="nb">sum</span>(<span class="v">notas</span>) <span class="op2">/</span> <span class="nb">len</span>(<span class="v">notas</span>)
+
+<span class="n">calcular_promedio</span>([])
+<span class="c"># → AssertionError: La lista no puede estar vacía</span>
+
+<span class="c"># assert es para errores de PROGRAMADOR, no de usuario</span>
+<span class="c"># no uses assert para validar input del usuario</span>
+<span class="c"># los assert se pueden desactivar con python -O (modo optimizado)</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Caso especial: except en bucle — continuar vs romper</div>
+      <pre><span class="v">datos</span> <span class="op2">=</span> [<span class="s">"10"</span>, <span class="s">"abc"</span>, <span class="s">"30"</span>, <span class="s">"0"</span>, <span class="s">"50"</span>]
+<span class="v">resultados</span> <span class="op2">=</span> []
+
+<span class="k">for</span> <span class="v">dato</span> <span class="k">in</span> <span class="v">datos</span>:
+    <span class="k">try</span>:
+        <span class="v">n</span> <span class="op2">=</span> <span class="nb">int</span>(<span class="v">dato</span>)
+        <span class="v">r</span> <span class="op2">=</span> <span class="nm">100</span> <span class="op2">/</span> <span class="v">n</span>
+        <span class="v">resultados</span>.<span class="n">append</span>(<span class="v">r</span>)
+    <span class="ke">except</span> <span class="n">ValueError</span>:
+        <span class="nb">print</span>(<span class="s">f"'{dato}' no es número — saltando"</span>)
+        <span class="k">continue</span>   <span class="c"># salta esta iteración, sigue con la siguiente</span>
+    <span class="ke">except</span> <span class="n">ZeroDivisionError</span>:
+        <span class="nb">print</span>(<span class="s">"División por cero — deteniendo"</span>)
+        <span class="k">break</span>      <span class="c"># sale del for completamente</span>
+
+<span class="nb">print</span>(<span class="v">resultados</span>)    <span class="c"># → [10.0] — solo '10' fue válido antes del 0</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Caso especial: except con finally y return</div>
+      <pre><span class="k">def</span> <span class="n">demo</span>():
+    <span class="k">try</span>:
+        <span class="nb">print</span>(<span class="s">"try"</span>)
+        <span class="k">return</span> <span class="s">"desde try"</span>     <span class="c"># parece que retorna aquí...</span>
+    <span class="ky">finally</span>:
+        <span class="nb">print</span>(<span class="s">"finally"</span>)       <span class="c"># ...pero finally corre ANTES del return</span>
+        <span class="c"># si pones return aquí, SOBREESCRIBE el return del try</span>
+
+<span class="v">resultado</span> <span class="op2">=</span> <span class="n">demo</span>()
+<span class="c"># imprime: "try"</span>
+<span class="c"># imprime: "finally"</span>
+<span class="c"># resultado = "desde try"</span>
+
+<span class="c"># TRAMPA: return dentro de finally anula el return del try</span>
+<span class="k">def</span> <span class="n">trampa</span>():
+    <span class="k">try</span>:
+        <span class="k">return</span> <span class="s">"try"</span>
+    <span class="ky">finally</span>:
+        <span class="k">return</span> <span class="s">"finally"</span>   <span class="c"># este gana siempre</span>
+
+<span class="n">trampa</span>()  <span class="c"># → "finally"  — evita esto</span></pre>
+    </div>
+
+    <div class="callout c-warn">
+      <b>Casos que confunden:</b><br>
+      · <code>except:</code> sin tipo — atrapa TODO incluyendo <code>KeyboardInterrupt</code> y <code>SystemExit</code>. Casi nunca lo quieres.<br>
+      · <code>try/except</code> vacío con <code>pass</code> — silencia errores sin hacer nada. Muy difícil de debuggear después.<br>
+      · <code>return</code> dentro de <code>finally</code> — sobreescribe el return del try. Evítalo.<br>
+      · <code>assert</code> con tupla — <code>assert (False, "msg")</code> siempre pasa porque una tupla es truthy. Usa <code>assert False, "msg"</code>.
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · try / except</span>
+    <span>bloques · catálogo · raise · custom · patrones</span>
+  </footer>
+
+</div>
+</body>
+</html>

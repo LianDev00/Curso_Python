@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List Comprehensions · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:    #09090b;
+  --bg2:   #0f0f12;
+  --bg3:   #141418;
+  --line:  #1d1d24;
+  --line2: #252532;
+  --text:  #d0d0e0;
+  --dim:   #464660;
+  --faint: #14141c;
+
+  --a: #38bdf8; --a-bg: #020b14; --a-bd: #09283d;
+  --b: #4ade80; --b-bg: #021209; --b-bd: #0d3518;
+  --c: #fb923c; --c-bg: #120700; --c-bd: #3d1f06;
+  --d: #e879f9; --d-bg: #110514; --d-bd: #380d3f;
+  --e: #fbbf24; --e-bg: #120d02; --e-bd: #3d2d06;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; }
+
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(9,9,11,.96); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  height:44px; display:flex; align-items:center;
+  padding:0 24px; overflow-x:auto; gap:0;
+}
+nav::-webkit-scrollbar { display:none; }
+.nav-brand { font-family:'Unbounded',sans-serif; font-size:10px; font-weight:700; color:var(--dim); letter-spacing:1px; white-space:nowrap; margin-right:20px; flex-shrink:0; }
+.nav-links { display:flex; gap:2px; flex-shrink:0; }
+.nav-links a { font-size:10px; text-decoration:none; padding:6px 10px; border-radius:3px; white-space:nowrap; color:var(--dim); transition:all .15s; }
+.nav-links a:hover { color:var(--text); background:var(--line); }
+.na { color:var(--a) !important; } .nb2 { color:var(--b) !important; }
+.nc { color:var(--c) !important; } .nd { color:var(--d) !important; }
+.ne2 { color:var(--e) !important; }
+
+.page { max-width:880px; margin:0 auto; padding:60px 22px 100px; }
+
+.hero { margin-bottom:60px; }
+.hero-eyebrow { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-bottom:16px; }
+.hero h1 { font-family:'Unbounded',sans-serif; font-size:clamp(30px,6vw,56px); font-weight:900; line-height:1; letter-spacing:-2px; color:#fff; }
+.hero h1 em { font-style:normal; color:var(--a); }
+.hero-sub { margin-top:16px; font-size:12px; color:var(--dim); max-width:520px; line-height:1.85; }
+
+/* formula box */
+.formula {
+  margin-top:24px; display:inline-flex; flex-wrap:wrap;
+  gap:6px; align-items:center; font-size:12px;
+}
+.fpart { padding:7px 13px; border-radius:3px; font-weight:700; font-size:11px; white-space:nowrap; }
+.fp-a { background:var(--b-bg); border:1px solid var(--b-bd); color:var(--b); }
+.fp-b { background:var(--a-bg); border:1px solid var(--a-bd); color:var(--a); }
+.fp-c { background:var(--c-bg); border:1px solid var(--c-bd); color:var(--c); }
+.fp-d { background:var(--d-bg); border:1px solid var(--d-bd); color:var(--d); }
+.fp-br{ color:var(--dim); font-size:18px; font-weight:300; }
+.fp-op{ color:var(--dim); font-size:11px; }
+
+.section { margin-bottom:60px; }
+.section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.s-icon { width:36px; height:36px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:9px; font-weight:900; flex-shrink:0; }
+.i-a { background:var(--a-bg); border:1px solid var(--a-bd); color:var(--a); }
+.i-b { background:var(--b-bg); border:1px solid var(--b-bd); color:var(--b); }
+.i-c { background:var(--c-bg); border:1px solid var(--c-bd); color:var(--c); }
+.i-d { background:var(--d-bg); border:1px solid var(--d-bd); color:var(--d); }
+.i-e { background:var(--e-bg); border:1px solid var(--e-bd); color:var(--e); }
+.section-title { font-family:'Unbounded',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:-.5px; }
+.section-type { font-size:10px; letter-spacing:2px; color:var(--dim); margin-top:2px; }
+
+p { color:var(--text); font-size:12.5px; line-height:1.85; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+p code { background:var(--faint); padding:1px 5px; border-radius:2px; font-size:12px; color:#c084fc; }
+
+.cb { background:var(--bg2); border:1px solid var(--line2); border-radius:4px; margin:14px 0; overflow:hidden; }
+.cb-label { background:var(--bg3); border-bottom:1px solid var(--line); padding:6px 14px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
+.cb pre { padding:16px 18px; overflow-x:auto; font-size:12.5px; line-height:1.8; }
+.cb pre::-webkit-scrollbar { height:4px; }
+.cb pre::-webkit-scrollbar-thumb { background:var(--line2); border-radius:2px; }
+
+.k  { color:var(--a); }
+.kg { color:var(--b); }
+.ko { color:var(--c); }
+.kp { color:var(--d); }
+.ky { color:var(--e); }
+.n  { color:#c084fc; }
+.s  { color:#86efac; }
+.nm { color:#fb923c; }
+.c  { color:#303048; font-style:italic; }
+.v  { color:var(--text); }
+
+.callout { padding:13px 16px; border-radius:3px; margin:14px 0; font-size:12px; line-height:1.8; }
+.ca { background:var(--a-bg); border-left:2px solid var(--a); color:#8dd4f8; }
+.cb2{ background:var(--b-bg); border-left:2px solid var(--b); color:#a8f0c0; }
+.cc { background:var(--c-bg); border-left:2px solid var(--c); color:#f0c8a8; }
+.cd { background:var(--d-bg); border-left:2px solid var(--d); color:#eeaaff; }
+.ce { background:var(--e-bg); border-left:2px solid var(--e); color:#f0d898; }
+.cw { background:#120c02; border-left:2px solid #ca8a04; color:#e8cc88; }
+.callout b { font-weight:700; color:#fff; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+@media(max-width:580px){ .two-col { grid-template-columns:1fr; } }
+
+footer { border-top:1px solid var(--line); padding-top:22px; margin-top:20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · Comprehensions</div>
+  <div class="nav-links">
+    <a href="#base"   class="na">list básica</a>
+    <a href="#filtro" class="nb2">con filtro</a>
+    <a href="#anidada" class="nc">anidada</a>
+    <a href="#dict"   class="nd">dict/set</a>
+    <a href="#gen"    class="ne2">generators</a>
+    <a href="#cuando" class="na">¿cuándo usarlas?</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Guía · Python · Comprehensions</div>
+    <h1>List<br><em>Comprehensions</em></h1>
+    <p class="hero-sub">Forma compacta de crear listas, dicts y sets a partir de iterables. Más legible que un for con append — cuando no se abusa de ellas.</p>
+    <div class="formula">
+      <span class="fp-br">[</span>
+      <span class="fpart fp-a">expresión</span>
+      <span class="fpart fp-b">for item in iterable</span>
+      <span class="fp-op">opcional →</span>
+      <span class="fpart fp-c">if condición</span>
+      <span class="fp-br">]</span>
+    </div>
+  </div>
+
+  <!-- BASE -->
+  <div class="section" id="base">
+    <div class="section-header">
+      <div class="s-icon i-a">[ ]</div>
+      <div>
+        <div class="section-title">List comprehension básica</div>
+        <div class="section-type">for simple · transformación · equivalencia con bucle</div>
+      </div>
+    </div>
+
+    <p>Una list comprehension es un <code>for</code> comprimido que construye una lista. Lee izquierda a derecha: "dame <b>expresión</b> para cada <b>item</b> en <b>iterable</b>".</p>
+
+    <div class="two-col">
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Con for + append</div>
+        <pre><span class="v">cuadrados</span> <span class="op2">=</span> []
+<span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">1</span>, <span class="nm">6</span>):
+    <span class="v">cuadrados</span>.<span class="n">append</span>(<span class="v">n</span> <span class="op2">**</span> <span class="nm">2</span>)
+<span class="c"># [1, 4, 9, 16, 25]</span></pre>
+      </div>
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Con comprehension</div>
+        <pre><span class="v">cuadrados</span> <span class="op2">=</span> [<span class="v">n</span> <span class="op2">**</span> <span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">1</span>, <span class="nm">6</span>)]
+<span class="c"># [1, 4, 9, 16, 25]</span>
+
+<span class="c"># mismo resultado, una sola línea</span></pre>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Ejemplos básicos</div>
+      <pre><span class="c"># transformar strings</span>
+<span class="v">palabras</span>  <span class="op2">=</span> [<span class="s">"hola"</span>, <span class="s">"mundo"</span>, <span class="s">"python"</span>]
+<span class="v">mayusculas</span> <span class="op2">=</span> [<span class="v">p</span>.<span class="n">upper</span>() <span class="k">for</span> <span class="v">p</span> <span class="k">in</span> <span class="v">palabras</span>]
+<span class="c"># ['HOLA', 'MUNDO', 'PYTHON']</span>
+
+<span class="c"># longitud de cada palabra</span>
+<span class="v">longitudes</span> <span class="op2">=</span> [<span class="nb">len</span>(<span class="v">p</span>) <span class="k">for</span> <span class="v">p</span> <span class="k">in</span> <span class="v">palabras</span>]
+<span class="c"># [4, 5, 6]</span>
+
+<span class="c"># aplicar función propia</span>
+<span class="k">def</span> <span class="n">doble</span>(<span class="v">x</span>): <span class="k">return</span> <span class="v">x</span> <span class="op2">*</span> <span class="nm">2</span>
+[<span class="n">doble</span>(<span class="v">n</span>) <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">5</span>)]
+<span class="c"># [0, 2, 4, 6, 8]</span>
+
+<span class="c"># iterar sobre string (cada carácter)</span>
+[<span class="v">c</span>.<span class="n">upper</span>() <span class="k">for</span> <span class="v">c</span> <span class="k">in</span> <span class="s">"python"</span>]
+<span class="c"># ['P', 'Y', 'T', 'H', 'O', 'N']</span>
+
+<span class="c"># convertir tipos</span>
+[<span class="nb">int</span>(<span class="v">x</span>) <span class="k">for</span> <span class="v">x</span> <span class="k">in</span> [<span class="s">"1"</span>, <span class="s">"2"</span>, <span class="s">"3"</span>]]
+<span class="c"># [1, 2, 3]</span></pre>
+    </div>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="section" id="filtro">
+    <div class="section-header">
+      <div class="s-icon i-b">if</div>
+      <div>
+        <div class="section-title">Con filtro — if al final</div>
+        <div class="section-type">filtrar elementos · condición de inclusión</div>
+      </div>
+    </div>
+
+    <p>Agrega un <code>if</code> al final para incluir solo los elementos que cumplan la condición. El elemento que no cumple simplemente se descarta — no se agrega nada.</p>
+
+    <div class="cb">
+      <div class="cb-label">Filtrar con if</div>
+      <pre><span class="v">numeros</span> <span class="op2">=</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">8</span>]
+
+<span class="c"># solo pares</span>
+[<span class="v">n</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="v">numeros</span> <span class="kg">if</span> <span class="v">n</span> <span class="op2">%</span> <span class="nm">2</span> <span class="op2">==</span> <span class="nm">0</span>]
+<span class="c"># [2, 4, 6, 8]</span>
+
+<span class="c"># solo positivos</span>
+[<span class="v">n</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> [<span class="op2">-</span><span class="nm">3</span>, <span class="nm">1</span>, <span class="op2">-</span><span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">0</span>] <span class="kg">if</span> <span class="v">n</span> <span class="op2">&gt;</span> <span class="nm">0</span>]
+<span class="c"># [1, 4]</span>
+
+<span class="c"># strings que empiezan con 'a'</span>
+<span class="v">frutas</span> <span class="op2">=</span> [<span class="s">"manzana"</span>, <span class="s">"banana"</span>, <span class="s">"arándano"</span>, <span class="s">"pera"</span>]
+[<span class="v">f</span> <span class="k">for</span> <span class="v">f</span> <span class="k">in</span> <span class="v">frutas</span> <span class="kg">if</span> <span class="v">f</span>.<span class="n">startswith</span>(<span class="s">"a"</span>)]
+<span class="c"># ['arándano']</span>
+
+<span class="c"># filtrar y transformar a la vez</span>
+[<span class="v">n</span> <span class="op2">**</span> <span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">10</span>) <span class="kg">if</span> <span class="v">n</span> <span class="op2">%</span> <span class="nm">2</span> <span class="op2">==</span> <span class="nm">0</span>]
+<span class="c"># cuadrados de los pares del 0 al 9</span>
+<span class="c"># [0, 4, 16, 36, 64]</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">if/else dentro de la expresión — ternario</div>
+      <pre><span class="c"># if/else en la EXPRESIÓN (parte izquierda) — transforma según condición</span>
+<span class="c"># formato: valor_si_true if condición else valor_si_false</span>
+
+[<span class="s">"par"</span> <span class="kg">if</span> <span class="v">n</span> <span class="op2">%</span> <span class="nm">2</span> <span class="op2">==</span> <span class="nm">0</span> <span class="kg">else</span> <span class="s">"impar"</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">5</span>)]
+<span class="c"># ['par', 'impar', 'par', 'impar', 'par']</span>
+
+<span class="c"># reemplazar negativos por 0</span>
+[<span class="v">n</span> <span class="kg">if</span> <span class="v">n</span> <span class="op2">&gt;=</span> <span class="nm">0</span> <span class="kg">else</span> <span class="nm">0</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> [<span class="op2">-</span><span class="nm">2</span>, <span class="nm">3</span>, <span class="op2">-</span><span class="nm">1</span>, <span class="nm">5</span>]]
+<span class="c"># [0, 3, 0, 5]</span></pre>
+    </div>
+
+    <div class="callout ca">
+      <b>if al final (filtro) vs if/else en la expresión:</b><br>
+      <code>[x for x in lista if condicion]</code> → <b>filtra</b>, puede devolver lista más corta<br>
+      <code>[a if cond else b for x in lista]</code> → <b>transforma</b>, siempre devuelve mismo largo<br>
+      El <code>if/else</code> en la expresión no puede estar solo — necesita el <code>else</code>.
+    </div>
+  </div>
+
+  <!-- ANIDADA -->
+  <div class="section" id="anidada">
+    <div class="section-header">
+      <div class="s-icon i-c">[ [ ] ]</div>
+      <div>
+        <div class="section-title">Comprehensions anidadas</div>
+        <div class="section-type">for dentro de for · aplanar listas · matrices</div>
+      </div>
+    </div>
+
+    <div class="callout cc">
+      <b>Regla de lectura:</b> los <code>for</code> en una comprehension se leen de izquierda a derecha, igual que si los escribieras anidados. El primer <code>for</code> es el bucle externo, el segundo es el interno.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Dos for — equivalencia con bucles anidados</div>
+      <pre><span class="c"># bucles anidados equivalentes</span>
+<span class="v">resultado</span> <span class="op2">=</span> []
+<span class="k">for</span> <span class="v">i</span> <span class="k">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]:
+    <span class="k">for</span> <span class="v">j</span> <span class="k">in</span> [<span class="s">"a"</span>, <span class="s">"b"</span>]:
+        <span class="v">resultado</span>.<span class="n">append</span>((<span class="v">i</span>, <span class="v">j</span>))
+<span class="c"># [(1,'a'),(1,'b'),(2,'a'),(2,'b'),(3,'a'),(3,'b')]</span>
+
+<span class="c"># comprehension equivalente</span>
+[(<span class="v">i</span>, <span class="v">j</span>) <span class="k">for</span> <span class="v">i</span> <span class="k">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>] <span class="k">for</span> <span class="v">j</span> <span class="k">in</span> [<span class="s">"a"</span>, <span class="s">"b"</span>]]
+<span class="c"># mismo resultado</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Aplanar lista de listas</div>
+      <pre><span class="v">matriz</span> <span class="op2">=</span> [[<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>], [<span class="nm">7</span>, <span class="nm">8</span>, <span class="nm">9</span>]]
+
+<span class="c"># aplanar — un solo for sobre cada sublista, otro sobre cada elemento</span>
+[<span class="v">n</span> <span class="k">for</span> <span class="v">fila</span> <span class="k">in</span> <span class="v">matriz</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="v">fila</span>]
+<span class="c"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+<span class="c"># aplanar con filtro</span>
+[<span class="v">n</span> <span class="k">for</span> <span class="v">fila</span> <span class="k">in</span> <span class="v">matriz</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="v">fila</span> <span class="kg">if</span> <span class="v">n</span> <span class="op2">%</span> <span class="nm">2</span> <span class="op2">==</span> <span class="nm">0</span>]
+<span class="c"># [2, 4, 6, 8]</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Comprensión en la expresión — lista de listas (transponer)</div>
+      <pre><span class="c"># expresión que es otra comprehension → lista de listas</span>
+<span class="v">matriz</span> <span class="op2">=</span> [[<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>],
+           [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]]
+
+<span class="c"># transponer (filas → columnas)</span>
+[[<span class="v">fila</span>[<span class="v">i</span>] <span class="k">for</span> <span class="v">fila</span> <span class="k">in</span> <span class="v">matriz</span>] <span class="k">for</span> <span class="v">i</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">3</span>)]
+<span class="c"># [[1, 4], [2, 5], [3, 6]]</span></pre>
+    </div>
+
+    <div class="callout cw">
+      <b>Cuidado con el abuso:</b> una comprehension con 2 for y un if ya es difícil de leer. Si necesitas 3 for o lógica compleja, usa bucles normales — la legibilidad gana sobre la brevedad.
+    </div>
+  </div>
+
+  <!-- DICT / SET -->
+  <div class="section" id="dict">
+    <div class="section-header">
+      <div class="s-icon i-d">{ }</div>
+      <div>
+        <div class="section-title">Dict y set comprehensions</div>
+        <div class="section-type">{ } en vez de [ ] · pares clave:valor · valores únicos</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Dict comprehension — { clave: valor for ... }</div>
+      <pre><span class="c"># cuadrados como dict {n: n²}</span>
+{<span class="v">n</span>: <span class="v">n</span><span class="op2">**</span><span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">1</span>, <span class="nm">6</span>)}
+<span class="c"># {1:1, 2:4, 3:9, 4:16, 5:25}</span>
+
+<span class="c"># invertir un dict (clave ↔ valor)</span>
+<span class="v">original</span> <span class="op2">=</span> {<span class="s">"a"</span>: <span class="nm">1</span>, <span class="s">"b"</span>: <span class="nm">2</span>, <span class="s">"c"</span>: <span class="nm">3</span>}
+{<span class="v">v</span>: <span class="v">k</span> <span class="k">for</span> <span class="v">k</span>, <span class="v">v</span> <span class="k">in</span> <span class="v">original</span>.<span class="n">items</span>()}
+<span class="c"># {1:'a', 2:'b', 3:'c'}</span>
+
+<span class="c"># filtrar un dict — solo pares con valor > 1</span>
+{<span class="v">k</span>: <span class="v">v</span> <span class="k">for</span> <span class="v">k</span>, <span class="v">v</span> <span class="k">in</span> <span class="v">original</span>.<span class="n">items</span>() <span class="kg">if</span> <span class="v">v</span> <span class="op2">&gt;</span> <span class="nm">1</span>}
+<span class="c"># {'b': 2, 'c': 3}</span>
+
+<span class="c"># crear dict desde dos listas con zip</span>
+<span class="v">nombres</span> <span class="op2">=</span> [<span class="s">"Ana"</span>, <span class="s">"Luis"</span>, <span class="s">"Mía"</span>]
+<span class="v">notas</span>   <span class="op2">=</span> [<span class="nm">15</span>, <span class="nm">18</span>, <span class="nm">12</span>]
+{<span class="v">n</span>: <span class="v">nota</span> <span class="k">for</span> <span class="v">n</span>, <span class="v">nota</span> <span class="k">in</span> <span class="nb">zip</span>(<span class="v">nombres</span>, <span class="v">notas</span>)}
+<span class="c"># {'Ana': 15, 'Luis': 18, 'Mía': 12}</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Set comprehension — { expresión for ... }</div>
+      <pre><span class="c"># set de cuadrados — sin duplicados automáticamente</span>
+{<span class="v">n</span><span class="op2">**</span><span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">3</span>]}
+<span class="c"># {1, 4, 9}   — duplicados eliminados</span>
+
+<span class="c"># primeras letras únicas de una lista de palabras</span>
+<span class="v">palabras</span> <span class="op2">=</span> [<span class="s">"manzana"</span>, <span class="s">"mango"</span>, <span class="s">"pera"</span>, <span class="s">"piña"</span>]
+{<span class="v">p</span>[<span class="nm">0</span>] <span class="k">for</span> <span class="v">p</span> <span class="k">in</span> <span class="v">palabras</span>}
+<span class="c"># {'m', 'p'}</span>
+
+<span class="c"># diferencia: set {} vs dict {} — si no hay : es set, si hay : es dict</span>
+{<span class="v">x</span> <span class="k">for</span> <span class="v">x</span> <span class="k">in</span> <span class="v">lista</span>}      <span class="c"># set comprehension</span>
+{<span class="v">x</span>: <span class="nm">0</span> <span class="k">for</span> <span class="v">x</span> <span class="k">in</span> <span class="v">lista</span>}   <span class="c"># dict comprehension</span>
+{}                        <span class="c"># dict vacío — para set vacío usa set()</span></pre>
+    </div>
+  </div>
+
+  <!-- GENERATORS -->
+  <div class="section" id="gen">
+    <div class="section-header">
+      <div class="s-icon i-e">( )</div>
+      <div>
+        <div class="section-title">Generator expressions</div>
+        <div class="section-type">( ) en vez de [ ] · lazy · sin construir la lista completa</div>
+      </div>
+    </div>
+
+    <p>Cambiar <code>[]</code> por <code>()</code> crea un <b>generador</b> en vez de una lista. La diferencia: la lista calcula todos los valores de inmediato y los guarda en memoria. El generador calcula cada valor solo cuando se le pide — perfecto para datos grandes.</p>
+
+    <div class="cb">
+      <div class="cb-label">Lista vs generador</div>
+      <pre><span class="c"># lista — calcula todo YA, guarda en memoria</span>
+<span class="v">lista</span> <span class="op2">=</span> [<span class="v">n</span><span class="op2">**</span><span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">1000000</span>)]   <span class="c"># ocupa ~8MB</span>
+
+<span class="c"># generador — calcula uno a uno cuando se necesita</span>
+<span class="v">gen</span> <span class="op2">=</span> (<span class="v">n</span><span class="op2">**</span><span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">1000000</span>))      <span class="c"># ocupa ~100 bytes</span>
+
+<span class="c"># se puede usar en funciones que esperan un iterable</span>
+<span class="nb">sum</span>(<span class="v">n</span><span class="op2">**</span><span class="nm">2</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">10</span>))              <span class="c"># → 285  (sin [] extra)</span>
+<span class="nb">max</span>(<span class="nb">len</span>(<span class="v">p</span>) <span class="k">for</span> <span class="v">p</span> <span class="k">in</span> [<span class="s">"hola"</span>, <span class="s">"python"</span>])    <span class="c"># → 6</span>
+<span class="nb">any</span>(<span class="v">n</span> <span class="op2">&lt;</span> <span class="nm">0</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="op2">-</span><span class="nm">3</span>, <span class="nm">4</span>])          <span class="c"># → True</span>
+<span class="nb">all</span>(<span class="v">n</span> <span class="op2">&gt;</span> <span class="nm">0</span> <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])              <span class="c"># → True</span></pre>
+    </div>
+  </div>
+
+  <!-- CUÁNDO -->
+  <div class="section" id="cuando">
+    <div class="section-header">
+      <div class="s-icon i-a">?</div>
+      <div>
+        <div class="section-title">¿Cuándo usarlas?</div>
+        <div class="section-type">legibilidad · límites · reglas prácticas</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="callout cb2" style="margin:0">
+        <b>✓ Úsalas cuando:</b><br>
+        · La lógica cabe en una línea legible<br>
+        · Transformas o filtras un iterable<br>
+        · Quieres un dict/set nuevo a partir de otro<br>
+        · Pasas el resultado a sum/max/any/all
+      </div>
+      <div class="callout cc" style="margin:0">
+        <b>✗ Evítalas cuando:</b><br>
+        · Necesitas más de 2 for anidados<br>
+        · Tienes lógica compleja (try/except, múltiples if)<br>
+        · Necesitas efectos secundarios (prints, logs)<br>
+        · La línea supera ~80 caracteres
+      </div>
+    </div>
+
+    <div class="callout cd" style="margin-top:14px">
+      <b>La guía de oro:</b> si tienes que explicar verbalmente qué hace la comprehension, probablemente debería ser un bucle normal. La claridad siempre gana.
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · List Comprehensions</span>
+    <span>list · dict · set · generators</span>
+  </footer>
+
+</div>
+</body>
+</html>

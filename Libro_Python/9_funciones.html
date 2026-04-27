@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funciones en Python</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090d16;
+    --surface: #0e1420;
+    --surface2: #141b2d;
+    --surface3: #1a2238;
+    --border: #1f2d47;
+    --text: #d8e4f8;
+    --muted: #4e6080;
+    --accent: #3b82f6;
+    --accent2: #10b981;
+    --accent3: #f59e0b;
+    --accent4: #ec4899;
+    --red: #ef4444;
+    --mauve: #8b5cf6;
+    --cyan: #06b6d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(59,130,246,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(16,185,129,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(9,13,22,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .nav-brand {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 32px;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar { display: none; }
+
+  .nav-link {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-link:hover {
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 96px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 80px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .tag-blue   { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.25); color: var(--accent); }
+  .tag-green  { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.22); color: var(--accent2); }
+  .tag-amber  { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.22); color: var(--accent3); }
+  .tag-mauve  { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.22); color: var(--mauve); }
+  .tag-cyan   { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.22); color: var(--cyan); }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -3px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 .dim { color: var(--muted); font-weight: 300; }
+  .hero h1 .bright { color: var(--accent); }
+
+  .hero-lead {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 560px;
+    font-style: italic;
+  }
+
+  /* INDEX */
+  .index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 72px;
+  }
+
+  .index-title {
+    grid-column: 1 / -1;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .index-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .index-link:hover { color: var(--accent); }
+
+  .index-link-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    opacity: 0.5;
+    min-width: 20px;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 72px; scroll-margin-top: 72px; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+
+  h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+
+  h3 {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    color: var(--accent3);
+    margin: 28px 0 12px;
+    font-weight: 700;
+  }
+
+  p { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; }
+  p strong { color: var(--text); font-weight: 600; }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.84em;
+    background: rgba(59,130,246,0.1);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* ANATOMY */
+  .anatomy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 20px 0;
+    font-family: 'Fira Code', monospace;
+  }
+
+  .anatomy-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+
+  .anatomy-indent { padding-left: 32px; }
+
+  .tk { padding: 5px 12px; border-radius: 7px; font-size: 0.88rem; font-weight: 700; }
+  .tk-kw   { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tk-name { background: rgba(16,185,129,0.12); color: var(--accent2); }
+  .tk-param{ background: rgba(245,158,11,0.1); color: var(--accent3); }
+  .tk-body { background: rgba(236,72,153,0.1); color: var(--accent4); }
+  .tk-ret  { background: rgba(139,92,246,0.12); color: var(--mauve); }
+  .tk-punc { color: var(--muted); }
+
+  .anatomy-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* TYPE CARDS */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .type-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .type-card:hover { transform: translateY(-2px); }
+  .type-card.t1:hover { border-color: var(--accent); }
+  .type-card.t2:hover { border-color: var(--accent2); }
+  .type-card.t3:hover { border-color: var(--accent3); }
+  .type-card.t4:hover { border-color: var(--mauve); }
+
+  .type-card::before {
+    content: '';
+    display: block;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .t1::before { background: var(--accent); }
+  .t2::before { background: var(--accent2); }
+  .t3::before { background: var(--accent3); }
+  .t4::before { background: var(--mauve); }
+
+  .type-title { font-family: 'Fira Code', monospace; font-size: 0.88rem; font-weight: 700; margin-bottom: 6px; }
+  .t1 .type-title { color: var(--accent); }
+  .t2 .type-title { color: var(--accent2); }
+  .t3 .type-title { color: var(--accent3); }
+  .t4 .type-title { color: var(--mauve); }
+
+  .type-desc { font-size: 0.83rem; color: var(--muted); margin-bottom: 12px; }
+
+  .type-example {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.76rem;
+    background: var(--surface2);
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    background: var(--surface2);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .code-label {
+    margin-left: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  pre {
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.82rem;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .kw  { color: #3b82f6; }
+  .fn  { color: #10b981; }
+  .str { color: #a3e635; }
+  .cm  { color: #2a3f5f; font-style: italic; }
+  .num { color: #f59e0b; }
+  .var { color: #d8e4f8; }
+  .ret { color: #8b5cf6; }
+  .param { color: #f59e0b; }
+  .builtin { color: #06b6d4; }
+
+  .output {
+    background: rgba(16,185,129,0.05);
+    border-top: 1px solid rgba(16,185,129,0.12);
+    padding: 14px 24px;
+  }
+
+  .output-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 9px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .output pre { padding: 0; color: var(--accent2); font-size: 0.8rem; }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .c-blue   { background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.18); }
+  .c-green  { background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); }
+  .c-amber  { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.18); }
+  .c-red    { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.18); }
+
+  .callout-icon { font-size: 1rem; line-height: 1.7; flex-shrink: 0; }
+  .callout p { color: var(--text); font-size: 0.9rem; margin: 0; }
+  .callout strong { color: var(--accent3); }
+  .c-blue .callout strong { color: var(--accent); }
+  .c-green .callout strong { color: var(--accent2); }
+  .c-red .callout strong { color: var(--red); }
+
+  /* TIPS GRID */
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .tip-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--border);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .tip-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .tip-desc  { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+  /* REF TABLE */
+  .ref-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.84rem; }
+
+  .ref-table th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .ref-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .ref-table tr:hover td { background: rgba(255,255,255,0.01); }
+  .td-id   { font-family: 'Fira Code', monospace; color: var(--accent2); font-size: 0.8rem; }
+  .td-desc { color: var(--muted); font-size: 0.84rem; }
+  .td-type { font-family: 'Fira Code', monospace; color: var(--accent3); font-size: 0.8rem; }
+  .td-fn   { font-family: 'Fira Code', monospace; color: var(--cyan); font-size: 0.8rem; }
+  .td-rest { color: var(--muted); font-size: 0.82rem; }
+
+  /* EXERCISES */
+  .exercise {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: border-color 0.3s;
+  }
+
+  .exercise:hover { border-color: rgba(59,130,246,0.3); }
+
+  .exercise-header {
+    padding: 24px 28px 0;
+  }
+
+  .exercise-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .ex-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+  }
+
+  .ex-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .exercise-body { padding: 0 28px 24px; }
+
+  .reto-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+  }
+
+  .pista-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+  }
+
+  .tabla-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+  }
+
+  /* SOLUTION TOGGLE */
+  .solution-bar {
+    padding: 12px 28px;
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-show {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .btn-show-sol {
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.3);
+    color: var(--accent);
+  }
+
+  .btn-show-sol:hover {
+    background: rgba(59,130,246,0.25);
+    transform: translateY(-1px);
+  }
+
+  .btn-hide-sol {
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.25);
+    color: var(--red);
+  }
+
+  .btn-hide-sol:hover {
+    background: rgba(239,68,68,0.2);
+    transform: translateY(-1px);
+  }
+
+  .solution-panel {
+    display: none;
+    border-top: 1px solid var(--border);
+    animation: slideDown 0.25s ease;
+  }
+
+  .solution-panel.visible { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .solution-header {
+    padding: 14px 28px 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .solution-panel .code-block {
+    margin: 8px 28px 20px;
+  }
+
+  /* ERRORS */
+  .error-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .error-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .error-card.wrong { border-color: rgba(239,68,68,0.2); }
+  .error-card.right { border-color: rgba(16,185,129,0.2); }
+
+  .error-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .error-card.wrong .error-label { color: var(--red); }
+  .error-card.right .error-label { color: var(--accent2); }
+
+  .error-card pre { padding: 0; font-size: 0.8rem; line-height: 1.7; }
+  .error-card p { font-size: 0.82rem; color: var(--muted); margin-top: 8px; margin-bottom: 0; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 60px 0; }
+
+  /* SUMMARY */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .summary-icon { font-size: 1.6rem; margin-bottom: 10px; }
+  .summary-title { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .summary-desc  { font-size: 0.78rem; color: var(--muted); }
+
+  .footer {
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .error-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .container { padding: 80px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">def funciones():</span>
+  <div class="nav-links">
+    <a class="nav-link" href="#s1">¿Qué son?</a>
+    <a class="nav-link" href="#s2">Anatomía</a>
+    <a class="nav-link" href="#s3">Tipos</a>
+    <a class="nav-link" href="#s4">Parámetros</a>
+    <a class="nav-link" href="#s5">Retorno</a>
+    <a class="nav-link" href="#s6">Lambda</a>
+    <a class="nav-link" href="#s7">Casos</a>
+    <a class="nav-link" href="#s8">Errores</a>
+    <a class="nav-link" href="#s9">Buenas prácticas</a>
+    <a class="nav-link" href="#s10">Ejercicios</a>
+    <a class="nav-link" href="#s11">Resumen</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tags">
+      <span class="tag tag-blue">Python · CS50P · Guía #7</span>
+      <span class="tag tag-green">Funciones</span>
+      <span class="tag tag-amber">def · return · lambda</span>
+    </div>
+    <h1>
+      <span class="dim">def </span><span class="bright">funciones</span><span class="dim">():</span>
+    </h1>
+    <p class="hero-lead">Bloques de código reutilizables que reciben datos, los procesan y devuelven un resultado. La base de todo código bien organizado.</p>
+  </div>
+
+  <!-- INDEX -->
+  <div class="index-grid">
+    <div class="index-title">Contenido</div>
+    <a class="index-link" href="#s1"><span class="index-link-num">01</span> ¿Qué son las funciones?</a>
+    <a class="index-link" href="#s2"><span class="index-link-num">02</span> Anatomía</a>
+    <a class="index-link" href="#s3"><span class="index-link-num">03</span> Tipos de funciones</a>
+    <a class="index-link" href="#s4"><span class="index-link-num">04</span> Parámetros y argumentos</a>
+    <a class="index-link" href="#s5"><span class="index-link-num">05</span> Return</a>
+    <a class="index-link" href="#s6"><span class="index-link-num">06</span> Lambda</a>
+    <a class="index-link" href="#s7"><span class="index-link-num">07</span> Casos prácticos</a>
+    <a class="index-link" href="#s8"><span class="index-link-num">08</span> Errores comunes</a>
+    <a class="index-link" href="#s9"><span class="index-link-num">09</span> Buenas prácticas</a>
+    <a class="index-link" href="#s10"><span class="index-link-num">10</span> Ejercicios</a>
+    <a class="index-link" href="#s11"><span class="index-link-num">11</span> Resumen</a>
+  </div>
+
+  <!-- 01 QUÉ SON -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>¿Qué son las funciones?</h2>
+    </div>
+    <p>Una función es un <strong>bloque de código con nombre</strong> que puedes escribir una vez y usar cuantas veces necesites. En lugar de repetir el mismo código en varios lugares, lo metes en una función y simplemente la llamas.</p>
+    <p>Piénsalo como una <strong>máquina</strong>: le metes datos (parámetros), la máquina los procesa, y te devuelve un resultado (return). No necesitas saber cómo funciona por dentro cada vez que la usas.</p>
+
+    <div class="callout c-blue">
+      <span class="callout-icon">💡</span>
+      <p><strong>Sin funciones:</strong> copias y pegas código. <strong>Con funciones:</strong> escribes una vez, usas siempre. Si algo cambia, solo modificas un lugar.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">sin_funciones.py vs con_funciones.py</span></div>
+      <pre><span class="cm"># ❌ Sin funciones — código repetido</span>
+<span class="var">nombre1</span> = <span class="str">"Ana"</span>
+<span class="builtin">print</span>(<span class="str">f"Hola, </span><span class="var">{nombre1}</span><span class="str">! Bienvenida."</span>)
+
+<span class="var">nombre2</span> = <span class="str">"Luis"</span>
+<span class="builtin">print</span>(<span class="str">f"Hola, </span><span class="var">{nombre2}</span><span class="str">! Bienvenida."</span>)
+
+<span class="cm"># ✅ Con funciones — una vez, muchos usos</span>
+<span class="kw">def</span> <span class="fn">saludar</span>(<span class="param">nombre</span>):
+    <span class="builtin">print</span>(<span class="str">f"Hola, </span><span class="var">{nombre}</span><span class="str">! Bienvenido."</span>)
+
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>)
+<span class="fn">saludar</span>(<span class="str">"Luis"</span>)
+<span class="fn">saludar</span>(<span class="str">"Carlos"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Hola, Ana! Bienvenido.
+Hola, Luis! Bienvenido.
+Hola, Carlos! Bienvenido.</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 ANATOMÍA -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Anatomía de una función</h2>
+    </div>
+
+    <div class="anatomy">
+      <div class="anatomy-row">
+        <span class="tk tk-kw">def</span>
+        <span class="tk tk-name">nombre_funcion</span>
+        <span class="tk-punc">(</span>
+        <span class="tk tk-param">param1</span>
+        <span class="tk-punc">,</span>
+        <span class="tk tk-param">param2</span>
+        <span class="tk-punc">):</span>
+      </div>
+      <div class="anatomy-row anatomy-indent" style="margin-top:8px;">
+        <span class="tk tk-body">instrucciones del cuerpo</span>
+      </div>
+      <div class="anatomy-row anatomy-indent">
+        <span class="tk tk-ret">return</span>
+        <span class="tk tk-body">valor_a_devolver</span>
+      </div>
+      <div class="anatomy-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> def — palabra reservada</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> nombre — identificador de la función</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> parámetros — datos de entrada (opcionales)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div> cuerpo — código indentado 4 espacios</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> return — valor que devuelve (opcional)</div>
+      </div>
+    </div>
+
+    <div class="callout c-amber">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>Definir ≠ Ejecutar.</strong> Escribir <code>def saludar():</code> solo crea la función. Para que corra debes <strong>llamarla</strong>: <code>saludar()</code>.</p>
+    </div>
+  </div>
+
+  <!-- 03 TIPOS -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Tipos de funciones</h2>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card t1">
+        <div class="type-title">Sin parámetros</div>
+        <div class="type-desc">No recibe datos externos. Siempre hace lo mismo.</div>
+        <div class="type-example">
+          <span style="color:#3b82f6">def</span> <span style="color:#10b981">saludar</span>():<br>
+          &nbsp;&nbsp;print(<span style="color:#a3e635">"¡Hola!"</span>)<br><br>
+          <span style="color:#10b981">saludar</span>()
+        </div>
+      </div>
+      <div class="type-card t2">
+        <div class="type-title">Con parámetros</div>
+        <div class="type-desc">Recibe datos para personalizar su comportamiento.</div>
+        <div class="type-example">
+          <span style="color:#3b82f6">def</span> <span style="color:#10b981">saludar</span>(<span style="color:#f59e0b">nombre</span>):<br>
+          &nbsp;&nbsp;print(<span style="color:#a3e635">f"Hola {nombre}"</span>)<br><br>
+          <span style="color:#10b981">saludar</span>(<span style="color:#a3e635">"Ana"</span>)
+        </div>
+      </div>
+      <div class="type-card t3">
+        <div class="type-title">Con return</div>
+        <div class="type-desc">Devuelve un valor que puedes guardar o usar.</div>
+        <div class="type-example">
+          <span style="color:#3b82f6">def</span> <span style="color:#10b981">sumar</span>(<span style="color:#f59e0b">a, b</span>):<br>
+          &nbsp;&nbsp;<span style="color:#8b5cf6">return</span> a + b<br><br>
+          resultado = <span style="color:#10b981">sumar</span>(3, 4)
+        </div>
+      </div>
+      <div class="type-card t4">
+        <div class="type-title">Lambda</div>
+        <div class="type-desc">Función anónima de una sola línea para casos simples.</div>
+        <div class="type-example">
+          doble = <span style="color:#3b82f6">lambda</span> <span style="color:#f59e0b">x</span>: x * 2<br><br>
+          print(<span style="color:#10b981">doble</span>(5))  <span style="color:#2a3f5f"># 10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 PARÁMETROS -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Parámetros y argumentos</h2>
+    </div>
+    <p><strong>Parámetro</strong> es la variable que defines en el <code>def</code>. <strong>Argumento</strong> es el valor que pasas al llamar la función. Son la misma cosa vista desde dos ángulos distintos.</p>
+
+    <h3>Parámetros con valor por defecto</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">default_params.py</span></div>
+      <pre><span class="cm"># Si no pasas el argumento, usa el valor por defecto</span>
+<span class="kw">def</span> <span class="fn">saludar</span>(<span class="param">nombre</span>, <span class="param">saludo</span>=<span class="str">"Hola"</span>):
+    <span class="builtin">print</span>(<span class="str">f"</span><span class="var">{saludo}</span><span class="str">, </span><span class="var">{nombre}</span><span class="str">!"</span>)
+
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>)              <span class="cm"># usa "Hola" por defecto</span>
+<span class="fn">saludar</span>(<span class="str">"Luis"</span>, <span class="str">"Buenas"</span>)   <span class="cm"># sobreescribe el defecto</span></pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Hola, Ana!
+Buenas, Luis!</pre>
+      </div>
+    </div>
+
+    <h3>Argumentos con nombre (keyword arguments)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">keyword_args.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">describir</span>(<span class="param">nombre</span>, <span class="param">edad</span>, <span class="param">ciudad</span>):
+    <span class="builtin">print</span>(<span class="str">f"</span><span class="var">{nombre}</span><span class="str">, </span><span class="var">{edad}</span><span class="str"> años, de </span><span class="var">{ciudad}</span><span class="str">"</span>)
+
+<span class="cm"># Puedes pasarlos en cualquier orden si usas el nombre</span>
+<span class="fn">describir</span>(<span class="param">ciudad</span>=<span class="str">"Lima"</span>, <span class="param">nombre</span>=<span class="str">"Lian"</span>, <span class="param">edad</span>=<span class="num">26</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Lian, 26 años, de Lima</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 RETURN -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Return — devolver valores</h2>
+    </div>
+    <p><code>return</code> termina la función y devuelve un valor al lugar donde fue llamada. Sin <code>return</code>, la función devuelve <code>None</code> automáticamente.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">return_ejemplos.py</span></div>
+      <pre><span class="cm"># Return simple</span>
+<span class="kw">def</span> <span class="fn">cuadrado</span>(<span class="param">n</span>):
+    <span class="ret">return</span> <span class="var">n</span> ** <span class="num">2</span>
+
+<span class="var">resultado</span> = <span class="fn">cuadrado</span>(<span class="num">5</span>)
+<span class="builtin">print</span>(<span class="var">resultado</span>)   <span class="cm"># 25</span>
+
+<span class="cm"># Return múltiple</span>
+<span class="kw">def</span> <span class="fn">min_max</span>(<span class="param">lista</span>):
+    <span class="ret">return</span> <span class="builtin">min</span>(<span class="var">lista</span>), <span class="builtin">max</span>(<span class="var">lista</span>)
+
+<span class="var">minimo</span>, <span class="var">maximo</span> = <span class="fn">min_max</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">7</span>, <span class="num">2</span>])
+<span class="builtin">print</span>(<span class="var">minimo</span>, <span class="var">maximo</span>)   <span class="cm"># 1 7</span>
+
+<span class="cm"># Return como salida anticipada</span>
+<span class="kw">def</span> <span class="fn">dividir</span>(<span class="param">a</span>, <span class="param">b</span>):
+    <span class="kw">if</span> <span class="var">b</span> == <span class="num">0</span>:
+        <span class="ret">return</span> <span class="str">"Error: no se puede dividir entre 0"</span>
+    <span class="ret">return</span> <span class="var">a</span> / <span class="var">b</span>
+
+<span class="builtin">print</span>(<span class="fn">dividir</span>(<span class="num">10</span>, <span class="num">2</span>))   <span class="cm"># 5.0</span>
+<span class="builtin">print</span>(<span class="fn">dividir</span>(<span class="num">10</span>, <span class="num">0</span>))   <span class="cm"># Error: no se puede dividir entre 0</span></pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>25
+1 7
+5.0
+Error: no se puede dividir entre 0</pre>
+      </div>
+    </div>
+
+    <div class="callout c-blue">
+      <span class="callout-icon">💡</span>
+      <p><strong>print vs return:</strong> <code>print()</code> muestra algo en pantalla pero no devuelve nada útil. <code>return</code> devuelve el valor para que puedas guardarlo y usarlo después. Usa <code>return</code> cuando necesites el resultado para algo más.</p>
+    </div>
+  </div>
+
+  <!-- 06 LAMBDA -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Funciones Lambda</h2>
+    </div>
+    <p>Una función lambda es una <strong>función anónima de una sola expresión</strong>. Es útil para funciones simples que no necesitan nombre propio.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">lambda.py</span></div>
+      <pre><span class="cm"># Sintaxis: lambda parámetros : expresión</span>
+
+<span class="cm"># Equivalencia</span>
+<span class="kw">def</span> <span class="fn">doble</span>(<span class="param">x</span>): <span class="ret">return</span> <span class="var">x</span> * <span class="num">2</span>
+<span class="var">doble_lambda</span> = <span class="kw">lambda</span> <span class="param">x</span>: <span class="var">x</span> * <span class="num">2</span>
+
+<span class="builtin">print</span>(<span class="fn">doble</span>(<span class="num">5</span>))         <span class="cm"># 10</span>
+<span class="builtin">print</span>(<span class="var">doble_lambda</span>(<span class="num">5</span>))  <span class="cm"># 10</span>
+
+<span class="cm"># Lambda con múltiples parámetros</span>
+<span class="var">sumar</span> = <span class="kw">lambda</span> <span class="param">a</span>, <span class="param">b</span>: <span class="var">a</span> + <span class="var">b</span>
+<span class="builtin">print</span>(<span class="var">sumar</span>(<span class="num">3</span>, <span class="num">4</span>))   <span class="cm"># 7</span>
+
+<span class="cm"># Lambda con condicional</span>
+<span class="var">par_o_impar</span> = <span class="kw">lambda</span> <span class="param">n</span>: <span class="str">"par"</span> <span class="kw">if</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span> <span class="kw">else</span> <span class="str">"impar"</span>
+<span class="builtin">print</span>(<span class="var">par_o_impar</span>(<span class="num">7</span>))  <span class="cm"># impar</span></pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>10
+10
+7
+impar</pre>
+      </div>
+    </div>
+
+    <div class="callout c-amber">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>¿Cuándo usar lambda?</strong> Solo para expresiones simples de una línea. Si necesitas múltiples líneas, usa <code>def</code> normal. Las lambdas no mejoran la legibilidad cuando son complejas.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 07 CASOS PRÁCTICOS -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Casos prácticos</h2>
+    </div>
+
+    <h3>Calcular promedio</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">promedio.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">promedio</span>(<span class="param">numeros</span>):
+    <span class="kw">if</span> <span class="builtin">len</span>(<span class="var">numeros</span>) == <span class="num">0</span>:
+        <span class="ret">return</span> <span class="num">0</span>
+    <span class="ret">return</span> <span class="builtin">sum</span>(<span class="var">numeros</span>) / <span class="builtin">len</span>(<span class="var">numeros</span>)
+
+<span class="var">notas</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>, <span class="num">95</span>, <span class="num">88</span>]
+<span class="builtin">print</span>(<span class="str">f"Promedio: </span><span class="var">{<span class="fn">promedio</span>(notas):.2f}</span><span class="str">"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Promedio: 87.60</pre>
+      </div>
+    </div>
+
+    <h3>Validar contraseña</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">validar_password.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">es_valida</span>(<span class="param">password</span>):
+    <span class="kw">if</span> <span class="builtin">len</span>(<span class="var">password</span>) < <span class="num">8</span>:
+        <span class="ret">return</span> <span class="kw">False</span>, <span class="str">"Mínimo 8 caracteres"</span>
+    <span class="kw">if</span> <span class="str">" "</span> <span class="kw">in</span> <span class="var">password</span>:
+        <span class="ret">return</span> <span class="kw">False</span>, <span class="str">"Sin espacios"</span>
+    <span class="kw">if</span> <span class="kw">not</span> <span class="builtin">any</span>(<span class="var">c</span>.<span class="fn">isdigit</span>() <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">password</span>):
+        <span class="ret">return</span> <span class="kw">False</span>, <span class="str">"Debe tener al menos un número"</span>
+    <span class="ret">return</span> <span class="kw">True</span>, <span class="str">"Contraseña válida"</span>
+
+<span class="var">ok</span>, <span class="var">msg</span> = <span class="fn">es_valida</span>(<span class="str">"python123"</span>)
+<span class="builtin">print</span>(<span class="var">msg</span>)
+
+<span class="var">ok</span>, <span class="var">msg</span> = <span class="fn">es_valida</span>(<span class="str">"abc"</span>)
+<span class="builtin">print</span>(<span class="var">msg</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>Contraseña válida
+Mínimo 8 caracteres</pre>
+      </div>
+    </div>
+
+    <h3>Convertir temperatura</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">temperatura.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">celsius_a_fahrenheit</span>(<span class="param">c</span>):
+    <span class="ret">return</span> (<span class="var">c</span> * <span class="num">9</span> / <span class="num">5</span>) + <span class="num">32</span>
+
+<span class="kw">def</span> <span class="fn">fahrenheit_a_celsius</span>(<span class="param">f</span>):
+    <span class="ret">return</span> (<span class="var">f</span> - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>
+
+<span class="builtin">print</span>(<span class="str">f"100°C = </span><span class="var">{<span class="fn">celsius_a_fahrenheit</span>(100):.1f}</span><span class="str">°F"</span>)
+<span class="builtin">print</span>(<span class="str">f"98.6°F = </span><span class="var">{<span class="fn">fahrenheit_a_celsius</span>(98.6):.1f}</span><span class="str">°C"</span>)</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>100°C = 212.0°F
+98.6°F = 37.0°C</pre>
+      </div>
+    </div>
+
+    <h3>Función que llama a otra función</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">funciones_compuestas.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">es_par</span>(<span class="param">n</span>):
+    <span class="ret">return</span> <span class="var">n</span> % <span class="num">2</span> == <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">filtrar_pares</span>(<span class="param">lista</span>):
+    <span class="var">resultado</span> = []
+    <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">lista</span>:
+        <span class="kw">if</span> <span class="fn">es_par</span>(<span class="var">n</span>):           <span class="cm"># llama a es_par()</span>
+            <span class="var">resultado</span>.<span class="fn">append</span>(<span class="var">n</span>)
+    <span class="ret">return</span> <span class="var">resultado</span>
+
+<span class="var">numeros</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>]
+<span class="builtin">print</span>(<span class="fn">filtrar_pares</span>(<span class="var">numeros</span>))</pre>
+      <div class="output">
+        <div class="output-label">Output</div>
+        <pre>[2, 4, 6, 8]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 ERRORES COMUNES -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Errores comunes</h2>
+    </div>
+
+    <div class="error-grid">
+      <div class="error-card wrong">
+        <div class="error-label">❌ Error</div>
+        <pre><span class="cm"># Llamar antes de definir</span>
+<span class="fn">saludar</span>()
+
+<span class="kw">def</span> <span class="fn">saludar</span>():
+    <span class="builtin">print</span>(<span class="str">"Hola"</span>)</pre>
+        <p>NameError: saludar no existe aún</p>
+      </div>
+      <div class="error-card right">
+        <div class="error-label">✅ Correcto</div>
+        <pre><span class="cm"># Definir primero, llamar después</span>
+<span class="kw">def</span> <span class="fn">saludar</span>():
+    <span class="builtin">print</span>(<span class="str">"Hola"</span>)
+
+<span class="fn">saludar</span>()</pre>
+        <p>Siempre define la función antes de usarla</p>
+      </div>
+      <div class="error-card wrong">
+        <div class="error-label">❌ Error</div>
+        <pre><span class="cm"># Imprimir en vez de retornar</span>
+<span class="kw">def</span> <span class="fn">sumar</span>(<span class="param">a</span>, <span class="param">b</span>):
+    <span class="builtin">print</span>(a + b)
+
+<span class="var">res</span> = <span class="fn">sumar</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="builtin">print</span>(<span class="var">res</span> * <span class="num">2</span>)  <span class="cm"># None * 2 = Error</span></pre>
+        <p>print no devuelve el valor, devuelve None</p>
+      </div>
+      <div class="error-card right">
+        <div class="error-label">✅ Correcto</div>
+        <pre><span class="cm"># Usar return para devolver</span>
+<span class="kw">def</span> <span class="fn">sumar</span>(<span class="param">a</span>, <span class="param">b</span>):
+    <span class="ret">return</span> a + b
+
+<span class="var">res</span> = <span class="fn">sumar</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="builtin">print</span>(<span class="var">res</span> * <span class="num">2</span>)  <span class="cm"># 14</span></pre>
+        <p>return devuelve el valor para usarlo después</p>
+      </div>
+      <div class="error-card wrong">
+        <div class="error-label">❌ Error</div>
+        <pre><span class="cm"># Número incorrecto de argumentos</span>
+<span class="kw">def</span> <span class="fn">saludar</span>(<span class="param">nombre</span>, <span class="param">edad</span>):
+    <span class="builtin">print</span>(<span class="str">f"{nombre}, {edad}"</span>)
+
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>)  <span class="cm"># TypeError</span></pre>
+        <p>Falta el argumento "edad"</p>
+      </div>
+      <div class="error-card right">
+        <div class="error-label">✅ Correcto</div>
+        <pre><span class="cm"># Pasar todos los argumentos</span>
+<span class="kw">def</span> <span class="fn">saludar</span>(<span class="param">nombre</span>, <span class="param">edad</span>):
+    <span class="builtin">print</span>(<span class="str">f"{nombre}, {edad}"</span>)
+
+<span class="fn">saludar</span>(<span class="str">"Ana"</span>, <span class="num">25</span>)  <span class="cm"># OK</span></pre>
+        <p>O usa parámetros por defecto si es opcional</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 09 BUENAS PRÁCTICAS -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Buenas prácticas</h2>
+    </div>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-num">01</div>
+        <div class="tip-title">Una función, una responsabilidad</div>
+        <div class="tip-desc">Cada función debe hacer solo una cosa. Si su nombre necesita un "y", probablemente debería ser dos funciones.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">02</div>
+        <div class="tip-title">Nombres descriptivos</div>
+        <div class="tip-desc">Usa verbos: <code>calcular_promedio()</code>, <code>validar_email()</code>, <code>convertir_celsius()</code>. Evita <code>f1()</code> o <code>hacer_cosa()</code>.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">03</div>
+        <div class="tip-title">Máximo 20 líneas</div>
+        <div class="tip-desc">Si una función es muy larga, divídela en funciones más pequeñas. Más fácil de leer y de depurar.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">04</div>
+        <div class="tip-title">Siempre return explícito</div>
+        <div class="tip-desc">Si una función debe devolver algo, usa <code>return</code> explícito. No dependas del <code>None</code> implícito.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">05</div>
+        <div class="tip-title">Documentar con docstrings</div>
+        <div class="tip-desc">Agrega una línea de descripción al inicio: <code>"""Calcula el promedio de una lista."""</code></div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">06</div>
+        <div class="tip-title">Llama a main() al final</div>
+        <div class="tip-desc">Define todas tus funciones primero, luego llama a <code>main()</code> al final del archivo. Es el patrón estándar de CS50P.</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">estructura_cs50p.py</span></div>
+      <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="var">nombre</span> = <span class="builtin">input</span>(<span class="str">"Nombre: "</span>)
+    <span class="var">resultado</span> = <span class="fn">procesar</span>(<span class="var">nombre</span>)
+    <span class="builtin">print</span>(<span class="var">resultado</span>)
+
+<span class="kw">def</span> <span class="fn">procesar</span>(<span class="param">texto</span>):
+    <span class="ret">return</span> <span class="var">texto</span>.<span class="fn">strip</span>().<span class="fn">title</span>()
+
+<span class="cm"># Llamar main al final — patrón CS50P</span>
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- 10 EJERCICIOS -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Ejercicios</h2>
+    </div>
+    <p>Cada ejercicio incluye enunciado, reto, pistas y tabla de análisis. Intenta resolverlo antes de ver la solución.</p>
+
+    <!-- EJERCICIO 1 -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-meta">
+          <div class="ex-num">01</div>
+          <div class="ex-title">Calculadora de IMC</div>
+        </div>
+      </div>
+      <div class="exercise-body">
+        <p>Crea una función <code>calcular_imc(peso, altura)</code> que reciba el peso en kg y la altura en metros, calcule el IMC y devuelva la categoría correspondiente como string.</p>
+
+        <div class="reto-label">🎯 Reto</div>
+        <p>La función debe devolver tanto el valor del IMC como la categoría en una sola llamada. Luego crea una función <code>main()</code> que pida los datos al usuario y llame a <code>calcular_imc()</code>.</p>
+
+        <div class="pista-label">💡 Pista de diseño</div>
+        <p>Usa <code>return imc, categoria</code> para devolver dos valores a la vez. Al llamar la función, desempácalos: <code>imc, cat = calcular_imc(peso, altura)</code>. Recuerda: IMC = peso / altura².</p>
+
+        <div class="tabla-label">📋 Tabla de análisis</div>
+        <table class="ref-table">
+          <thead><tr><th>Identificador</th><th>Descripción</th><th>Tipo</th><th>Función</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td class="td-id">peso</td><td class="td-desc">Peso del usuario en kg</td><td class="td-type">float</td><td class="td-fn">Parámetro</td><td class="td-rest">Mayor que 0</td></tr>
+            <tr><td class="td-id">altura</td><td class="td-desc">Altura en metros</td><td class="td-type">float</td><td class="td-fn">Parámetro</td><td class="td-rest">Mayor que 0</td></tr>
+            <tr><td class="td-id">imc</td><td class="td-desc">Índice de masa corporal calculado</td><td class="td-type">float</td><td class="td-fn">Proceso / Return</td><td class="td-rest">peso / altura²</td></tr>
+            <tr><td class="td-id">categoria</td><td class="td-desc">Clasificación del IMC</td><td class="td-type">str</td><td class="td-fn">Return</td><td class="td-rest">Bajo / Normal / Sobrepeso / Obesidad</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="solution-bar">
+        <button class="btn-show btn-show-sol" onclick="toggleSolution('sol1', this)">▶ Mostrar solución</button>
+      </div>
+      <div class="solution-panel" id="sol1">
+        <div class="solution-header">SOLUCIÓN</div>
+        <div class="code-block" style="margin:8px 28px 20px;">
+          <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">imc.py</span></div>
+          <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="var">peso</span> = <span class="builtin">float</span>(<span class="builtin">input</span>(<span class="str">"Peso (kg): "</span>))
+    <span class="var">altura</span> = <span class="builtin">float</span>(<span class="builtin">input</span>(<span class="str">"Altura (m): "</span>))
+    <span class="var">imc</span>, <span class="var">categoria</span> = <span class="fn">calcular_imc</span>(<span class="var">peso</span>, <span class="var">altura</span>)
+    <span class="builtin">print</span>(<span class="str">f"IMC: </span><span class="var">{imc:.2f}</span><span class="str"> — </span><span class="var">{categoria}</span><span class="str">"</span>)
+
+<span class="kw">def</span> <span class="fn">calcular_imc</span>(<span class="param">peso</span>, <span class="param">altura</span>):
+    <span class="var">imc</span> = <span class="var">peso</span> / (<span class="var">altura</span> ** <span class="num">2</span>)
+    <span class="kw">if</span> <span class="var">imc</span> < <span class="num">18.5</span>:
+        <span class="var">categoria</span> = <span class="str">"Bajo peso"</span>
+    <span class="kw">elif</span> <span class="var">imc</span> < <span class="num">25</span>:
+        <span class="var">categoria</span> = <span class="str">"Normal"</span>
+    <span class="kw">elif</span> <span class="var">imc</span> < <span class="num">30</span>:
+        <span class="var">categoria</span> = <span class="str">"Sobrepeso"</span>
+    <span class="kw">else</span>:
+        <span class="var">categoria</span> = <span class="str">"Obesidad"</span>
+    <span class="ret">return</span> <span class="var">imc</span>, <span class="var">categoria</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 2 -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-meta">
+          <div class="ex-num">02</div>
+          <div class="ex-title">Conversor de Temperaturas</div>
+        </div>
+      </div>
+      <div class="exercise-body">
+        <p>Crea tres funciones: <code>celsius_a_fahrenheit(c)</code>, <code>fahrenheit_a_celsius(f)</code> y <code>main()</code>. El programa debe preguntar al usuario qué conversión quiere hacer y en qué dirección.</p>
+
+        <div class="reto-label">🎯 Reto</div>
+        <p>Cada función de conversión solo hace el cálculo y retorna el resultado — no imprime nada. Todo el input/output se maneja en <code>main()</code>. Usa un menú con <code>while True</code> para repetir hasta que el usuario elija salir.</p>
+
+        <div class="pista-label">💡 Pista de diseño</div>
+        <p>Fórmulas: <code>F = (C × 9/5) + 32</code> y <code>C = (F - 32) × 5/9</code>. Usa <code>input().strip().lower()</code> para normalizar la opción del usuario.</p>
+
+        <div class="tabla-label">📋 Tabla de análisis</div>
+        <table class="ref-table">
+          <thead><tr><th>Identificador</th><th>Descripción</th><th>Tipo</th><th>Función</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td class="td-id">celsius_a_fahrenheit</td><td class="td-desc">Convierte °C a °F</td><td class="td-type">función</td><td class="td-fn">Proceso</td><td class="td-rest">Recibe float, retorna float</td></tr>
+            <tr><td class="td-id">fahrenheit_a_celsius</td><td class="td-desc">Convierte °F a °C</td><td class="td-type">función</td><td class="td-fn">Proceso</td><td class="td-rest">Recibe float, retorna float</td></tr>
+            <tr><td class="td-id">opcion</td><td class="td-desc">Tipo de conversión elegida</td><td class="td-type">str</td><td class="td-fn">Entrada</td><td class="td-rest">"cf", "fc" o "salir"</td></tr>
+            <tr><td class="td-id">temperatura</td><td class="td-desc">Valor ingresado por el usuario</td><td class="td-type">float</td><td class="td-fn">Entrada</td><td class="td-rest">Solo si opcion != "salir"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="solution-bar">
+        <button class="btn-show btn-show-sol" onclick="toggleSolution('sol2', this)">▶ Mostrar solución</button>
+      </div>
+      <div class="solution-panel" id="sol2">
+        <div class="solution-header">SOLUCIÓN</div>
+        <div class="code-block" style="margin:8px 28px 20px;">
+          <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">temperatura.py</span></div>
+          <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="builtin">print</span>(<span class="str">"\ncf → Celsius a Fahrenheit"</span>)
+        <span class="builtin">print</span>(<span class="str">"fc → Fahrenheit a Celsius"</span>)
+        <span class="builtin">print</span>(<span class="str">"salir → Terminar"</span>)
+        <span class="var">opcion</span> = <span class="builtin">input</span>(<span class="str">"Opción: "</span>).<span class="fn">strip</span>().<span class="fn">lower</span>()
+
+        <span class="kw">if</span> <span class="var">opcion</span> == <span class="str">"salir"</span>:
+            <span class="kw">break</span>
+        <span class="kw">elif</span> <span class="var">opcion</span> == <span class="str">"cf"</span>:
+            <span class="var">t</span> = <span class="builtin">float</span>(<span class="builtin">input</span>(<span class="str">"Celsius: "</span>))
+            <span class="builtin">print</span>(<span class="str">f"= </span><span class="var">{<span class="fn">celsius_a_fahrenheit</span>(t):.2f}</span><span class="str">°F"</span>)
+        <span class="kw">elif</span> <span class="var">opcion</span> == <span class="str">"fc"</span>:
+            <span class="var">t</span> = <span class="builtin">float</span>(<span class="builtin">input</span>(<span class="str">"Fahrenheit: "</span>))
+            <span class="builtin">print</span>(<span class="str">f"= </span><span class="var">{<span class="fn">fahrenheit_a_celsius</span>(t):.2f}</span><span class="str">°C"</span>)
+        <span class="kw">else</span>:
+            <span class="builtin">print</span>(<span class="str">"Opción inválida"</span>)
+
+<span class="kw">def</span> <span class="fn">celsius_a_fahrenheit</span>(<span class="param">c</span>):
+    <span class="ret">return</span> (<span class="var">c</span> * <span class="num">9</span> / <span class="num">5</span>) + <span class="num">32</span>
+
+<span class="kw">def</span> <span class="fn">fahrenheit_a_celsius</span>(<span class="param">f</span>):
+    <span class="ret">return</span> (<span class="var">f</span> - <span class="num">32</span>) * <span class="num">5</span> / <span class="num">9</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-meta">
+          <div class="ex-num">03</div>
+          <div class="ex-title">Verificador de Palíndromo</div>
+        </div>
+      </div>
+      <div class="exercise-body">
+        <p>Crea una función <code>es_palindromo(texto)</code> que reciba una cadena y retorne <code>True</code> si es palíndromo o <code>False</code> si no lo es. Debe ignorar mayúsculas y espacios.</p>
+
+        <div class="reto-label">🎯 Reto</div>
+        <p>La función debe limpiar el texto antes de comparar: quitar espacios y convertir a minúsculas. No uses <code>[::-1]</code> directamente — construye la comparación limpiando primero el texto.</p>
+
+        <div class="pista-label">💡 Pista de diseño</div>
+        <p>Usa <code>texto.lower().replace(" ", "")</code> para normalizar antes de comparar con <code>[::-1]</code>. La función solo retorna <code>True</code> o <code>False</code> — el mensaje lo maneja <code>main()</code>.</p>
+
+        <div class="tabla-label">📋 Tabla de análisis</div>
+        <table class="ref-table">
+          <thead><tr><th>Identificador</th><th>Descripción</th><th>Tipo</th><th>Función</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td class="td-id">texto</td><td class="td-desc">Palabra o frase a verificar</td><td class="td-type">str</td><td class="td-fn">Parámetro</td><td class="td-rest">Se normaliza dentro de la función</td></tr>
+            <tr><td class="td-id">limpio</td><td class="td-desc">Texto normalizado sin espacios y en minúsculas</td><td class="td-type">str</td><td class="td-fn">Proceso</td><td class="td-rest">lower() + replace()</td></tr>
+            <tr><td class="td-id">return</td><td class="td-desc">Resultado de la verificación</td><td class="td-type">bool</td><td class="td-fn">Salida</td><td class="td-rest">True o False</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="solution-bar">
+        <button class="btn-show btn-show-sol" onclick="toggleSolution('sol3', this)">▶ Mostrar solución</button>
+      </div>
+      <div class="solution-panel" id="sol3">
+        <div class="solution-header">SOLUCIÓN</div>
+        <div class="code-block" style="margin:8px 28px 20px;">
+          <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">palindromo.py</span></div>
+          <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="var">texto</span> = <span class="builtin">input</span>(<span class="str">"Ingresa una palabra o frase: "</span>)
+    <span class="kw">if</span> <span class="fn">es_palindromo</span>(<span class="var">texto</span>):
+        <span class="builtin">print</span>(<span class="str">f'"{texto}" ES palíndromo ✓'</span>)
+    <span class="kw">else</span>:
+        <span class="builtin">print</span>(<span class="str">f'"{texto}" NO es palíndromo ✗'</span>)
+
+<span class="kw">def</span> <span class="fn">es_palindromo</span>(<span class="param">texto</span>):
+    <span class="var">limpio</span> = <span class="var">texto</span>.<span class="fn">lower</span>().<span class="fn">replace</span>(<span class="str">" "</span>, <span class="str">""</span>)
+    <span class="ret">return</span> <span class="var">limpio</span> == <span class="var">limpio</span>[::<span class="num">-1</span>]
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-meta">
+          <div class="ex-num">04</div>
+          <div class="ex-title">Generador de Contraseña Segura</div>
+        </div>
+      </div>
+      <div class="exercise-body">
+        <p>Crea una función <code>validar_password(password)</code> que verifique si una contraseña es segura y retorne una lista con los errores encontrados. Si la lista está vacía, la contraseña es válida.</p>
+
+        <div class="reto-label">🎯 Reto</div>
+        <p>La función debe verificar al menos 4 reglas: mínimo 8 caracteres, al menos una mayúscula, al menos un número, sin espacios. Retorna una <strong>lista de strings</strong> con cada error, o una lista vacía si todo está bien.</p>
+
+        <div class="pista-label">💡 Pista de diseño</div>
+        <p>Crea una lista <code>errores = []</code> dentro de la función. Por cada regla que falle, haz <code>errores.append("descripción del error")</code>. Al final retorna <code>errores</code>. En <code>main()</code>, si <code>len(errores) == 0</code> → válida.</p>
+
+        <div class="tabla-label">📋 Tabla de análisis</div>
+        <table class="ref-table">
+          <thead><tr><th>Identificador</th><th>Descripción</th><th>Tipo</th><th>Función</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td class="td-id">password</td><td class="td-desc">Contraseña a validar</td><td class="td-type">str</td><td class="td-fn">Parámetro</td><td class="td-rest">Sin modificar — evaluar tal cual</td></tr>
+            <tr><td class="td-id">errores</td><td class="td-desc">Lista de errores encontrados</td><td class="td-type">list</td><td class="td-fn">Proceso / Return</td><td class="td-rest">Vacía si todo está bien</td></tr>
+            <tr><td class="td-id">return</td><td class="td-desc">Lista con mensajes de error</td><td class="td-type">list</td><td class="td-fn">Salida</td><td class="td-rest">[] = válida, [msgs] = inválida</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="solution-bar">
+        <button class="btn-show btn-show-sol" onclick="toggleSolution('sol4', this)">▶ Mostrar solución</button>
+      </div>
+      <div class="solution-panel" id="sol4">
+        <div class="solution-header">SOLUCIÓN</div>
+        <div class="code-block" style="margin:8px 28px 20px;">
+          <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">password_validator.py</span></div>
+          <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="var">password</span> = <span class="builtin">input</span>(<span class="str">"Ingresa una contraseña: "</span>)
+    <span class="var">errores</span> = <span class="fn">validar_password</span>(<span class="var">password</span>)
+
+    <span class="kw">if</span> <span class="builtin">len</span>(<span class="var">errores</span>) == <span class="num">0</span>:
+        <span class="builtin">print</span>(<span class="str">"✓ Contraseña segura"</span>)
+    <span class="kw">else</span>:
+        <span class="builtin">print</span>(<span class="str">"✗ Contraseña inválida:"</span>)
+        <span class="kw">for</span> <span class="var">error</span> <span class="kw">in</span> <span class="var">errores</span>:
+            <span class="builtin">print</span>(<span class="str">f"  - </span><span class="var">{error}</span><span class="str">"</span>)
+
+<span class="kw">def</span> <span class="fn">validar_password</span>(<span class="param">password</span>):
+    <span class="var">errores</span> = []
+    <span class="kw">if</span> <span class="builtin">len</span>(<span class="var">password</span>) < <span class="num">8</span>:
+        <span class="var">errores</span>.<span class="fn">append</span>(<span class="str">"Mínimo 8 caracteres"</span>)
+    <span class="kw">if</span> <span class="str">" "</span> <span class="kw">in</span> <span class="var">password</span>:
+        <span class="var">errores</span>.<span class="fn">append</span>(<span class="str">"No puede tener espacios"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> <span class="builtin">any</span>(<span class="var">c</span>.<span class="fn">isupper</span>() <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">password</span>):
+        <span class="var">errores</span>.<span class="fn">append</span>(<span class="str">"Al menos una mayúscula"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> <span class="builtin">any</span>(<span class="var">c</span>.<span class="fn">isdigit</span>() <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">password</span>):
+        <span class="var">errores</span>.<span class="fn">append</span>(<span class="str">"Al menos un número"</span>)
+    <span class="ret">return</span> <span class="var">errores</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-meta">
+          <div class="ex-num">05</div>
+          <div class="ex-title">Cifrado César con Funciones</div>
+        </div>
+      </div>
+      <div class="exercise-body">
+        <p>Refactoriza el cifrado César que hiciste antes en funciones. Crea <code>cifrar(texto, n)</code> que cifre el texto y <code>descifrar(texto, n)</code> que lo descifre. Ambas deben usar una función auxiliar interna.</p>
+
+        <div class="reto-label">🎯 Reto</div>
+        <p>Crea una tercera función <code>desplazar(texto, n)</code> que haga el trabajo real. <code>cifrar()</code> la llama con <code>+n</code> y <code>descifrar()</code> la llama con <code>-n</code>. Así evitas duplicar código.</p>
+
+        <div class="pista-label">💡 Pista de diseño</div>
+        <p>La función <code>desplazar(texto, n)</code> recorre cada carácter: si es letra usa <code>chr(ord(c) + n)</code>, si no lo deja igual. <code>cifrar</code> y <code>descifrar</code> son solo envoltorios que llaman a <code>desplazar</code> con signo positivo o negativo.</p>
+
+        <div class="tabla-label">📋 Tabla de análisis</div>
+        <table class="ref-table">
+          <thead><tr><th>Identificador</th><th>Descripción</th><th>Tipo</th><th>Función</th><th>Restricción</th></tr></thead>
+          <tbody>
+            <tr><td class="td-id">desplazar</td><td class="td-desc">Función auxiliar que hace el desplazamiento real</td><td class="td-type">función</td><td class="td-fn">Proceso</td><td class="td-rest">n positivo = cifra, negativo = descifra</td></tr>
+            <tr><td class="td-id">cifrar</td><td class="td-desc">Llama a desplazar con +n</td><td class="td-type">función</td><td class="td-fn">Interfaz</td><td class="td-rest">Retorna texto cifrado</td></tr>
+            <tr><td class="td-id">descifrar</td><td class="td-desc">Llama a desplazar con -n</td><td class="td-type">función</td><td class="td-fn">Interfaz</td><td class="td-rest">Retorna texto original</td></tr>
+            <tr><td class="td-id">texto</td><td class="td-desc">Mensaje a procesar</td><td class="td-type">str</td><td class="td-fn">Parámetro</td><td class="td-rest">Solo letras se desplazan</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="solution-bar">
+        <button class="btn-show btn-show-sol" onclick="toggleSolution('sol5', this)">▶ Mostrar solución</button>
+      </div>
+      <div class="solution-panel" id="sol5">
+        <div class="solution-header">SOLUCIÓN</div>
+        <div class="code-block" style="margin:8px 28px 20px;">
+          <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-label">cesar_funciones.py</span></div>
+          <pre><span class="kw">def</span> <span class="fn">main</span>():
+    <span class="var">texto</span> = <span class="builtin">input</span>(<span class="str">"Texto: "</span>).<span class="fn">lower</span>()
+    <span class="var">n</span> = <span class="builtin">int</span>(<span class="builtin">input</span>(<span class="str">"Desplazamiento: "</span>))
+    <span class="var">cifrado</span> = <span class="fn">cifrar</span>(<span class="var">texto</span>, <span class="var">n</span>)
+    <span class="var">descifrado</span> = <span class="fn">descifrar</span>(<span class="var">cifrado</span>, <span class="var">n</span>)
+    <span class="builtin">print</span>(<span class="str">f"Original:   </span><span class="var">{texto}</span><span class="str">"</span>)
+    <span class="builtin">print</span>(<span class="str">f"Cifrado:    </span><span class="var">{cifrado}</span><span class="str">"</span>)
+    <span class="builtin">print</span>(<span class="str">f"Descifrado: </span><span class="var">{descifrado}</span><span class="str">"</span>)
+
+<span class="kw">def</span> <span class="fn">desplazar</span>(<span class="param">texto</span>, <span class="param">n</span>):
+    <span class="var">resultado</span> = <span class="str">""</span>
+    <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">texto</span>:
+        <span class="kw">if</span> <span class="var">c</span>.<span class="fn">isalpha</span>():
+            <span class="var">resultado</span> += <span class="builtin">chr</span>(<span class="builtin">ord</span>(<span class="var">c</span>) + <span class="var">n</span>)
+        <span class="kw">else</span>:
+            <span class="var">resultado</span> += <span class="var">c</span>
+    <span class="ret">return</span> <span class="var">resultado</span>
+
+<span class="kw">def</span> <span class="fn">cifrar</span>(<span class="param">texto</span>, <span class="param">n</span>):
+    <span class="ret">return</span> <span class="fn">desplazar</span>(<span class="var">texto</span>, <span class="var">n</span>)    <span class="cm"># desplaza hacia adelante</span>
+
+<span class="kw">def</span> <span class="fn">descifrar</span>(<span class="param">texto</span>, <span class="param">n</span>):
+    <span class="ret">return</span> <span class="fn">desplazar</span>(<span class="var">texto</span>, -<span class="var">n</span>)   <span class="cm"># desplaza hacia atrás</span>
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    <span class="fn">main</span>()</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11 RESUMEN -->
+  <div class="section" id="s11">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <h2>Resumen</h2>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-icon">📦</div>
+        <div class="summary-title">def nombre():</div>
+        <div class="summary-desc">Define una función. El cuerpo va indentado.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">📥</div>
+        <div class="summary-title">Parámetros</div>
+        <div class="summary-desc">Datos que recibe la función al ser llamada.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">📤</div>
+        <div class="summary-title">return</div>
+        <div class="summary-desc">Devuelve un valor y termina la función.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">⚡</div>
+        <div class="summary-title">lambda</div>
+        <div class="summary-desc">Función anónima de una sola expresión.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">🔁</div>
+        <div class="summary-title">Reutilización</div>
+        <div class="summary-desc">Escribe una vez, llama cuantas veces quieras.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon">🏗️</div>
+        <div class="summary-title">main() al final</div>
+        <div class="summary-desc">Patrón estándar CS50P: define primero, llama después.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">funciones.py · Python · CS50P Harvard</div>
+
+</div>
+
+<script>
+  function toggleSolution(id, btn) {
+    const panel = document.getElementById(id);
+    const isVisible = panel.classList.contains('visible');
+
+    if (isVisible) {
+      panel.classList.remove('visible');
+      btn.textContent = '▶ Mostrar solución';
+      btn.className = 'btn-show btn-show-sol';
+    } else {
+      panel.classList.add('visible');
+      btn.textContent = '▼ Ocultar solución';
+      btn.className = 'btn-show btn-hide-sol';
+    }
+  }
+</script>
+
+</body>
+</html>

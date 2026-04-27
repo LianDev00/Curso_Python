@@ -1,0 +1,4 @@
+Estudiar list comprehensions
+Practicar modulos
+Terminar ejercicios de archivos
+Continuar con los ejercicios

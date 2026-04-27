@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulos Estándar · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:#09090b; --bg2:#0f0f12; --bg3:#141418;
+  --line:#1d1d24; --line2:#252532; --text:#d0d0e0; --dim:#464660; --faint:#14141c;
+  --os:#38bdf8;   --os-bg:#020b14;  --os-bd:#09283d;
+  --mt:#4ade80;   --mt-bg:#021209;  --mt-bd:#0d3518;
+  --dt:#fb923c;   --dt-bg:#120700;  --dt-bd:#3d1f06;
+  --rd:#e879f9;   --rd-bg:#110514;  --rd-bd:#380d3f;
+  --js:#fbbf24;   --js-bg:#120d02;  --js-bd:#3d2d06;
+  --sy:#f87171;   --sy-bg:#120505;  --sy-bd:#3d1010;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; }
+
+nav { position:sticky; top:0; z-index:100; background:rgba(9,9,11,.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); height:44px; display:flex; align-items:center; padding:0 24px; overflow-x:auto; gap:0; }
+nav::-webkit-scrollbar { display:none; }
+.nav-brand { font-family:'Unbounded',sans-serif; font-size:10px; font-weight:700; color:var(--dim); letter-spacing:1px; white-space:nowrap; margin-right:20px; flex-shrink:0; }
+.nav-links { display:flex; gap:2px; flex-shrink:0; }
+.nav-links a { font-size:10px; text-decoration:none; padding:6px 10px; border-radius:3px; white-space:nowrap; color:var(--dim); transition:all .15s; }
+.nav-links a:hover { color:var(--text); background:var(--line); }
+.nos { color:var(--os) !important; } .nmt { color:var(--mt) !important; }
+.ndt { color:var(--dt) !important; } .nrd { color:var(--rd) !important; }
+.njs { color:var(--js) !important; } .nsy { color:var(--sy) !important; }
+
+.page { max-width:900px; margin:0 auto; padding:60px 22px 100px; }
+
+.hero { margin-bottom:60px; }
+.hero-eyebrow { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-bottom:16px; }
+.hero h1 { font-family:'Unbounded',sans-serif; font-size:clamp(28px,5vw,52px); font-weight:900; line-height:1; letter-spacing:-2px; color:#fff; }
+.hero h1 em { font-style:normal; color:var(--js); }
+.hero-sub { margin-top:16px; font-size:12px; color:var(--dim); max-width:520px; line-height:1.85; }
+.import-note { margin-top:20px; background:var(--bg2); border:1px solid var(--line2); border-radius:4px; padding:12px 16px; font-size:12px; }
+.import-note code { color:var(--js); }
+
+.section { margin-bottom:64px; }
+.section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.s-icon { width:38px; height:38px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-family:'Unbounded',sans-serif; font-size:9px; font-weight:900; flex-shrink:0; text-align:center; line-height:1.2; }
+.i-os { background:var(--os-bg); border:1px solid var(--os-bd); color:var(--os); }
+.i-mt { background:var(--mt-bg); border:1px solid var(--mt-bd); color:var(--mt); }
+.i-dt { background:var(--dt-bg); border:1px solid var(--dt-bd); color:var(--dt); }
+.i-rd { background:var(--rd-bg); border:1px solid var(--rd-bd); color:var(--rd); }
+.i-js { background:var(--js-bg); border:1px solid var(--js-bd); color:var(--js); }
+.i-sy { background:var(--sy-bg); border:1px solid var(--sy-bd); color:var(--sy); }
+.section-title { font-family:'Unbounded',sans-serif; font-size:18px; font-weight:700; color:#fff; letter-spacing:-.5px; }
+.section-type { font-size:10px; letter-spacing:2px; color:var(--dim); margin-top:2px; }
+
+p { color:var(--text); font-size:12.5px; line-height:1.85; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+p code { background:var(--faint); padding:1px 5px; border-radius:2px; font-size:12px; color:#c084fc; }
+
+.cb { background:var(--bg2); border:1px solid var(--line2); border-radius:4px; margin:14px 0; overflow:hidden; }
+.cb-label { background:var(--bg3); border-bottom:1px solid var(--line); padding:6px 14px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
+.cb pre { padding:16px 18px; overflow-x:auto; font-size:12.5px; line-height:1.8; }
+.cb pre::-webkit-scrollbar { height:4px; }
+.cb pre::-webkit-scrollbar-thumb { background:var(--line2); border-radius:2px; }
+
+.k  { color:var(--os); } .kg { color:var(--mt); } .ko { color:var(--dt); }
+.kp { color:var(--rd); } .ky { color:var(--js); } .ks { color:var(--sy); }
+.n  { color:#c084fc; } .s  { color:#86efac; } .nm { color:#fb923c; }
+.c  { color:#303048; font-style:italic; } .v  { color:var(--text); }
+
+.callout { padding:13px 16px; border-radius:3px; margin:14px 0; font-size:12px; line-height:1.8; }
+.ca { background:var(--os-bg); border-left:2px solid var(--os); color:#8dd4f8; }
+.cb2{ background:var(--mt-bg); border-left:2px solid var(--mt); color:#a8f0c0; }
+.cc { background:var(--dt-bg); border-left:2px solid var(--dt); color:#f0c8a8; }
+.cd { background:var(--rd-bg); border-left:2px solid var(--rd); color:#eeaaff; }
+.ce { background:var(--js-bg); border-left:2px solid var(--js); color:#f0d898; }
+.cw { background:#120c02; border-left:2px solid #ca8a04; color:#e8cc88; }
+.callout b { font-weight:700; color:#fff; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+@media(max-width:580px){ .two-col { grid-template-columns:1fr; } }
+
+.tbl { width:100%; border-collapse:collapse; margin:14px 0; font-size:11.5px; }
+.tbl th { text-align:left; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); padding:7px 12px; border-bottom:1px solid var(--line2); font-weight:400; }
+.tbl td { padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:var(--faint); }
+.tn { font-weight:700; white-space:nowrap; }
+.te { color:#86efac; font-size:11px; }
+
+footer { border-top:1px solid var(--line); padding-top:22px; margin-top:20px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · Stdlib</div>
+  <div class="nav-links">
+    <a href="#os"     class="nos">os / os.path</a>
+    <a href="#math"   class="nmt">math</a>
+    <a href="#dt"     class="ndt">datetime</a>
+    <a href="#random" class="nrd">random</a>
+    <a href="#json"   class="njs">json</a>
+    <a href="#sys"    class="nsy">sys</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Guía · Python · Módulos de la librería estándar</div>
+    <h1>Módulos<br><em>Estándar</em></h1>
+    <p class="hero-sub">Python viene con "baterías incluidas" — una librería estándar enorme que no necesitas instalar. Solo importar.</p>
+    <div class="import-note">
+      <code>import math</code> · importa todo el módulo → usas <code>math.sqrt()</code><br>
+      <code>from math import sqrt</code> · importa solo lo que necesitas → usas <code>sqrt()</code><br>
+      <code>from math import sqrt, pi, floor</code> · múltiples elementos<br>
+      <code>import math as m</code> · alias → <code>m.sqrt()</code>
+    </div>
+  </div>
+
+  <!-- OS -->
+  <div class="section" id="os">
+    <div class="section-header">
+      <div class="s-icon i-os">os</div>
+      <div>
+        <div class="section-title">os · os.path</div>
+        <div class="section-type">sistema de archivos · rutas · directorios · variables de entorno</div>
+      </div>
+    </div>
+    <p>Interacción con el sistema operativo: navegar directorios, crear/eliminar carpetas, leer variables de entorno, y construir rutas de forma compatible entre Windows/Mac/Linux.</p>
+
+    <div class="cb">
+      <div class="cb-label">os — sistema de archivos y directorios</div>
+      <pre><span class="k">import</span> <span class="v">os</span>
+
+<span class="c"># directorio actual</span>
+<span class="v">os</span>.<span class="n">getcwd</span>()                        <span class="c"># → '/home/lian/proyectos'</span>
+
+<span class="c"># cambiar directorio</span>
+<span class="v">os</span>.<span class="n">chdir</span>(<span class="s">"/home/lian"</span>)
+
+<span class="c"># listar archivos de un directorio</span>
+<span class="v">os</span>.<span class="n">listdir</span>(<span class="s">"."</span>)                   <span class="c"># → ['main.py', 'datos', 'README.md']</span>
+<span class="v">os</span>.<span class="n">listdir</span>(<span class="s">"/home/lian"</span>)
+
+<span class="c"># crear directorio</span>
+<span class="v">os</span>.<span class="n">mkdir</span>(<span class="s">"nueva_carpeta"</span>)         <span class="c"># falla si ya existe</span>
+<span class="v">os</span>.<span class="n">makedirs</span>(<span class="s">"a/b/c"</span>, exist_ok<span class="op2">=</span><span class="b">True</span>) <span class="c"># crea árbol, no falla si existe</span>
+
+<span class="c"># eliminar</span>
+<span class="v">os</span>.<span class="n">remove</span>(<span class="s">"archivo.txt"</span>)          <span class="c"># elimina archivo</span>
+<span class="v">os</span>.<span class="n">rmdir</span>(<span class="s">"carpeta_vacia"</span>)         <span class="c"># elimina carpeta vacía</span>
+
+<span class="c"># renombrar / mover</span>
+<span class="v">os</span>.<span class="n">rename</span>(<span class="s">"viejo.txt"</span>, <span class="s">"nuevo.txt"</span>)
+
+<span class="c"># variables de entorno</span>
+<span class="v">os</span>.<span class="n">environ</span>[<span class="s">"PATH"</span>]                <span class="c"># leer</span>
+<span class="v">os</span>.<span class="n">getenv</span>(<span class="s">"HOME"</span>, <span class="s">"/default"</span>)    <span class="c"># leer con valor por defecto</span>
+<span class="v">os</span>.<span class="n">environ</span>[<span class="s">"MI_VAR"</span>] <span class="op2">=</span> <span class="s">"valor"</span>   <span class="c"># definir</span>
+
+<span class="c"># ejecutar comando del sistema</span>
+<span class="v">os</span>.<span class="n">system</span>(<span class="s">"ls -la"</span>)               <span class="c"># retorna código de salida</span>
+
+<span class="c"># recorrer árbol de directorios</span>
+<span class="k">for</span> <span class="v">raiz</span>, <span class="v">dirs</span>, <span class="v">archivos</span> <span class="k">in</span> <span class="v">os</span>.<span class="n">walk</span>(<span class="s">"."</span>):
+    <span class="k">for</span> <span class="v">arch</span> <span class="k">in</span> <span class="v">archivos</span>:
+        <span class="nb">print</span>(<span class="v">os</span>.<span class="n">path</span>.<span class="n">join</span>(<span class="v">raiz</span>, <span class="v">arch</span>))</pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">os.path — rutas multiplataforma</div>
+      <pre><span class="k">import</span> <span class="v">os</span>
+
+<span class="c"># unir rutas (usa / en Linux/Mac, \ en Windows automáticamente)</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">join</span>(<span class="s">"/home"</span>, <span class="s">"lian"</span>, <span class="s">"archivo.txt"</span>)
+<span class="c"># → '/home/lian/archivo.txt'</span>
+
+<span class="c"># verificar existencia</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">exists</span>(<span class="s">"archivo.txt"</span>)    <span class="c"># → True / False</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">isfile</span>(<span class="s">"archivo.txt"</span>)    <span class="c"># es archivo?</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">isdir</span>(<span class="s">"carpeta"</span>)         <span class="c"># es directorio?</span>
+
+<span class="c"># partes de una ruta</span>
+<span class="v">ruta</span> <span class="op2">=</span> <span class="s">"/home/lian/datos/archivo.txt"</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">basename</span>(<span class="v">ruta</span>)            <span class="c"># → 'archivo.txt'</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">dirname</span>(<span class="v">ruta</span>)             <span class="c"># → '/home/lian/datos'</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">splitext</span>(<span class="s">"foto.jpg"</span>)      <span class="c"># → ('foto', '.jpg')</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">split</span>(<span class="v">ruta</span>)               <span class="c"># → ('/home/lian/datos', 'archivo.txt')</span>
+
+<span class="c"># ruta absoluta desde relativa</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">abspath</span>(<span class="s">"."</span>)             <span class="c"># → ruta completa del directorio actual</span>
+
+<span class="c"># tamaño en bytes</span>
+<span class="v">os</span>.<span class="n">path</span>.<span class="n">getsize</span>(<span class="s">"archivo.txt"</span>)   <span class="c"># → 1024</span></pre>
+    </div>
+
+    <div class="callout ca">
+      <b>Usa siempre os.path.join()</b> para construir rutas — nunca concatenes strings con "/" manualmente. En Windows las rutas usan "\" y tu código se rompe. <code>os.path.join</code> elige el separador correcto automáticamente.
+    </div>
+  </div>
+
+  <!-- MATH -->
+  <div class="section" id="math">
+    <div class="section-header">
+      <div class="s-icon i-mt">math</div>
+      <div>
+        <div class="section-title">math</div>
+        <div class="section-type">funciones matemáticas · constantes · trigonometría · logaritmos</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Constantes y funciones esenciales</div>
+      <pre><span class="k">import</span> <span class="v">math</span>
+
+<span class="c"># constantes</span>
+<span class="v">math</span>.<span class="v">pi</span>      <span class="c"># → 3.141592653589793</span>
+<span class="v">math</span>.<span class="v">e</span>       <span class="c"># → 2.718281828459045</span>
+<span class="v">math</span>.<span class="v">inf</span>     <span class="c"># → inf  (infinito)</span>
+<span class="v">math</span>.<span class="v">tau</span>     <span class="c"># → 6.28...  (2π)</span>
+
+<span class="c"># redondeo</span>
+<span class="v">math</span>.<span class="n">floor</span>(<span class="nm">3.9</span>)     <span class="c"># → 3   (hacia abajo)</span>
+<span class="v">math</span>.<span class="n">ceil</span>(<span class="nm">3.1</span>)      <span class="c"># → 4   (hacia arriba)</span>
+<span class="v">math</span>.<span class="n">trunc</span>(<span class="nm">3.9</span>)     <span class="c"># → 3   (trunca, igual que int())</span>
+
+<span class="c"># potencias y raíces</span>
+<span class="v">math</span>.<span class="n">sqrt</span>(<span class="nm">25</span>)        <span class="c"># → 5.0</span>
+<span class="v">math</span>.<span class="n">pow</span>(<span class="nm">2</span>, <span class="nm">10</span>)      <span class="c"># → 1024.0   (igual que 2**10 pero retorna float)</span>
+<span class="v">math</span>.<span class="n">isqrt</span>(<span class="nm">17</span>)       <span class="c"># → 4   (raíz entera — piso de sqrt)</span>
+
+<span class="c"># logaritmos</span>
+<span class="v">math</span>.<span class="n">log</span>(<span class="nm">100</span>, <span class="nm">10</span>)    <span class="c"># → 2.0  (log base 10 de 100)</span>
+<span class="v">math</span>.<span class="n">log</span>(<span class="v">math</span>.<span class="v">e</span>)     <span class="c"># → 1.0  (log natural = log base e)</span>
+<span class="v">math</span>.<span class="n">log10</span>(<span class="nm">1000</span>)    <span class="c"># → 3.0</span>
+<span class="v">math</span>.<span class="n">log2</span>(<span class="nm">8</span>)         <span class="c"># → 3.0</span>
+<span class="v">math</span>.<span class="n">exp</span>(<span class="nm">1</span>)          <span class="c"># → 2.718... (e^1)</span>
+
+<span class="c"># valor absoluto y signo</span>
+<span class="v">math</span>.<span class="n">fabs</span>(<span class="op2">-</span><span class="nm">5.5</span>)      <span class="c"># → 5.5  (como abs pero siempre float)</span>
+<span class="v">math</span>.<span class="n">copysign</span>(<span class="nm">3</span>, <span class="op2">-</span><span class="nm">1</span>)<span class="c"># → -3.0 (toma signo del segundo argumento)</span>
+
+<span class="c"># factores</span>
+<span class="v">math</span>.<span class="n">factorial</span>(<span class="nm">5</span>)    <span class="c"># → 120  (5! = 5×4×3×2×1)</span>
+<span class="v">math</span>.<span class="n">gcd</span>(<span class="nm">12</span>, <span class="nm">8</span>)      <span class="c"># → 4   (máximo común divisor)</span>
+<span class="v">math</span>.<span class="n">lcm</span>(<span class="nm">4</span>, <span class="nm">6</span>)       <span class="c"># → 12  (mínimo común múltiplo) — Python 3.9+</span>
+
+<span class="c"># comparación de floats</span>
+<span class="v">math</span>.<span class="n">isclose</span>(<span class="nm">0.1</span><span class="op2">+</span><span class="nm">0.2</span>, <span class="nm">0.3</span>)       <span class="c"># → True</span>
+<span class="v">math</span>.<span class="n">isnan</span>(<span class="nb">float</span>(<span class="s">"nan"</span>))          <span class="c"># → True</span>
+<span class="v">math</span>.<span class="n">isinf</span>(<span class="nb">float</span>(<span class="s">"inf"</span>))          <span class="c"># → True</span>
+
+<span class="c"># trigonometría (en radianes)</span>
+<span class="v">math</span>.<span class="n">sin</span>(<span class="v">math</span>.<span class="v">pi</span> <span class="op2">/</span> <span class="nm">2</span>)   <span class="c"># → 1.0</span>
+<span class="v">math</span>.<span class="n">cos</span>(<span class="nm">0</span>)            <span class="c"># → 1.0</span>
+<span class="v">math</span>.<span class="n">degrees</span>(<span class="v">math</span>.<span class="v">pi</span>) <span class="c"># → 180.0  (rad → grados)</span>
+<span class="v">math</span>.<span class="n">radians</span>(<span class="nm">180</span>)     <span class="c"># → 3.14... (grados → rad)</span></pre>
+    </div>
+  </div>
+
+  <!-- DATETIME -->
+  <div class="section" id="dt">
+    <div class="section-header">
+      <div class="s-icon i-dt">date</div>
+      <div>
+        <div class="section-title">datetime</div>
+        <div class="section-type">fechas · horas · diferencias · formateo · timedelta</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Las 4 clases principales del módulo</div>
+      <pre><span class="k">from</span> <span class="v">datetime</span> <span class="k">import</span> <span class="n">date</span>, <span class="n">time</span>, <span class="n">datetime</span>, <span class="n">timedelta</span>
+
+<span class="c"># date — solo fecha (año, mes, día)</span>
+<span class="v">hoy</span>       <span class="op2">=</span> <span class="n">date</span>.<span class="n">today</span>()               <span class="c"># fecha de hoy</span>
+<span class="v">nacimiento</span> <span class="op2">=</span> <span class="n">date</span>(<span class="nm">2000</span>, <span class="nm">6</span>, <span class="nm">15</span>)          <span class="c"># fecha específica</span>
+<span class="nb">print</span>(<span class="v">hoy</span>.<span class="v">year</span>, <span class="v">hoy</span>.<span class="v">month</span>, <span class="v">hoy</span>.<span class="v">day</span>)    <span class="c"># atributos</span>
+
+<span class="c"># time — solo hora (sin fecha)</span>
+<span class="v">t</span> <span class="op2">=</span> <span class="n">time</span>(<span class="nm">14</span>, <span class="nm">30</span>, <span class="nm">0</span>)                    <span class="c"># 14:30:00</span>
+<span class="nb">print</span>(<span class="v">t</span>.<span class="v">hour</span>, <span class="v">t</span>.<span class="v">minute</span>, <span class="v">t</span>.<span class="v">second</span>)
+
+<span class="c"># datetime — fecha Y hora combinadas</span>
+<span class="v">ahora</span>  <span class="op2">=</span> <span class="n">datetime</span>.<span class="n">now</span>()              <span class="c"># fecha y hora actuales</span>
+<span class="v">evento</span> <span class="op2">=</span> <span class="n">datetime</span>(<span class="nm">2026</span>, <span class="nm">12</span>, <span class="nm">31</span>, <span class="nm">23</span>, <span class="nm">59</span>, <span class="nm">59</span>)
+
+<span class="c"># timedelta — duración / diferencia entre fechas</span>
+<span class="v">diff</span> <span class="op2">=</span> <span class="n">date</span>.<span class="n">today</span>() <span class="op2">-</span> <span class="v">nacimiento</span>    <span class="c"># resta dos fechas → timedelta</span>
+<span class="nb">print</span>(<span class="v">diff</span>.<span class="v">days</span>)                      <span class="c"># cuántos días han pasado</span>
+
+<span class="v">una_semana</span> <span class="op2">=</span> <span class="n">timedelta</span>(<span class="v">weeks</span><span class="op2">=</span><span class="nm">1</span>)
+<span class="v">proximo</span>    <span class="op2">=</span> <span class="n">date</span>.<span class="n">today</span>() <span class="op2">+</span> <span class="v">una_semana</span> <span class="c"># sumar tiempo a una fecha</span>
+<span class="v">ayer</span>       <span class="op2">=</span> <span class="n">date</span>.<span class="n">today</span>() <span class="op2">-</span> <span class="n">timedelta</span>(<span class="v">days</span><span class="op2">=</span><span class="nm">1</span>)</pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Formateo — strftime y strptime</div>
+      <pre><span class="k">from</span> <span class="v">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+
+<span class="v">ahora</span> <span class="op2">=</span> <span class="n">datetime</span>.<span class="n">now</span>()
+
+<span class="c"># strftime — datetime → string con formato</span>
+<span class="v">ahora</span>.<span class="n">strftime</span>(<span class="s">"%d/%m/%Y"</span>)         <span class="c"># → '12/04/2026'</span>
+<span class="v">ahora</span>.<span class="n">strftime</span>(<span class="s">"%H:%M:%S"</span>)         <span class="c"># → '14:30:00'</span>
+<span class="v">ahora</span>.<span class="n">strftime</span>(<span class="s">"%d de %B de %Y"</span>)  <span class="c"># → '12 de April de 2026'</span>
+<span class="v">ahora</span>.<span class="n">strftime</span>(<span class="s">"%A"</span>)               <span class="c"># → 'Sunday'  (día de la semana)</span>
+
+<span class="c"># strptime — string → datetime (parsear)</span>
+<span class="n">datetime</span>.<span class="n">strptime</span>(<span class="s">"12/04/2026"</span>, <span class="s">"%d/%m/%Y"</span>)
+<span class="n">datetime</span>.<span class="n">strptime</span>(<span class="s">"2026-04-12 14:30"</span>, <span class="s">"%Y-%m-%d %H:%M"</span>)
+
+<span class="c"># isoformat — formato estándar ISO 8601</span>
+<span class="v">ahora</span>.<span class="n">isoformat</span>()                   <span class="c"># → '2026-04-12T14:30:00.123456'</span>
+<span class="n">datetime</span>.<span class="n">fromisoformat</span>(<span class="s">"2026-04-12T14:30:00"</span>)  <span class="c"># parsear ISO</span>
+
+<span class="c"># códigos de formato más usados</span>
+<span class="c"># %Y año 4 dígitos  %m mes 01-12   %d día 01-31</span>
+<span class="c"># %H hora 00-23     %M minuto      %S segundo</span>
+<span class="c"># %A día semana     %B mes nombre  %y año 2 dígitos</span></pre>
+    </div>
+  </div>
+
+  <!-- RANDOM -->
+  <div class="section" id="random">
+    <div class="section-header">
+      <div class="s-icon i-rd">rnd</div>
+      <div>
+        <div class="section-title">random</div>
+        <div class="section-type">números aleatorios · elecciones · mezclar · semilla</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Funciones principales</div>
+      <pre><span class="k">import</span> <span class="v">random</span>
+
+<span class="c"># float entre 0.0 y 1.0 (exclusivo)</span>
+<span class="v">random</span>.<span class="n">random</span>()               <span class="c"># → 0.37444...  (varía cada vez)</span>
+
+<span class="c"># float en un rango</span>
+<span class="v">random</span>.<span class="n">uniform</span>(<span class="nm">1.5</span>, <span class="nm">5.5</span>)      <span class="c"># → 3.24...  (entre 1.5 y 5.5)</span>
+
+<span class="c"># entero en un rango (ambos extremos incluidos)</span>
+<span class="v">random</span>.<span class="n">randint</span>(<span class="nm">1</span>, <span class="nm">6</span>)          <span class="c"># → simula un dado</span>
+<span class="v">random</span>.<span class="n">randrange</span>(<span class="nm">0</span>, <span class="nm">100</span>, <span class="nm">5</span>) <span class="c"># → múltiplo de 5 entre 0 y 99</span>
+
+<span class="c"># elegir de una secuencia</span>
+<span class="v">random</span>.<span class="n">choice</span>([<span class="s">"roca"</span>, <span class="s">"papel"</span>, <span class="s">"tijera"</span>])   <span class="c"># un elemento</span>
+<span class="v">random</span>.<span class="n">choices</span>([<span class="s">"a"</span>,<span class="s">"b"</span>,<span class="s">"c"</span>], <span class="v">k</span><span class="op2">=</span><span class="nm">3</span>)            <span class="c"># 3 con repetición</span>
+<span class="v">random</span>.<span class="n">choices</span>([<span class="s">"cara"</span>,<span class="s">"cruz"</span>], <span class="v">weights</span><span class="op2">=</span>[<span class="nm">70</span>,<span class="nm">30</span>], <span class="v">k</span><span class="op2">=</span><span class="nm">5</span>) <span class="c"># con pesos</span>
+<span class="v">random</span>.<span class="n">sample</span>([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>], <span class="v">k</span><span class="op2">=</span><span class="nm">3</span>)            <span class="c"># 3 SIN repetición</span>
+
+<span class="c"># mezclar lista in-place</span>
+<span class="v">baraja</span> <span class="op2">=</span> <span class="nb">list</span>(<span class="nb">range</span>(<span class="nm">1</span>, <span class="nm">53</span>))
+<span class="v">random</span>.<span class="n">shuffle</span>(<span class="v">baraja</span>)        <span class="c"># modifica la lista, no retorna nada</span>
+
+<span class="c"># semilla — reproducibilidad (para tests)</span>
+<span class="v">random</span>.<span class="n">seed</span>(<span class="nm">42</span>)
+<span class="v">random</span>.<span class="n">random</span>()               <span class="c"># siempre el mismo valor con seed 42</span></pre>
+    </div>
+
+    <div class="callout cd">
+      <b>random no es criptográficamente seguro.</b> Para tokens, contraseñas o cualquier cosa de seguridad usa <code>secrets</code> en vez de <code>random</code>: <code>import secrets; secrets.token_hex(16)</code>
+    </div>
+  </div>
+
+  <!-- JSON -->
+  <div class="section" id="json">
+    <div class="section-header">
+      <div class="s-icon i-js">json</div>
+      <div>
+        <div class="section-title">json</div>
+        <div class="section-type">serializar · deserializar · leer/escribir archivos JSON</div>
+      </div>
+    </div>
+
+    <p>JSON es el formato estándar para intercambiar datos entre sistemas. Python convierte automáticamente entre tipos Python y tipos JSON.</p>
+
+    <table class="tbl">
+      <thead><tr><th>Python</th><th>JSON</th></tr></thead>
+      <tbody>
+        <tr><td class="tn" style="color:var(--js)">dict</td><td>object { }</td></tr>
+        <tr><td class="tn" style="color:var(--js)">list / tuple</td><td>array [ ]</td></tr>
+        <tr><td class="tn" style="color:var(--js)">str</td><td>string ""</td></tr>
+        <tr><td class="tn" style="color:var(--js)">int / float</td><td>number</td></tr>
+        <tr><td class="tn" style="color:var(--js)">True / False</td><td>true / false</td></tr>
+        <tr><td class="tn" style="color:var(--js)">None</td><td>null</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cb">
+      <div class="cb-label">dumps / loads — convertir entre Python y string JSON</div>
+      <pre><span class="k">import</span> <span class="v">json</span>
+
+<span class="v">datos</span> <span class="op2">=</span> {
+    <span class="s">"nombre"</span>: <span class="s">"Lian"</span>,
+    <span class="s">"edad"</span>: <span class="nm">22</span>,
+    <span class="s">"activo"</span>: <span class="b">True</span>,
+    <span class="s">"notas"</span>: [<span class="nm">15</span>, <span class="nm">18</span>, <span class="nm">20</span>]
+}
+
+<span class="c"># dumps — dict Python → string JSON</span>
+<span class="v">json_str</span> <span class="op2">=</span> <span class="v">json</span>.<span class="n">dumps</span>(<span class="v">datos</span>)
+<span class="c"># '{"nombre": "Lian", "edad": 22, "activo": true, "notas": [15, 18, 20]}'</span>
+
+<span class="v">json_str</span> <span class="op2">=</span> <span class="v">json</span>.<span class="n">dumps</span>(<span class="v">datos</span>, <span class="v">indent</span><span class="op2">=</span><span class="nm">2</span>)   <span class="c"># con sangría (legible)</span>
+<span class="v">json_str</span> <span class="op2">=</span> <span class="v">json</span>.<span class="n">dumps</span>(<span class="v">datos</span>, <span class="v">ensure_ascii</span><span class="op2">=</span><span class="b">False</span>) <span class="c"># preserva ñ, tildes</span>
+
+<span class="c"># loads — string JSON → dict Python</span>
+<span class="v">recuperado</span> <span class="op2">=</span> <span class="v">json</span>.<span class="n">loads</span>(<span class="v">json_str</span>)
+<span class="nb">print</span>(<span class="v">recuperado</span>[<span class="s">"nombre"</span>])   <span class="c"># → Lian</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">dump / load — leer y escribir archivos JSON</div>
+      <pre><span class="k">import</span> <span class="v">json</span>
+
+<span class="c"># escribir a archivo</span>
+<span class="v">datos</span> <span class="op2">=</span> {<span class="s">"usuario"</span>: <span class="s">"lian"</span>, <span class="s">"nivel"</span>: <span class="nm">5</span>}
+
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"config.json"</span>, <span class="s">"w"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">json</span>.<span class="n">dump</span>(<span class="v">datos</span>, <span class="v">f</span>, <span class="v">indent</span><span class="op2">=</span><span class="nm">2</span>, <span class="v">ensure_ascii</span><span class="op2">=</span><span class="b">False</span>)
+
+<span class="c"># leer desde archivo</span>
+<span class="k">with</span> <span class="nb">open</span>(<span class="s">"config.json"</span>, <span class="v">encoding</span><span class="op2">=</span><span class="s">"utf-8"</span>) <span class="k">as</span> <span class="v">f</span>:
+    <span class="v">config</span> <span class="op2">=</span> <span class="v">json</span>.<span class="n">load</span>(<span class="v">f</span>)
+
+<span class="nb">print</span>(<span class="v">config</span>[<span class="s">"nivel"</span>])   <span class="c"># → 5</span>
+
+<span class="c"># manejo de errores — JSON malformado</span>
+<span class="k">try</span>:
+    <span class="v">json</span>.<span class="n">loads</span>(<span class="s">"esto no es json"</span>)
+<span class="k">except</span> <span class="n">json</span>.<span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="v">e</span>:
+    <span class="nb">print</span>(<span class="s">f"JSON inválido: {e}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- SYS -->
+  <div class="section" id="sys">
+    <div class="section-header">
+      <div class="s-icon i-sy">sys</div>
+      <div>
+        <div class="section-title">sys</div>
+        <div class="section-type">argumentos · salida · versión · rutas</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Lo más usado de sys</div>
+      <pre><span class="k">import</span> <span class="v">sys</span>
+
+<span class="c"># argumentos de línea de comandos</span>
+<span class="c"># si ejecutas: python script.py hola 42</span>
+<span class="v">sys</span>.<span class="v">argv</span>         <span class="c"># → ['script.py', 'hola', '42']</span>
+<span class="v">sys</span>.<span class="v">argv</span>[<span class="nm">0</span>]     <span class="c"># → 'script.py'  (nombre del script)</span>
+<span class="v">sys</span>.<span class="v">argv</span>[<span class="nm">1</span>]     <span class="c"># → 'hola'</span>
+
+<span class="c"># salir del programa con código de estado</span>
+<span class="v">sys</span>.<span class="n">exit</span>(<span class="nm">0</span>)      <span class="c"># salida exitosa</span>
+<span class="v">sys</span>.<span class="n">exit</span>(<span class="nm">1</span>)      <span class="c"># salida con error</span>
+<span class="v">sys</span>.<span class="n">exit</span>(<span class="s">"Error: falta el archivo"</span>)  <span class="c"># mensaje + código 1</span>
+
+<span class="c"># versión de Python</span>
+<span class="v">sys</span>.<span class="v">version</span>      <span class="c"># → '3.12.0 (main, ...)'</span>
+<span class="v">sys</span>.<span class="v">version_info</span> <span class="c"># → sys.version_info(major=3, minor=12, ...)</span>
+<span class="v">sys</span>.<span class="v">version_info</span>.<span class="v">major</span>  <span class="c"># → 3</span>
+
+<span class="c"># sistema operativo</span>
+<span class="v">sys</span>.<span class="v">platform</span>     <span class="c"># → 'linux' / 'win32' / 'darwin'</span>
+
+<span class="c"># rutas de búsqueda de módulos</span>
+<span class="v">sys</span>.<span class="v">path</span>         <span class="c"># lista de directorios donde Python busca módulos</span>
+<span class="v">sys</span>.<span class="v">path</span>.<span class="n">append</span>(<span class="s">"/mi/modulo"</span>)  <span class="c"># agregar ruta personalizada</span>
+
+<span class="c"># tamaño en bytes de un objeto</span>
+<span class="v">sys</span>.<span class="n">getsizeof</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])   <span class="c"># → 88  (bytes)</span>
+
+<span class="c"># stdin / stdout / stderr</span>
+<span class="v">sys</span>.<span class="v">stdout</span>.<span class="n">write</span>(<span class="s">"hola\n"</span>)   <span class="c"># igual que print pero sin salto automático</span>
+<span class="v">sys</span>.<span class="v">stderr</span>.<span class="n">write</span>(<span class="s">"error\n"</span>)  <span class="c"># escribir en la salida de error</span></pre>
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · Módulos estándar</span>
+    <span>os · math · datetime · random · json · sys</span>
+  </footer>
+
+</div>
+</body>
+</html>

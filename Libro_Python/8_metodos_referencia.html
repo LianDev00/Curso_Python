@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Métodos de Python — Referencia Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b15;
+    --surface: #0d1121;
+    --surface2: #121828;
+    --surface3: #18202e;
+    --border: #1c2840;
+    --text: #d2dff5;
+    --muted: #48607f;
+    --str:   #f472b6;
+    --list:  #22d3ee;
+    --tuple: #a78bfa;
+    --dict:  #34d399;
+    --num:   #fb923c;
+    --blt:   #3b82f6;
+    --set:   #facc15;
+    --red:   #ef4444;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    line-height: 1.7;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%,   rgba(244,114,182,0.05) 0%, transparent 40%),
+      radial-gradient(ellipse at 100% 50%, rgba(34,211,238,0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 100%, rgba(52,211,153,0.04) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(8,11,21,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    gap: 0;
+  }
+
+  .nav-brand {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--blt);
+    margin-right: 24px;
+    white-space: nowrap;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar { display: none; }
+
+  .nav-link {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nl-str:hover   { color: var(--str);   background: rgba(244,114,182,0.08); }
+  .nl-list:hover  { color: var(--list);  background: rgba(34,211,238,0.08); }
+  .nl-tup:hover   { color: var(--tuple); background: rgba(167,139,250,0.08); }
+  .nl-dict:hover  { color: var(--dict);  background: rgba(52,211,153,0.08); }
+  .nl-blt:hover   { color: var(--blt);   background: rgba(59,130,246,0.08); }
+  .nl-num:hover   { color: var(--num);   background: rgba(251,146,60,0.08); }
+  .nl-set:hover   { color: var(--set);   background: rgba(250,204,21,0.08); }
+
+  .container {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: 82px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .tag {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 4px 11px;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .t-str   { background: rgba(244,114,182,0.1); border: 1px solid rgba(244,114,182,0.22); color: var(--str); }
+  .t-list  { background: rgba(34,211,238,0.1);  border: 1px solid rgba(34,211,238,0.22);  color: var(--list); }
+  .t-tup   { background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.22); color: var(--tuple); }
+  .t-dict  { background: rgba(52,211,153,0.1);  border: 1px solid rgba(52,211,153,0.22);  color: var(--dict); }
+  .t-blt   { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.22);  color: var(--blt); }
+  .t-num   { background: rgba(251,146,60,0.1);  border: 1px solid rgba(251,146,60,0.22);  color: var(--num); }
+  .t-set   { background: rgba(250,204,21,0.1);  border: 1px solid rgba(250,204,21,0.22);  color: var(--set); }
+
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+
+  .hero-lead {
+    color: var(--muted);
+    font-size: 0.96rem;
+    font-style: italic;
+    max-width: 560px;
+  }
+
+  /* INDEX */
+  .index-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 64px;
+  }
+
+  .index-title {
+    grid-column: 1 / -1;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .idx {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    color: var(--muted);
+    font-size: 0.83rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .idx-n { font-family: 'Fira Code', monospace; font-size: 0.68rem; opacity: 0.5; min-width: 18px; }
+  .idx.s:hover { color: var(--str); }
+  .idx.l:hover { color: var(--list); }
+  .idx.t:hover { color: var(--tuple); }
+  .idx.d:hover { color: var(--dict); }
+  .idx.b:hover { color: var(--blt); }
+  .idx.n:hover { color: var(--num); }
+  .idx.st:hover { color: var(--set); }
+
+  /* SECTIONS */
+  .section { margin-bottom: 60px; scroll-margin-top: 64px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .sec-badge {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .sb-str   { background: rgba(244,114,182,0.12); color: var(--str);   border-bottom: 3px solid var(--str); }
+  .sb-list  { background: rgba(34,211,238,0.12);  color: var(--list);  border-bottom: 3px solid var(--list); }
+  .sb-tup   { background: rgba(167,139,250,0.12); color: var(--tuple); border-bottom: 3px solid var(--tuple); }
+  .sb-dict  { background: rgba(52,211,153,0.12);  color: var(--dict);  border-bottom: 3px solid var(--dict); }
+  .sb-blt   { background: rgba(59,130,246,0.12);  color: var(--blt);   border-bottom: 3px solid var(--blt); }
+  .sb-num   { background: rgba(251,146,60,0.12);  color: var(--num);   border-bottom: 3px solid var(--num); }
+  .sb-set   { background: rgba(250,204,21,0.12);  color: var(--set);   border-bottom: 3px solid var(--set); }
+
+  .section-header { border-bottom: 1px solid var(--border); }
+
+  h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+
+  p { color: var(--muted); font-size: 0.93rem; margin-bottom: 12px; }
+  p strong { color: var(--text); }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.82em;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* METHOD TABLE */
+  .mtable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.83rem;
+  }
+
+  .mtable th {
+    background: var(--surface2);
+    color: var(--muted);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 9px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mtable td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .mtable tr:hover td { background: rgba(255,255,255,0.012); }
+
+  .td-method { font-family: 'Fira Code', monospace; font-weight: 700; font-size: 0.8rem; white-space: nowrap; }
+  .td-desc   { color: var(--muted); }
+  .td-ex     { font-family: 'Fira Code', monospace; font-size: 0.78rem; white-space: nowrap; }
+  .td-res    { font-family: 'Fira Code', monospace; font-size: 0.78rem; }
+  .td-note   { color: var(--muted); font-size: 0.78rem; font-style: italic; }
+
+  .tm-str  .td-method { color: var(--str); }
+  .tm-list .td-method { color: var(--list); }
+  .tm-tup  .td-method { color: var(--tuple); }
+  .tm-dict .td-method { color: var(--dict); }
+  .tm-blt  .td-method { color: var(--blt); }
+  .tm-num  .td-method { color: var(--num); }
+  .tm-set  .td-method { color: var(--set); }
+
+  .tm-str  .td-res { color: var(--str); }
+  .tm-list .td-res { color: var(--list); }
+  .tm-tup  .td-res { color: var(--tuple); }
+  .tm-dict .td-res { color: var(--dict); }
+  .tm-blt  .td-res { color: var(--blt); }
+  .tm-num  .td-res { color: var(--num); }
+  .tm-set  .td-res { color: var(--set); }
+
+  /* CATEGORY ROW */
+  .cat-row td {
+    background: var(--surface3);
+    color: var(--muted);
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    font-style: normal;
+  }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 14px 0;
+  }
+
+  .code-header {
+    background: var(--surface2);
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .code-lbl {
+    margin-left: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  pre {
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .kw  { color: #3b82f6; }
+  .fn  { color: #22d3ee; }
+  .fn2 { color: #34d399; }
+  .str { color: #a3e635; }
+  .cm  { color: #243550; font-style: italic; }
+  .num { color: #fb923c; }
+  .var { color: #d2dff5; }
+  .ret { color: #a78bfa; }
+  .key { color: #34d399; }
+  .bi  { color: #3b82f6; }
+
+  .output {
+    background: rgba(52,211,153,0.04);
+    border-top: 1px solid rgba(52,211,153,0.1);
+    padding: 10px 20px;
+  }
+
+  .out-lbl {
+    font-family: 'Fira Code', monospace;
+    font-size: 9px;
+    color: var(--dict);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .output pre { padding: 0; color: var(--dict); font-size: 0.78rem; }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 10px;
+    padding: 13px 18px;
+    margin: 12px 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .c-blue  { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.16); }
+  .c-green { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.16); }
+  .c-amber { background: rgba(251,146,60,0.06); border: 1px solid rgba(251,146,60,0.16); }
+  .c-red   { background: rgba(239,68,68,0.06);  border: 1px solid rgba(239,68,68,0.16); }
+
+  .callout-icon { font-size: 1rem; line-height: 1.6; flex-shrink: 0; }
+  .callout p { color: var(--text); font-size: 0.88rem; margin: 0; }
+  .c-blue  .callout strong { color: var(--blt); }
+  .c-green .callout strong { color: var(--green); }
+  .c-amber .callout strong { color: var(--num); }
+  .c-red   .callout strong { color: var(--red); }
+
+  /* HIGHLIGHT CARD */
+  .highlight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .hc-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
+
+  .footer {
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .mtable { font-size: 0.75rem; }
+    .td-ex, .td-res { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">methods.py</span>
+  <div class="nav-links">
+    <a class="nav-link nl-str"  href="#s-str">Strings</a>
+    <a class="nav-link nl-list" href="#s-list">Listas</a>
+    <a class="nav-link nl-tup"  href="#s-tup">Tuplas</a>
+    <a class="nav-link nl-dict" href="#s-dict">Diccionarios</a>
+    <a class="nav-link nl-blt"  href="#s-blt">Funciones built-in</a>
+    <a class="nav-link nl-num"  href="#s-num">Números</a>
+    <a class="nav-link nl-set"  href="#s-set">Sets</a>
+    <a class="nav-link nl-blt"  href="#s-iter">Iteradores</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tags">
+      <span class="tag t-blt">Python · CS50P · Guía #9</span>
+      <span class="tag t-str">Strings</span>
+      <span class="tag t-list">Listas</span>
+      <span class="tag t-tup">Tuplas</span>
+      <span class="tag t-dict">Diccionarios</span>
+      <span class="tag t-num">Números</span>
+      <span class="tag t-set">Sets</span>
+    </div>
+    <h1>Referencia completa<br>de métodos</h1>
+    <p class="hero-lead">Todos los métodos que necesitas para trabajar con strings, listas, tuplas, diccionarios, números y más — en un solo lugar.</p>
+  </div>
+
+  <!-- INDEX -->
+  <div class="index-grid">
+    <div class="index-title">Contenido</div>
+    <a class="idx s" href="#s-str"><span class="idx-n" style="color:var(--str)">01</span> Métodos de string</a>
+    <a class="idx l" href="#s-list"><span class="idx-n" style="color:var(--list)">02</span> Métodos de lista</a>
+    <a class="idx t" href="#s-tup"><span class="idx-n" style="color:var(--tuple)">03</span> Métodos de tupla</a>
+    <a class="idx d" href="#s-dict"><span class="idx-n" style="color:var(--dict)">04</span> Métodos de diccionario</a>
+    <a class="idx b" href="#s-blt"><span class="idx-n" style="color:var(--blt)">05</span> Funciones built-in</a>
+    <a class="idx n" href="#s-num"><span class="idx-n" style="color:var(--num)">06</span> Métodos numéricos</a>
+    <a class="idx st" href="#s-set"><span class="idx-n" style="color:var(--set)">07</span> Sets y sus métodos</a>
+    <a class="idx b" href="#s-iter"><span class="idx-n" style="color:var(--blt)">08</span> Iteradores especiales</a>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       01 · STRINGS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-str">
+    <div class="section-header">
+      <span class="sec-badge sb-str">01 · str</span>
+      <h2>Métodos de String</h2>
+    </div>
+    <p>Los strings en Python tienen más de 40 métodos. Aquí están los más usados, organizados por categoría.</p>
+
+    <table class="mtable tm-str">
+      <thead>
+        <tr><th>Método</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">TRANSFORMAR CASE</td></tr>
+        <tr><td class="td-method">.upper()</td><td class="td-desc">Todo en MAYÚSCULAS</td><td class="td-ex">"hola".upper()</td><td class="td-res">"HOLA"</td></tr>
+        <tr><td class="td-method">.lower()</td><td class="td-desc">Todo en minúsculas</td><td class="td-ex">"HOLA".lower()</td><td class="td-res">"hola"</td></tr>
+        <tr><td class="td-method">.title()</td><td class="td-desc">Primera letra de cada palabra en mayúscula</td><td class="td-ex">"hola mundo".title()</td><td class="td-res">"Hola Mundo"</td></tr>
+        <tr><td class="td-method">.capitalize()</td><td class="td-desc">Solo primera letra en mayúscula</td><td class="td-ex">"hola MUNDO".capitalize()</td><td class="td-res">"Hola mundo"</td></tr>
+        <tr><td class="td-method">.swapcase()</td><td class="td-desc">Invierte mayúsculas y minúsculas</td><td class="td-ex">"Hola".swapcase()</td><td class="td-res">"hOLA"</td></tr>
+
+        <tr class="cat-row"><td colspan="4">LIMPIAR</td></tr>
+        <tr><td class="td-method">.strip()</td><td class="td-desc">Elimina espacios al inicio y final</td><td class="td-ex">"  hi  ".strip()</td><td class="td-res">"hi"</td></tr>
+        <tr><td class="td-method">.lstrip()</td><td class="td-desc">Elimina espacios solo al inicio</td><td class="td-ex">"  hi  ".lstrip()</td><td class="td-res">"hi  "</td></tr>
+        <tr><td class="td-method">.rstrip()</td><td class="td-desc">Elimina espacios solo al final</td><td class="td-ex">"  hi  ".rstrip()</td><td class="td-res">"  hi"</td></tr>
+
+        <tr class="cat-row"><td colspan="4">BUSCAR Y REEMPLAZAR</td></tr>
+        <tr><td class="td-method">.find(x)</td><td class="td-desc">Índice primera aparición. -1 si no existe</td><td class="td-ex">"python".find("t")</td><td class="td-res">2</td></tr>
+        <tr><td class="td-method">.rfind(x)</td><td class="td-desc">Índice última aparición</td><td class="td-ex">"banana".rfind("a")</td><td class="td-res">5</td></tr>
+        <tr><td class="td-method">.count(x)</td><td class="td-desc">Cuántas veces aparece x</td><td class="td-ex">"banana".count("a")</td><td class="td-res">3</td></tr>
+        <tr><td class="td-method">.replace(a, b)</td><td class="td-desc">Reemplaza a por b (todas las ocurrencias)</td><td class="td-ex">"hola".replace("o","0")</td><td class="td-res">"h0la"</td></tr>
+        <tr><td class="td-method">.startswith(x)</td><td class="td-desc">True si empieza con x</td><td class="td-ex">"python".startswith("py")</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.endswith(x)</td><td class="td-desc">True si termina con x</td><td class="td-ex">"foto.jpg".endswith(".jpg")</td><td class="td-res">True</td></tr>
+
+        <tr class="cat-row"><td colspan="4">VERIFICAR CONTENIDO</td></tr>
+        <tr><td class="td-method">.isalpha()</td><td class="td-desc">True si solo letras</td><td class="td-ex">"hola".isalpha()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.isdigit()</td><td class="td-desc">True si solo dígitos</td><td class="td-ex">"123".isdigit()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.isalnum()</td><td class="td-desc">True si letras o números (sin símbolos)</td><td class="td-ex">"abc123".isalnum()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.isupper()</td><td class="td-desc">True si todas las letras son mayúsculas</td><td class="td-ex">"ABC".isupper()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.islower()</td><td class="td-desc">True si todas las letras son minúsculas</td><td class="td-ex">"abc".islower()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.isspace()</td><td class="td-desc">True si solo espacios</td><td class="td-ex">"   ".isspace()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.isnumeric()</td><td class="td-desc">True si es número (incluye fracciones unicode)</td><td class="td-ex">"42".isnumeric()</td><td class="td-res">True</td></tr>
+
+        <tr class="cat-row"><td colspan="4">DIVIDIR Y UNIR</td></tr>
+        <tr><td class="td-method">.split(sep)</td><td class="td-desc">Divide en lista por separador. Sin sep: por espacios</td><td class="td-ex">"a,b,c".split(",")</td><td class="td-res">['a','b','c']</td></tr>
+        <tr><td class="td-method">.splitlines()</td><td class="td-desc">Divide por saltos de línea</td><td class="td-ex">"a\nb\nc".splitlines()</td><td class="td-res">['a','b','c']</td></tr>
+        <tr><td class="td-method">"sep".join(lista)</td><td class="td-desc">Une lista de strings con separador</td><td class="td-ex">"-".join(["a","b"])</td><td class="td-res">"a-b"</td></tr>
+
+        <tr class="cat-row"><td colspan="4">FORMATO Y ALINEACIÓN</td></tr>
+        <tr><td class="td-method">.center(n)</td><td class="td-desc">Centra el string en un ancho de n caracteres</td><td class="td-ex">"hi".center(10)</td><td class="td-res">"    hi    "</td></tr>
+        <tr><td class="td-method">.ljust(n)</td><td class="td-desc">Alinea a la izquierda con relleno de espacios</td><td class="td-ex">"hi".ljust(6)</td><td class="td-res">"hi    "</td></tr>
+        <tr><td class="td-method">.rjust(n)</td><td class="td-desc">Alinea a la derecha</td><td class="td-ex">"hi".rjust(6)</td><td class="td-res">"    hi"</td></tr>
+        <tr><td class="td-method">.zfill(n)</td><td class="td-desc">Rellena con ceros a la izquierda hasta largo n</td><td class="td-ex">"42".zfill(5)</td><td class="td-res">"00042"</td></tr>
+
+        <tr class="cat-row"><td colspan="4">ASCII</td></tr>
+        <tr><td class="td-method">ord(c)</td><td class="td-desc">Número ASCII del carácter (función, no método)</td><td class="td-ex">ord("a")</td><td class="td-res">97</td></tr>
+        <tr><td class="td-method">chr(n)</td><td class="td-desc">Carácter del número ASCII (función, no método)</td><td class="td-ex">chr(97)</td><td class="td-res">"a"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       02 · LISTAS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-list">
+    <div class="section-header">
+      <span class="sec-badge sb-list">02 · list</span>
+      <h2>Métodos de Lista</h2>
+    </div>
+
+    <table class="mtable tm-list">
+      <thead>
+        <tr><th>Método</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">AGREGAR ELEMENTOS</td></tr>
+        <tr><td class="td-method">.append(x)</td><td class="td-desc">Agrega x al final</td><td class="td-ex">[1,2].append(3)</td><td class="td-res">[1, 2, 3]</td></tr>
+        <tr><td class="td-method">.insert(i, x)</td><td class="td-desc">Inserta x en la posición i</td><td class="td-ex">[1,3].insert(1, 2)</td><td class="td-res">[1, 2, 3]</td></tr>
+        <tr><td class="td-method">.extend(iter)</td><td class="td-desc">Agrega todos los elementos de otro iterable</td><td class="td-ex">[1,2].extend([3,4])</td><td class="td-res">[1, 2, 3, 4]</td></tr>
+
+        <tr class="cat-row"><td colspan="4">ELIMINAR ELEMENTOS</td></tr>
+        <tr><td class="td-method">.remove(x)</td><td class="td-desc">Elimina la primera ocurrencia de x (ValueError si no existe)</td><td class="td-ex">[1,2,2].remove(2)</td><td class="td-res">[1, 2]</td></tr>
+        <tr><td class="td-method">.pop(i)</td><td class="td-desc">Elimina y retorna el elemento en posición i. Sin i: último</td><td class="td-ex">[1,2,3].pop(1)</td><td class="td-res">retorna 2, lista=[1,3]</td></tr>
+        <tr><td class="td-method">.clear()</td><td class="td-desc">Elimina todos los elementos</td><td class="td-ex">[1,2,3].clear()</td><td class="td-res">[]</td></tr>
+
+        <tr class="cat-row"><td colspan="4">BUSCAR</td></tr>
+        <tr><td class="td-method">.index(x)</td><td class="td-desc">Índice de la primera ocurrencia de x</td><td class="td-ex">[10,20,30].index(20)</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">.count(x)</td><td class="td-desc">Cuántas veces aparece x</td><td class="td-ex">[1,2,2,3].count(2)</td><td class="td-res">2</td></tr>
+        <tr><td class="td-method">x in lista</td><td class="td-desc">True si x está en la lista</td><td class="td-ex">5 in [1,3,5]</td><td class="td-res">True</td></tr>
+
+        <tr class="cat-row"><td colspan="4">ORDENAR Y REORGANIZAR</td></tr>
+        <tr><td class="td-method">.sort()</td><td class="td-desc">Ordena la lista in-place (modifica la original)</td><td class="td-ex">[3,1,2].sort()</td><td class="td-res">[1, 2, 3]</td></tr>
+        <tr><td class="td-method">.sort(reverse=True)</td><td class="td-desc">Ordena de mayor a menor</td><td class="td-ex">[3,1,2].sort(reverse=True)</td><td class="td-res">[3, 2, 1]</td></tr>
+        <tr><td class="td-method">.reverse()</td><td class="td-desc">Invierte el orden in-place</td><td class="td-ex">[1,2,3].reverse()</td><td class="td-res">[3, 2, 1]</td></tr>
+        <tr><td class="td-method">.copy()</td><td class="td-desc">Retorna una copia superficial de la lista</td><td class="td-ex">nueva = lista.copy()</td><td class="td-res">lista independiente</td></tr>
+
+        <tr class="cat-row"><td colspan="4">FUNCIONES APLICADAS A LISTAS</td></tr>
+        <tr><td class="td-method">len(lista)</td><td class="td-desc">Número de elementos</td><td class="td-ex">len([1,2,3,4])</td><td class="td-res">4</td></tr>
+        <tr><td class="td-method">sum(lista)</td><td class="td-desc">Suma todos los elementos (deben ser números)</td><td class="td-ex">sum([1,2,3,4])</td><td class="td-res">10</td></tr>
+        <tr><td class="td-method">max(lista)</td><td class="td-desc">Elemento máximo</td><td class="td-ex">max([3,1,4,1,5])</td><td class="td-res">5</td></tr>
+        <tr><td class="td-method">min(lista)</td><td class="td-desc">Elemento mínimo</td><td class="td-ex">min([3,1,4,1,5])</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">sorted(lista)</td><td class="td-desc">Retorna lista ordenada SIN modificar la original</td><td class="td-ex">sorted([3,1,2])</td><td class="td-res">[1, 2, 3]</td></tr>
+        <tr><td class="td-method">list(iter)</td><td class="td-desc">Convierte un iterable en lista</td><td class="td-ex">list("abc")</td><td class="td-res">['a','b','c']</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout c-amber">
+      <span class="callout-icon">⚠️</span>
+      <p><strong>.sort() modifica la lista original.</strong> Si necesitas conservar la original, usa <code>sorted(lista)</code> que devuelve una nueva lista sin tocar la original.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       03 · TUPLAS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-tup">
+    <div class="section-header">
+      <span class="sec-badge sb-tup">03 · tuple</span>
+      <h2>Métodos de Tupla</h2>
+    </div>
+    <p>Las tuplas son inmutables — solo pueden <strong>consultar</strong>, no modificar. Por eso tienen muy pocos métodos propios.</p>
+
+    <table class="mtable tm-tup">
+      <thead>
+        <tr><th>Método / Función</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-method">.count(x)</td><td class="td-desc">Cuántas veces aparece x</td><td class="td-ex">(1,2,2,3).count(2)</td><td class="td-res">2</td></tr>
+        <tr><td class="td-method">.index(x)</td><td class="td-desc">Índice de la primera ocurrencia de x</td><td class="td-ex">(10,20,30).index(20)</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">len(tupla)</td><td class="td-desc">Número de elementos</td><td class="td-ex">len((1,2,3))</td><td class="td-res">3</td></tr>
+        <tr><td class="td-method">x in tupla</td><td class="td-desc">True si x está en la tupla</td><td class="td-ex">5 in (1,3,5)</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">max(tupla)</td><td class="td-desc">Elemento máximo</td><td class="td-ex">max((3,1,4))</td><td class="td-res">4</td></tr>
+        <tr><td class="td-method">min(tupla)</td><td class="td-desc">Elemento mínimo</td><td class="td-ex">min((3,1,4))</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">sum(tupla)</td><td class="td-desc">Suma (elementos numéricos)</td><td class="td-ex">sum((1,2,3))</td><td class="td-res">6</td></tr>
+        <tr><td class="td-method">tuple(iter)</td><td class="td-desc">Convierte un iterable en tupla</td><td class="td-ex">tuple([1,2,3])</td><td class="td-res">(1, 2, 3)</td></tr>
+        <tr class="cat-row"><td colspan="4">UNPACKING</td></tr>
+        <tr><td class="td-method">a, b = tupla</td><td class="td-desc">Desempaca elementos en variables separadas</td><td class="td-ex">x, y = (10, 20)</td><td class="td-res">x=10, y=20</td></tr>
+        <tr><td class="td-method">a, *b = tupla</td><td class="td-desc">El * captura el resto en una lista</td><td class="td-ex">a, *b = (1,2,3,4)</td><td class="td-res">a=1, b=[2,3,4]</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       04 · DICCIONARIOS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-dict">
+    <div class="section-header">
+      <span class="sec-badge sb-dict">04 · dict</span>
+      <h2>Métodos de Diccionario</h2>
+    </div>
+
+    <table class="mtable tm-dict">
+      <thead>
+        <tr><th>Método / Función</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">ACCEDER</td></tr>
+        <tr><td class="td-method">d[clave]</td><td class="td-desc">Accede al valor. KeyError si no existe</td><td class="td-ex">d["nombre"]</td><td class="td-res">"Lian"</td></tr>
+        <tr><td class="td-method">.get(clave, def)</td><td class="td-desc">Accede al valor. Retorna def (None) si no existe</td><td class="td-ex">d.get("edad", 0)</td><td class="td-res">0 si no existe</td></tr>
+        <tr><td class="td-method">.keys()</td><td class="td-desc">Vista de todas las claves</td><td class="td-ex">d.keys()</td><td class="td-res">dict_keys([...])</td></tr>
+        <tr><td class="td-method">.values()</td><td class="td-desc">Vista de todos los valores</td><td class="td-ex">d.values()</td><td class="td-res">dict_values([...])</td></tr>
+        <tr><td class="td-method">.items()</td><td class="td-desc">Vista de pares (clave, valor) — ideal para for</td><td class="td-ex">for k,v in d.items()</td><td class="td-res">clave, valor</td></tr>
+
+        <tr class="cat-row"><td colspan="4">MODIFICAR</td></tr>
+        <tr><td class="td-method">d[clave] = val</td><td class="td-desc">Agrega o sobreescribe un par clave-valor</td><td class="td-ex">d["edad"] = 27</td><td class="td-res">modifica el dict</td></tr>
+        <tr><td class="td-method">.update(otro)</td><td class="td-desc">Actualiza con los pares de otro dict</td><td class="td-ex">d.update({"b":2})</td><td class="td-res">agrega/sobreescribe</td></tr>
+        <tr><td class="td-method">.setdefault(k, v)</td><td class="td-desc">Si la clave no existe, la crea con valor v</td><td class="td-ex">d.setdefault("x", 0)</td><td class="td-res">agrega solo si no existe</td></tr>
+
+        <tr class="cat-row"><td colspan="4">ELIMINAR</td></tr>
+        <tr><td class="td-method">.pop(clave)</td><td class="td-desc">Elimina la clave y retorna su valor</td><td class="td-ex">d.pop("nombre")</td><td class="td-res">retorna el valor</td></tr>
+        <tr><td class="td-method">.popitem()</td><td class="td-desc">Elimina y retorna el último par insertado</td><td class="td-ex">d.popitem()</td><td class="td-res">(clave, valor)</td></tr>
+        <tr><td class="td-method">.clear()</td><td class="td-desc">Elimina todos los pares</td><td class="td-ex">d.clear()</td><td class="td-res">{}</td></tr>
+        <tr><td class="td-method">del d[clave]</td><td class="td-desc">Elimina la clave (KeyError si no existe)</td><td class="td-ex">del d["edad"]</td><td class="td-res">elimina del dict</td></tr>
+
+        <tr class="cat-row"><td colspan="4">INFORMACIÓN</td></tr>
+        <tr><td class="td-method">len(d)</td><td class="td-desc">Número de pares clave-valor</td><td class="td-ex">len({"a":1,"b":2})</td><td class="td-res">2</td></tr>
+        <tr><td class="td-method">clave in d</td><td class="td-desc">True si la clave existe</td><td class="td-ex">"nombre" in d</td><td class="td-res">True / False</td></tr>
+        <tr><td class="td-method">.copy()</td><td class="td-desc">Copia superficial del diccionario</td><td class="td-ex">nuevo = d.copy()</td><td class="td-res">dict independiente</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       05 · BUILT-INS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-blt">
+    <div class="section-header">
+      <span class="sec-badge sb-blt">05 · built-in</span>
+      <h2>Funciones Built-in</h2>
+    </div>
+    <p>Son funciones que Python incluye por defecto — no necesitas importar nada. Se pueden usar con cualquier tipo de dato.</p>
+
+    <table class="mtable tm-blt">
+      <thead>
+        <tr><th>Función</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">CONVERSIÓN DE TIPOS</td></tr>
+        <tr><td class="td-method">int(x)</td><td class="td-desc">Convierte a entero</td><td class="td-ex">int("42")</td><td class="td-res">42</td></tr>
+        <tr><td class="td-method">float(x)</td><td class="td-desc">Convierte a decimal</td><td class="td-ex">float("3.14")</td><td class="td-res">3.14</td></tr>
+        <tr><td class="td-method">str(x)</td><td class="td-desc">Convierte a string</td><td class="td-ex">str(42)</td><td class="td-res">"42"</td></tr>
+        <tr><td class="td-method">bool(x)</td><td class="td-desc">Convierte a booleano</td><td class="td-ex">bool(0)</td><td class="td-res">False</td></tr>
+        <tr><td class="td-method">list(x)</td><td class="td-desc">Convierte iterable a lista</td><td class="td-ex">list("abc")</td><td class="td-res">['a','b','c']</td></tr>
+        <tr><td class="td-method">tuple(x)</td><td class="td-desc">Convierte iterable a tupla</td><td class="td-ex">tuple([1,2,3])</td><td class="td-res">(1, 2, 3)</td></tr>
+        <tr><td class="td-method">dict(x)</td><td class="td-desc">Crea un diccionario</td><td class="td-ex">dict(a=1, b=2)</td><td class="td-res">{'a':1,'b':2}</td></tr>
+        <tr><td class="td-method">set(x)</td><td class="td-desc">Convierte iterable a set</td><td class="td-ex">set([1,2,2,3])</td><td class="td-res">{1, 2, 3}</td></tr>
+
+        <tr class="cat-row"><td colspan="4">INFORMACIÓN</td></tr>
+        <tr><td class="td-method">len(x)</td><td class="td-desc">Longitud / número de elementos</td><td class="td-ex">len("hola")</td><td class="td-res">4</td></tr>
+        <tr><td class="td-method">type(x)</td><td class="td-desc">Tipo del objeto</td><td class="td-ex">type(42)</td><td class="td-res">&lt;class 'int'&gt;</td></tr>
+        <tr><td class="td-method">isinstance(x, tipo)</td><td class="td-desc">True si x es del tipo indicado</td><td class="td-ex">isinstance(42, int)</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">id(x)</td><td class="td-desc">Identificador único en memoria</td><td class="td-ex">id(42)</td><td class="td-res">número grande</td></tr>
+
+        <tr class="cat-row"><td colspan="4">MATEMÁTICAS</td></tr>
+        <tr><td class="td-method">abs(x)</td><td class="td-desc">Valor absoluto</td><td class="td-ex">abs(-7)</td><td class="td-res">7</td></tr>
+        <tr><td class="td-method">round(x, n)</td><td class="td-desc">Redondea a n decimales</td><td class="td-ex">round(3.1416, 2)</td><td class="td-res">3.14</td></tr>
+        <tr><td class="td-method">pow(x, y)</td><td class="td-desc">x elevado a y (igual que x**y)</td><td class="td-ex">pow(2, 10)</td><td class="td-res">1024</td></tr>
+        <tr><td class="td-method">divmod(a, b)</td><td class="td-desc">Retorna (cociente, resto) en una tupla</td><td class="td-ex">divmod(17, 5)</td><td class="td-res">(3, 2)</td></tr>
+        <tr><td class="td-method">max(iter)</td><td class="td-desc">Elemento máximo</td><td class="td-ex">max([3,1,4,5])</td><td class="td-res">5</td></tr>
+        <tr><td class="td-method">min(iter)</td><td class="td-desc">Elemento mínimo</td><td class="td-ex">min([3,1,4,5])</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">sum(iter)</td><td class="td-desc">Suma todos los elementos</td><td class="td-ex">sum([1,2,3,4])</td><td class="td-res">10</td></tr>
+
+        <tr class="cat-row"><td colspan="4">INPUT / OUTPUT</td></tr>
+        <tr><td class="td-method">input(prompt)</td><td class="td-desc">Pide dato al usuario, siempre retorna string</td><td class="td-ex">input("Nombre: ")</td><td class="td-res">str</td></tr>
+        <tr><td class="td-method">print(*args)</td><td class="td-desc">Imprime en consola</td><td class="td-ex">print("hola", end="")</td><td class="td-res">sin salto de línea</td></tr>
+        <tr><td class="td-method">print(sep=",")</td><td class="td-desc">Cambia el separador entre argumentos</td><td class="td-ex">print(1,2,3,sep="-")</td><td class="td-res">1-2-3</td></tr>
+
+        <tr class="cat-row"><td colspan="4">OTROS ÚTILES</td></tr>
+        <tr><td class="td-method">range(n)</td><td class="td-desc">Secuencia de números de 0 a n-1</td><td class="td-ex">list(range(5))</td><td class="td-res">[0,1,2,3,4]</td></tr>
+        <tr><td class="td-method">range(a,b)</td><td class="td-desc">Secuencia de a hasta b-1</td><td class="td-ex">list(range(2,6))</td><td class="td-res">[2,3,4,5]</td></tr>
+        <tr><td class="td-method">range(a,b,step)</td><td class="td-desc">Secuencia con paso</td><td class="td-ex">list(range(0,10,2))</td><td class="td-res">[0,2,4,6,8]</td></tr>
+        <tr><td class="td-method">sorted(iter)</td><td class="td-desc">Retorna nueva lista ordenada</td><td class="td-ex">sorted([3,1,2])</td><td class="td-res">[1,2,3]</td></tr>
+        <tr><td class="td-method">reversed(iter)</td><td class="td-desc">Iterador al revés (usar con list())</td><td class="td-ex">list(reversed([1,2,3]))</td><td class="td-res">[3,2,1]</td></tr>
+        <tr><td class="td-method">any(iter)</td><td class="td-desc">True si AL MENOS UN elemento es True</td><td class="td-ex">any([0, 0, 1])</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">all(iter)</td><td class="td-desc">True si TODOS los elementos son True</td><td class="td-ex">all([1, 1, 0])</td><td class="td-res">False</td></tr>
+        <tr><td class="td-method">open(file, mode)</td><td class="td-desc">Abre un archivo para lectura/escritura</td><td class="td-ex">open("f.txt","r")</td><td class="td-res">objeto archivo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       06 · NÚMEROS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-num">
+    <div class="section-header">
+      <span class="sec-badge sb-num">06 · int / float</span>
+      <h2>Operadores y métodos numéricos</h2>
+    </div>
+
+    <table class="mtable tm-num">
+      <thead>
+        <tr><th>Operador / Método</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">OPERADORES ARITMÉTICOS</td></tr>
+        <tr><td class="td-method">+  -  *  /</td><td class="td-desc">Suma, resta, multiplicación, división (siempre float)</td><td class="td-ex">10 / 3</td><td class="td-res">3.3333…</td></tr>
+        <tr><td class="td-method">//</td><td class="td-desc">División entera (descarta decimales)</td><td class="td-ex">10 // 3</td><td class="td-res">3</td></tr>
+        <tr><td class="td-method">%</td><td class="td-desc">Módulo — resto de la división</td><td class="td-ex">10 % 3</td><td class="td-res">1</td></tr>
+        <tr><td class="td-method">**</td><td class="td-desc">Potencia</td><td class="td-ex">2 ** 8</td><td class="td-res">256</td></tr>
+
+        <tr class="cat-row"><td colspan="4">MÉTODOS DE INT</td></tr>
+        <tr><td class="td-method">.bit_length()</td><td class="td-desc">Número de bits necesarios para representar el número</td><td class="td-ex">(42).bit_length()</td><td class="td-res">6</td></tr>
+        <tr><td class="td-method">.to_bytes(n, order)</td><td class="td-desc">Convierte a bytes</td><td class="td-ex">(255).to_bytes(1,'big')</td><td class="td-res">b'\xff'</td></tr>
+
+        <tr class="cat-row"><td colspan="4">MÉTODOS DE FLOAT</td></tr>
+        <tr><td class="td-method">.is_integer()</td><td class="td-desc">True si el float no tiene parte decimal</td><td class="td-ex">(3.0).is_integer()</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">.as_integer_ratio()</td><td class="td-desc">Retorna (numerador, denominador)</td><td class="td-ex">(0.5).as_integer_ratio()</td><td class="td-res">(1, 2)</td></tr>
+
+        <tr class="cat-row"><td colspan="4">MÓDULO MATH (requiere import math)</td></tr>
+        <tr><td class="td-method">math.sqrt(x)</td><td class="td-desc">Raíz cuadrada</td><td class="td-ex">math.sqrt(16)</td><td class="td-res">4.0</td></tr>
+        <tr><td class="td-method">math.ceil(x)</td><td class="td-desc">Redondea hacia arriba</td><td class="td-ex">math.ceil(3.2)</td><td class="td-res">4</td></tr>
+        <tr><td class="td-method">math.floor(x)</td><td class="td-desc">Redondea hacia abajo</td><td class="td-ex">math.floor(3.9)</td><td class="td-res">3</td></tr>
+        <tr><td class="td-method">math.pi</td><td class="td-desc">El número π</td><td class="td-ex">math.pi</td><td class="td-res">3.14159…</td></tr>
+        <tr><td class="td-method">math.factorial(n)</td><td class="td-desc">Factorial de n</td><td class="td-ex">math.factorial(5)</td><td class="td-res">120</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       07 · SETS
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-set">
+    <div class="section-header">
+      <span class="sec-badge sb-set">07 · set</span>
+      <h2>Sets y sus métodos</h2>
+    </div>
+    <p>Un <strong>set</strong> es una colección <strong>sin duplicados y sin orden</strong>. Es muy útil para eliminar repetidos de una lista o verificar pertenencia rápidamente.</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lbl">sets_intro.py</span></div>
+      <pre><span class="cm"># Eliminar duplicados de una lista</span>
+<span class="var">lista</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="var">sin_duplicados</span> = <span class="bi">list</span>(<span class="bi">set</span>(<span class="var">lista</span>))
+<span class="bi">print</span>(<span class="var">sin_duplicados</span>)   <span class="cm"># [1, 2, 3, 4]</span>
+
+<span class="cm"># Crear un set</span>
+<span class="var">frutas</span> = {<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>}
+<span class="bi">print</span>(<span class="str">"manzana"</span> <span class="kw">in</span> <span class="var">frutas</span>)   <span class="cm"># True (muy rápido)</span></pre>
+    </div>
+
+    <table class="mtable tm-set">
+      <thead>
+        <tr><th>Método</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-method">.add(x)</td><td class="td-desc">Agrega x (sin duplicados)</td><td class="td-ex">s.add(4)</td><td class="td-res">{1,2,3,4}</td></tr>
+        <tr><td class="td-method">.remove(x)</td><td class="td-desc">Elimina x. KeyError si no existe</td><td class="td-ex">s.remove(2)</td><td class="td-res">{1,3}</td></tr>
+        <tr><td class="td-method">.discard(x)</td><td class="td-desc">Elimina x sin error si no existe</td><td class="td-ex">s.discard(99)</td><td class="td-res">sin error</td></tr>
+        <tr><td class="td-method">.union(otro)</td><td class="td-desc">Elementos de ambos sets (sin duplicados)</td><td class="td-ex">{1,2}.union({2,3})</td><td class="td-res">{1,2,3}</td></tr>
+        <tr><td class="td-method">.intersection(otro)</td><td class="td-desc">Solo elementos en AMBOS sets</td><td class="td-ex">{1,2,3}.intersection({2,3,4})</td><td class="td-res">{2,3}</td></tr>
+        <tr><td class="td-method">.difference(otro)</td><td class="td-desc">Elementos en el primero pero NO en el segundo</td><td class="td-ex">{1,2,3}.difference({2,3})</td><td class="td-res">{1}</td></tr>
+        <tr><td class="td-method">.issubset(otro)</td><td class="td-desc">True si todos los elementos están en otro</td><td class="td-ex">{1,2}.issubset({1,2,3})</td><td class="td-res">True</td></tr>
+        <tr><td class="td-method">len(s)</td><td class="td-desc">Número de elementos</td><td class="td-ex">len({1,2,3})</td><td class="td-res">3</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- ══════════════════════════════════════
+       08 · ITERADORES ESPECIALES
+  ══════════════════════════════════════ -->
+  <div class="section" id="s-iter">
+    <div class="section-header">
+      <span class="sec-badge sb-blt">08 · iteradores</span>
+      <h2>Iteradores especiales</h2>
+    </div>
+    <p>Funciones built-in que hacen los bucles más poderosos y expresivos. Estos son los que aparecen frecuentemente en ejercicios como el que mencionaste.</p>
+
+    <table class="mtable tm-blt">
+      <thead>
+        <tr><th>Función</th><th>Descripción</th><th>Ejemplo</th><th>Resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="4">LOS MÁS IMPORTANTES</td></tr>
+        <tr>
+          <td class="td-method">enumerate(iter, start)</td>
+          <td class="td-desc">Recorre un iterable dando (índice, valor). start define desde qué número empieza el índice (por defecto 0)</td>
+          <td class="td-ex">for i, v in enumerate(["a","b"], 1)</td>
+          <td class="td-res">i=1,v="a" / i=2,v="b"</td>
+        </tr>
+        <tr>
+          <td class="td-method">zip(a, b)</td>
+          <td class="td-desc">Empareja elementos de dos iterables en tuplas. Se detiene en el más corto</td>
+          <td class="td-ex">list(zip([1,2],["a","b"]))</td>
+          <td class="td-res">[(1,'a'),(2,'b')]</td>
+        </tr>
+        <tr>
+          <td class="td-method">map(fn, iter)</td>
+          <td class="td-desc">Aplica una función a cada elemento. Retorna iterador</td>
+          <td class="td-ex">list(map(int, ["1","2","3"]))</td>
+          <td class="td-res">[1, 2, 3]</td>
+        </tr>
+        <tr>
+          <td class="td-method">filter(fn, iter)</td>
+          <td class="td-desc">Filtra elementos donde fn retorna True</td>
+          <td class="td-ex">list(filter(lambda x: x>2, [1,2,3,4]))</td>
+          <td class="td-res">[3, 4]</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="color:var(--blt); font-family:'Fira Code',monospace; font-size:0.88rem; margin: 24px 0 12px;">enumerate() — el más común en ejercicios</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lbl">enumerate_ejemplo.py</span></div>
+      <pre><span class="var">frutas</span> = [<span class="str">"manzana"</span>, <span class="str">"pera"</span>, <span class="str">"uva"</span>]
+
+<span class="cm"># Sin enumerate — necesitas manejar el índice manualmente</span>
+<span class="var">i</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">fruta</span> <span class="kw">in</span> <span class="var">frutas</span>:
+    <span class="bi">print</span>(<span class="var">i</span>, <span class="var">fruta</span>)
+    <span class="var">i</span> += <span class="num">1</span>
+
+<span class="cm"># Con enumerate — más limpio</span>
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">fruta</span> <span class="kw">in</span> <span class="bi">enumerate</span>(<span class="var">frutas</span>):
+    <span class="bi">print</span>(<span class="var">i</span>, <span class="var">fruta</span>)
+
+<span class="cm"># Con start=1 para empezar desde 1 en lugar de 0</span>
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">fruta</span> <span class="kw">in</span> <span class="bi">enumerate</span>(<span class="var">frutas</span>, <span class="num">1</span>):
+    <span class="bi">print</span>(<span class="str">f"</span><span class="var">{i}</span><span class="str">. </span><span class="var">{fruta}</span><span class="str">"</span>)</pre>
+      <div class="output">
+        <div class="out-lbl">Output (último bloque)</div>
+        <pre>1. manzana
+2. pera
+3. uva</pre>
+      </div>
+    </div>
+
+    <h3 style="color:var(--blt); font-family:'Fira Code',monospace; font-size:0.88rem; margin: 24px 0 12px;">zip() — combinar dos listas</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lbl">zip_ejemplo.py</span></div>
+      <pre><span class="var">nombres</span> = [<span class="str">"Ana"</span>, <span class="str">"Luis"</span>, <span class="str">"Carlos"</span>]
+<span class="var">notas</span>   = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>]
+
+<span class="kw">for</span> <span class="var">nombre</span>, <span class="var">nota</span> <span class="kw">in</span> <span class="bi">zip</span>(<span class="var">nombres</span>, <span class="var">notas</span>):
+    <span class="bi">print</span>(<span class="str">f"</span><span class="var">{nombre}</span><span class="str">: </span><span class="var">{nota}</span><span class="str">"</span>)</pre>
+      <div class="output">
+        <div class="out-lbl">Output</div>
+        <pre>Ana: 85
+Luis: 92
+Carlos: 78</pre>
+      </div>
+    </div>
+
+    <div class="callout c-blue">
+      <span class="callout-icon">💡</span>
+      <p><strong>enumerate vs zip:</strong> usa <code>enumerate</code> cuando necesitas el índice de un solo iterable. Usa <code>zip</code> cuando quieres recorrer dos listas en paralelo al mismo tiempo.</p>
+    </div>
+  </div>
+
+  <div class="footer">metodos_referencia.py · Python · CS50P Harvard</div>
+
+</div>
+</body>
+</html>

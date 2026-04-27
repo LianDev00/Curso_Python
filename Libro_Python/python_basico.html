@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Básico — Guía de Referencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d0f14;
+    --bg2:       #12151c;
+    --bg3:       #181c26;
+    --surface:   #1c2030;
+    --surface2:  #222638;
+    --border:    #2a2f42;
+    --accent:    #7ee8a2;
+    --accent2:   #5bc4f5;
+    --accent3:   #f7c948;
+    --accent4:   #f87171;
+    --purple:    #c084fc;
+    --text:      #e2e8f0;
+    --muted:     #64748b;
+    --dim:       #94a3b8;
+
+    --c-kw:      #c084fc;
+    --c-fn:      #7ee8a2;
+    --c-str:     #f7c948;
+    --c-num:     #5bc4f5;
+    --c-cmt:     #4a5568;
+    --c-op:      #f87171;
+    --c-var:     #e2e8f0;
+    --c-builtin: #fb923c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,20,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 32px;
+    height: 52px;
+  }
+
+  .nav-logo {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-right: 16px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+    overflow-x: auto;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: color .2s, background .2s;
+  }
+
+  .nav-links a:hover { color: var(--text); background: var(--surface); }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 0 56px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--dim);
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .hero-snake {
+    font-size: 80px;
+    line-height: 1;
+    opacity: 0.15;
+    user-select: none;
+  }
+
+  /* ── PROGRESS PILLS ── */
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+
+  .pill-done  { border-color: var(--accent);  color: var(--accent);  background: rgba(126,232,162,0.07); }
+  .pill-todo  { border-color: var(--border);  color: var(--muted);   background: transparent; }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 72px;
+    animation: fadeUp .5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(2) { animation-delay: .05s; }
+  .section:nth-child(3) { animation-delay: .10s; }
+  .section:nth-child(4) { animation-delay: .15s; }
+  .section:nth-child(5) { animation-delay: .20s; }
+  .section:nth-child(6) { animation-delay: .25s; }
+  .section:nth-child(7) { animation-delay: .30s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .section-accent { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 2px; }
+
+  .desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--dim);
+    margin-bottom: 20px;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: #0a0c10;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .code-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #f87171; }
+  .dot-y { background: #f7c948; }
+  .dot-g { background: #7ee8a2; }
+
+  .code-lang {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  pre {
+    padding: 20px 24px;
+    overflow-x: auto;
+    line-height: 1.75;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .kw  { color: var(--c-kw); }
+  .fn  { color: var(--c-fn); }
+  .str { color: var(--c-str); }
+  .num { color: var(--c-num); }
+  .cmt { color: var(--c-cmt); font-style: italic; }
+  .op  { color: var(--c-op); }
+  .bi  { color: var(--c-builtin); }
+  .var { color: var(--c-var); }
+
+  /* ── INFO BOX ── */
+  .info {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border-left: 3px solid;
+    margin: 20px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-content { color: var(--dim); }
+  .info-title { font-weight: 700; margin-bottom: 2px; }
+
+  .info-blue  { border-color: var(--accent2); background: rgba(91,196,245,0.06); }
+  .info-green { border-color: var(--accent);  background: rgba(126,232,162,0.06); }
+  .info-yellow{ border-color: var(--accent3); background: rgba(247,201,72,0.06); }
+  .info-red   { border-color: var(--accent4); background: rgba(248,113,113,0.06); }
+
+  .info-blue  .info-title { color: var(--accent2); }
+  .info-green .info-title { color: var(--accent); }
+  .info-yellow .info-title { color: var(--accent3); }
+  .info-red   .info-title { color: var(--accent4); }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+
+  .mini-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .mini-card h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .mini-card ul { list-style: none; }
+  .mini-card li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--dim);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mini-card li:last-child { border: none; }
+  .mini-card li::before { content: '→'; color: var(--accent); font-size: 11px; }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+
+  tr:last-child td { border: none; }
+  tr:hover td { background: var(--surface); color: var(--text); }
+
+  /* ── CHECKLIST ── */
+  .checklist {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 64px;
+  }
+
+  .checklist-header {
+    padding: 20px 24px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .checklist-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .checklist-header span {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+    user-select: none;
+  }
+
+  .check-item:last-child { border: none; }
+  .check-item:hover { background: var(--bg2); }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color .2s, background .2s;
+    font-size: 11px;
+  }
+
+  .check-item.done .check-box {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #0d0f14;
+  }
+
+  .check-item.done .check-label { color: var(--muted); text-decoration: line-through; }
+
+  .check-label {
+    font-size: 14px;
+    color: var(--dim);
+    transition: color .2s;
+  }
+
+  .check-tag {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-snake { display: none; }
+    nav { padding: 0 16px; }
+    .wrapper { padding: 0 16px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🐍 PY·BÁSICO</div>
+  <div class="nav-links">
+    <a href="#sets">Sets</a>
+    <a href="#errores">Errores</a>
+    <a href="#archivos">Archivos</a>
+    <a href="#modulos">Módulos</a>
+    <a href="#comprehensions">Comprehensions</a>
+    <a href="#funciones">Funciones</a>
+    <a href="#poo">POO</a>
+    <a href="#checklist">Checklist</a>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-label">Guía de Referencia · Nivel Básico Completo</div>
+      <h1>Python<br><span>Básico</span></h1>
+      <p class="hero-sub">Temas pendientes antes de pasar a intermedio. Domina estos 7 bloques y puedes llamarte Junior con confianza.</p>
+      <div class="pills">
+        <span class="pill pill-done">✓ Cadenas</span>
+        <span class="pill pill-done">✓ Listas / Dicts / Tuplas</span>
+        <span class="pill pill-done">✓ Condicionales</span>
+        <span class="pill pill-done">✓ for / while</span>
+        <span class="pill pill-done">✓ Funciones básicas</span>
+        <span class="pill pill-todo">· Sets</span>
+        <span class="pill pill-todo">· Errores</span>
+        <span class="pill pill-todo">· Archivos</span>
+        <span class="pill pill-todo">· Módulos</span>
+        <span class="pill pill-todo">· Comprehensions</span>
+        <span class="pill pill-todo">· Funciones avanzadas</span>
+        <span class="pill pill-todo">· POO</span>
+      </div>
+    </div>
+    <div class="hero-snake">🐍</div>
+  </div>
+
+  <!-- ── 01. SETS ── -->
+  <div class="section" id="sets">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Sets <span style="color:var(--muted);font-weight:400;font-size:15px">— Conjuntos</span></h2>
+    </div>
+    <p class="desc">Colecciones <strong style="color:var(--text)">sin orden y sin duplicados</strong>. Perfectas para eliminar repetidos o hacer operaciones matemáticas de conjuntos. La cuarta estructura de datos que te faltaba.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="cmt"># Crear un set — los duplicados desaparecen solos</span>
+<span class="var">frutas</span> <span class="op">=</span> {<span class="str">'manzana'</span>, <span class="str">'pera'</span>, <span class="str">'uva'</span>, <span class="str">'pera'</span>}
+<span class="bi">print</span>(<span class="var">frutas</span>)  <span class="cmt"># {'manzana', 'pera', 'uva'} — sin el duplicado</span>
+
+<span class="cmt"># Agregar y eliminar</span>
+<span class="var">frutas</span>.<span class="fn">add</span>(<span class="str">'kiwi'</span>)
+<span class="var">frutas</span>.<span class="fn">discard</span>(<span class="str">'pera'</span>)   <span class="cmt"># no lanza error si no existe</span>
+
+<span class="cmt"># Operaciones de conjuntos</span>
+<span class="var">a</span> <span class="op">=</span> {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>}
+<span class="var">b</span> <span class="op">=</span> {<span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>}
+
+<span class="bi">print</span>(<span class="var">a</span> <span class="op">&amp;</span> <span class="var">b</span>)    <span class="cmt"># Intersección → {3, 4}</span>
+<span class="bi">print</span>(<span class="var">a</span> <span class="op">|</span> <span class="var">b</span>)    <span class="cmt"># Unión       → {1, 2, 3, 4, 5, 6}</span>
+<span class="bi">print</span>(<span class="var">a</span> <span class="op">-</span> <span class="var">b</span>)    <span class="cmt"># Diferencia  → {1, 2}</span>
+<span class="bi">print</span>(<span class="var">a</span> <span class="op">^</span> <span class="var">b</span>)    <span class="cmt"># Simétrica   → {1, 2, 5, 6}</span>
+
+<span class="cmt"># Caso práctico: usuarios únicos que visitaron hoy</span>
+<span class="var">visitas</span> <span class="op">=</span> [<span class="str">'user1'</span>, <span class="str">'user2'</span>, <span class="str">'user1'</span>, <span class="str">'user3'</span>, <span class="str">'user2'</span>]
+<span class="var">unicos</span> <span class="op">=</span> <span class="bi">set</span>(<span class="var">visitas</span>)
+<span class="bi">print</span>(<span class="bi">len</span>(<span class="var">unicos</span>))  <span class="cmt"># 3</span></code></pre>
+    </div>
+
+    <div class="info info-blue">
+      <span class="info-icon">💡</span>
+      <div class="info-content">
+        <div class="info-title">¿Cuándo usarlo?</div>
+        Cuando necesitas elementos únicos o comparar grupos. Ejemplo real: encontrar usuarios que compraron en enero pero no en febrero. <code style="color:var(--accent2)">enero - febrero</code> te da exactamente eso.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02. ERRORES ── -->
+  <div class="section" id="errores">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Manejo de Errores <span style="color:var(--muted);font-weight:400;font-size:15px">— try / except</span></h2>
+    </div>
+    <p class="desc">En proyectos reales, los errores son inevitables. Python usa <strong style="color:var(--text)">try/except</strong> para capturarlos sin que el programa explote. Sin esto no puedes hacer nada productivo.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="kw">try</span>:
+    <span class="var">numero</span> <span class="op">=</span> <span class="bi">int</span>(<span class="bi">input</span>(<span class="str">'Ingresa un número: '</span>))
+    <span class="var">resultado</span> <span class="op">=</span> <span class="num">10</span> <span class="op">/</span> <span class="var">numero</span>
+    <span class="bi">print</span>(<span class="str">f'Resultado: <span class="var">{resultado}</span>'</span>)
+
+<span class="kw">except</span> <span class="bi">ValueError</span>:
+    <span class="bi">print</span>(<span class="str">'Error: eso no es un número válido'</span>)
+
+<span class="kw">except</span> <span class="bi">ZeroDivisionError</span>:
+    <span class="bi">print</span>(<span class="str">'Error: no se puede dividir entre cero'</span>)
+
+<span class="kw">except</span> <span class="bi">Exception</span> <span class="kw">as</span> <span class="var">e</span>:
+    <span class="bi">print</span>(<span class="str">f'Error inesperado: <span class="var">{e}</span>'</span>)  <span class="cmt"># captura cualquier otro</span>
+
+<span class="kw">else</span>:
+    <span class="bi">print</span>(<span class="str">'Todo salió bien ✓'</span>)  <span class="cmt"># solo si NO hubo error</span>
+
+<span class="kw">finally</span>:
+    <span class="bi">print</span>(<span class="str">'Esto siempre se ejecuta'</span>)  <span class="cmt"># con o sin error</span>
+
+<span class="cmt"># Lanzar tu propio error</span>
+<span class="kw">def</span> <span class="fn">dividir</span>(<span class="var">a</span>, <span class="var">b</span>):
+    <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="bi">ValueError</span>(<span class="str">'El divisor no puede ser cero'</span>)
+    <span class="kw">return</span> <span class="var">a</span> <span class="op">/</span> <span class="var">b</span></code></pre>
+    </div>
+
+    <div class="two-col">
+      <div class="mini-card">
+        <h4>Errores comunes</h4>
+        <ul>
+          <li><code><span class="fn">ValueError</span></code> — tipo inválido</li>
+          <li><code><span class="fn">TypeError</span></code> — operación inválida</li>
+          <li><code><span class="fn">KeyError</span></code> — clave no existe</li>
+          <li><code><span class="fn">IndexError</span></code> — índice fuera de rango</li>
+          <li><code><span class="fn">FileNotFoundError</span></code> — archivo no existe</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4>Estructura</h4>
+        <ul>
+          <li><code><span class="kw">try</span></code> — código que puede fallar</li>
+          <li><code><span class="kw">except</span></code> — qué hacer si falla</li>
+          <li><code><span class="kw">else</span></code> — si no hubo error</li>
+          <li><code><span class="kw">finally</span></code> — siempre se ejecuta</li>
+          <li><code><span class="kw">raise</span></code> — lanzar tu propio error</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 03. ARCHIVOS ── -->
+  <div class="section" id="archivos">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Archivos <span style="color:var(--muted);font-weight:400;font-size:15px">— Leer y escribir</span></h2>
+    </div>
+    <p class="desc">Leer y escribir archivos es fundamental para trabajar con datos reales: logs, CSVs, configuraciones. Usa siempre <strong style="color:var(--text)">with open()</strong> — cierra el archivo automáticamente aunque haya errores.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="cmt"># Escribir — 'w' crea o sobreescribe</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'notas.txt'</span>, <span class="str">'w'</span>, encoding<span class="op">=</span><span class="str">'utf-8'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">f</span>.<span class="fn">write</span>(<span class="str">'Primera línea\n'</span>)
+    <span class="var">f</span>.<span class="fn">write</span>(<span class="str">'Segunda línea\n'</span>)
+
+<span class="cmt"># Leer todo</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'notas.txt'</span>, <span class="str">'r'</span>, encoding<span class="op">=</span><span class="str">'utf-8'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">contenido</span> <span class="op">=</span> <span class="var">f</span>.<span class="fn">read</span>()
+
+<span class="cmt"># Leer línea por línea — más eficiente para archivos grandes</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'notas.txt'</span>, <span class="str">'r'</span>, encoding<span class="op">=</span><span class="str">'utf-8'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="kw">for</span> <span class="var">linea</span> <span class="kw">in</span> <span class="var">f</span>:
+        <span class="bi">print</span>(<span class="var">linea</span>.<span class="fn">strip</span>())  <span class="cmt"># .strip() quita el \n</span>
+
+<span class="cmt"># Agregar al final — 'a' no borra el contenido</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'notas.txt'</span>, <span class="str">'a'</span>, encoding<span class="op">=</span><span class="str">'utf-8'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">f</span>.<span class="fn">write</span>(<span class="str">'Nueva línea agregada\n'</span>)
+
+<span class="cmt"># JSON — el formato más usado en APIs y configs</span>
+<span class="kw">import</span> <span class="var">json</span>
+
+<span class="var">config</span> <span class="op">=</span> {<span class="str">'nombre'</span>: <span class="str">'Lian'</span>, <span class="str">'nivel'</span>: <span class="str">'junior'</span>, <span class="str">'skills'</span>: [<span class="str">'python'</span>, <span class="str">'sql'</span>]}
+
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'config.json'</span>, <span class="str">'w'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">json</span>.<span class="fn">dump</span>(<span class="var">config</span>, <span class="var">f</span>, indent<span class="op">=</span><span class="num">2</span>)
+
+<span class="kw">with</span> <span class="bi">open</span>(<span class="str">'config.json'</span>, <span class="str">'r'</span>) <span class="kw">as</span> <span class="var">f</span>:
+    <span class="var">datos</span> <span class="op">=</span> <span class="var">json</span>.<span class="fn">load</span>(<span class="var">f</span>)
+
+<span class="bi">print</span>(<span class="var">datos</span>[<span class="str">'nombre'</span>])  <span class="cmt"># 'Lian'</span></code></pre>
+    </div>
+
+    <table>
+      <thead><tr><th>Modo</th><th>Acción</th><th>¿Crea archivo?</th><th>¿Borra contenido?</th></tr></thead>
+      <tbody>
+        <tr><td><code class="str">'r'</code></td><td>Solo leer</td><td>No</td><td>No</td></tr>
+        <tr><td><code class="str">'w'</code></td><td>Escribir</td><td>Sí</td><td>Sí ⚠️</td></tr>
+        <tr><td><code class="str">'a'</code></td><td>Agregar al final</td><td>Sí</td><td>No</td></tr>
+        <tr><td><code class="str">'r+'</code></td><td>Leer y escribir</td><td>No</td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 04. MÓDULOS ── -->
+  <div class="section" id="modulos">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Módulos <span style="color:var(--muted);font-weight:400;font-size:15px">— Librería estándar</span></h2>
+    </div>
+    <p class="desc">Python trae una librería estándar enorme. Con <strong style="color:var(--text)">import</strong> accedes a herramientas sin instalar nada extra. Conocer los módulos clave te ahorra reinventar la rueda.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="kw">import</span> <span class="var">os</span>
+<span class="kw">import</span> <span class="var">math</span>
+<span class="kw">import</span> <span class="var">datetime</span>
+<span class="kw">import</span> <span class="var">random</span>
+<span class="kw">from</span> <span class="var">pathlib</span> <span class="kw">import</span> <span class="bi">Path</span>   <span class="cmt"># moderno — mejor que os.path</span>
+
+<span class="cmt"># os — interactuar con el sistema</span>
+<span class="bi">print</span>(<span class="var">os</span>.<span class="fn">getcwd</span>())          <span class="cmt"># carpeta actual</span>
+<span class="var">os</span>.<span class="fn">makedirs</span>(<span class="str">'nueva_carpeta'</span>, exist_ok<span class="op">=</span><span class="kw">True</span>)
+
+<span class="cmt"># math — operaciones matemáticas</span>
+<span class="bi">print</span>(<span class="var">math</span>.<span class="fn">sqrt</span>(<span class="num">144</span>))        <span class="cmt"># 12.0</span>
+<span class="bi">print</span>(<span class="var">math</span>.<span class="fn">ceil</span>(<span class="num">3.2</span>))         <span class="cmt"># 4 — redondea arriba</span>
+<span class="bi">print</span>(<span class="var">math</span>.<span class="fn">floor</span>(<span class="num">3.9</span>))        <span class="cmt"># 3 — redondea abajo</span>
+
+<span class="cmt"># datetime — fechas y horas</span>
+<span class="var">hoy</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">date</span>.<span class="fn">today</span>()
+<span class="var">ahora</span> <span class="op">=</span> <span class="var">datetime</span>.<span class="fn">datetime</span>.<span class="fn">now</span>()
+<span class="bi">print</span>(<span class="var">hoy</span>.<span class="fn">strftime</span>(<span class="str">'%d/%m/%Y'</span>))  <span class="cmt"># 15/01/2025</span>
+
+<span class="cmt"># random — números y elecciones aleatorias</span>
+<span class="bi">print</span>(<span class="var">random</span>.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">100</span>))          <span class="cmt"># entero entre 1 y 100</span>
+<span class="bi">print</span>(<span class="var">random</span>.<span class="fn">choice</span>([<span class="str">'a'</span>, <span class="str">'b'</span>, <span class="str">'c'</span>]))  <span class="cmt"># elemento aleatorio</span>
+<span class="var">random</span>.<span class="fn">shuffle</span>(<span class="var">mi_lista</span>)               <span class="cmt"># mezcla en-place</span>
+
+<span class="cmt"># Crear tu propio módulo — simplemente un archivo .py</span>
+<span class="cmt"># utils.py → def formatear_nombre(n): return n.strip().title()</span>
+<span class="kw">from</span> <span class="var">utils</span> <span class="kw">import</span> <span class="fn">formatear_nombre</span></code></pre>
+    </div>
+
+    <div class="info info-yellow">
+      <span class="info-icon">⚡</span>
+      <div class="info-content">
+        <div class="info-title">Módulos clave para tu ruta</div>
+        <code style="color:var(--accent3)">os</code> y <code style="color:var(--accent3)">pathlib</code> para archivos, <code style="color:var(--accent3)">json</code> para datos, <code style="color:var(--accent3)">datetime</code> para timestamps, <code style="color:var(--accent3)">collections</code> para estructuras avanzadas (Counter, defaultdict), <code style="color:var(--accent3)">itertools</code> para combinaciones — todos sin instalar nada.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 05. COMPREHENSIONS ── -->
+  <div class="section" id="comprehensions">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Comprehensions <span style="color:var(--muted);font-weight:400;font-size:15px">— Pythónico</span></h2>
+    </div>
+    <p class="desc">Forma concisa de crear listas, dicts o sets a partir de iterables. Se usa <strong style="color:var(--text)">constantemente</strong> en código profesional y es lo primero que un reviewer nota si lo dominas o no.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="var">numeros</span> <span class="op">=</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>]
+
+<span class="cmt"># List comprehension básica</span>
+<span class="var">cuadrados</span> <span class="op">=</span> [<span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">numeros</span>]
+<span class="cmt"># [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]</span>
+
+<span class="cmt"># Con filtro — el if va AL FINAL</span>
+<span class="var">pares</span> <span class="op">=</span> [<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">numeros</span> <span class="kw">if</span> <span class="var">x</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>]
+<span class="cmt"># [2, 4, 6, 8, 10]</span>
+
+<span class="cmt"># Transformar y filtrar al mismo tiempo</span>
+<span class="var">pares_cuadrados</span> <span class="op">=</span> [<span class="var">x</span><span class="op">**</span><span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">numeros</span> <span class="kw">if</span> <span class="var">x</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>]
+<span class="cmt"># [4, 16, 36, 64, 100]</span>
+
+<span class="cmt"># Dict comprehension</span>
+<span class="var">nombres</span> <span class="op">=</span> [<span class="str">'Ana'</span>, <span class="str">'Luis'</span>, <span class="str">'Eva'</span>]
+<span class="var">longitudes</span> <span class="op">=</span> {<span class="var">nombre</span>: <span class="bi">len</span>(<span class="var">nombre</span>) <span class="kw">for</span> <span class="var">nombre</span> <span class="kw">in</span> <span class="var">nombres</span>}
+<span class="cmt"># {'Ana': 3, 'Luis': 4, 'Eva': 3}</span>
+
+<span class="cmt"># Set comprehension</span>
+<span class="var">restos</span> <span class="op">=</span> {<span class="var">x</span> <span class="op">%</span> <span class="num">3</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">numeros</span>}  <span class="cmt"># {0, 1, 2}</span>
+
+<span class="cmt"># Caso real: limpiar emails de una lista</span>
+<span class="var">emails_raw</span> <span class="op">=</span> [<span class="str">'  ANA@mail.com '</span>, <span class="str">'luis@mail.com'</span>, <span class="str">'  EVA@MAIL.COM'</span>]
+<span class="var">emails</span> <span class="op">=</span> [<span class="var">e</span>.<span class="fn">strip</span>().<span class="fn">lower</span>() <span class="kw">for</span> <span class="var">e</span> <span class="kw">in</span> <span class="var">emails_raw</span>]
+<span class="cmt"># ['ana@mail.com', 'luis@mail.com', 'eva@mail.com']</span></code></pre>
+    </div>
+
+    <div class="info info-green">
+      <span class="info-icon">✅</span>
+      <div class="info-content">
+        <div class="info-title">Regla de oro</div>
+        Si el comprehension necesita lógica anidada compleja o más de 2 condiciones, usa un <code>for</code> normal. La claridad primero, el one-liner después.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 06. FUNCIONES ── -->
+  <div class="section" id="funciones">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Funciones Avanzadas <span style="color:var(--muted);font-weight:400;font-size:15px">— Lo que te faltaba</span></h2>
+    </div>
+    <p class="desc">Ya conoces las funciones básicas. Estas partes las completan: parámetros por defecto, número variable de argumentos, y funciones anónimas. Son esenciales para trabajar con librerías reales.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="cmt"># Parámetros con valor por defecto</span>
+<span class="kw">def</span> <span class="fn">saludar</span>(<span class="var">nombre</span>, <span class="var">saludo</span><span class="op">=</span><span class="str">'Hola'</span>, <span class="var">mayusculas</span><span class="op">=</span><span class="kw">False</span>):
+    <span class="var">msg</span> <span class="op">=</span> <span class="str">f'<span class="var">{saludo}</span>, <span class="var">{nombre}</span>!'</span>
+    <span class="kw">return</span> <span class="var">msg</span>.<span class="fn">upper</span>() <span class="kw">if</span> <span class="var">mayusculas</span> <span class="kw">else</span> <span class="var">msg</span>
+
+<span class="fn">saludar</span>(<span class="str">'Lian'</span>)                        <span class="cmt"># 'Hola, Lian!'</span>
+<span class="fn">saludar</span>(<span class="str">'Lian'</span>, <span class="str">'Hey'</span>)                <span class="cmt"># 'Hey, Lian!'</span>
+<span class="fn">saludar</span>(<span class="str">'Lian'</span>, mayusculas<span class="op">=</span><span class="kw">True</span>)     <span class="cmt"># 'HOLA, LIAN!'</span>
+
+<span class="cmt"># *args — acepta cualquier cantidad de argumentos</span>
+<span class="kw">def</span> <span class="fn">sumar</span>(<span class="op">*</span><span class="var">numeros</span>):
+    <span class="kw">return</span> <span class="bi">sum</span>(<span class="var">numeros</span>)   <span class="cmt"># numeros llega como tupla</span>
+
+<span class="fn">sumar</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)          <span class="cmt"># 6</span>
+<span class="fn">sumar</span>(<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>)   <span class="cmt"># 100</span>
+
+<span class="cmt"># **kwargs — argumentos con nombre, llegan como dict</span>
+<span class="kw">def</span> <span class="fn">crear_usuario</span>(<span class="op">**</span><span class="var">datos</span>):
+    <span class="kw">for</span> <span class="var">clave</span>, <span class="var">valor</span> <span class="kw">in</span> <span class="var">datos</span>.<span class="fn">items</span>():
+        <span class="bi">print</span>(<span class="str">f'  {clave}: {valor}'</span>)
+
+<span class="fn">crear_usuario</span>(nombre<span class="op">=</span><span class="str">'Lian'</span>, edad<span class="op">=</span><span class="num">26</span>, ciudad<span class="op">=</span><span class="str">'Lima'</span>)
+
+<span class="cmt"># Combinación completa</span>
+<span class="kw">def</span> <span class="fn">log</span>(<span class="var">nivel</span>, <span class="op">*</span><span class="var">mensajes</span>, <span class="var">separador</span><span class="op">=</span><span class="str">' | '</span>, <span class="op">**</span><span class="var">extra</span>):
+    <span class="bi">print</span>(<span class="str">f'[<span class="var">{nivel}</span>] <span class="var">{separador.join(mensajes)}</span>'</span>)
+
+<span class="cmt"># Lambda — función anónima en una línea</span>
+<span class="var">doble</span> <span class="op">=</span> <span class="kw">lambda</span> <span class="var">x</span>: <span class="var">x</span> <span class="op">*</span> <span class="num">2</span>
+<span class="var">usuarios</span>.<span class="fn">sort</span>(key<span class="op">=</span><span class="kw">lambda</span> <span class="var">u</span>: <span class="var">u</span>[<span class="str">'edad'</span>])  <span class="cmt"># ordenar por edad</span>
+
+<span class="cmt"># Retornar múltiples valores (devuelve tupla)</span>
+<span class="kw">def</span> <span class="fn">min_max</span>(<span class="var">lista</span>):
+    <span class="kw">return</span> <span class="bi">min</span>(<span class="var">lista</span>), <span class="bi">max</span>(<span class="var">lista</span>)
+
+<span class="var">minimo</span>, <span class="var">maximo</span> <span class="op">=</span> <span class="fn">min_max</span>([<span class="num">3</span>, <span class="num">1</span>, <span class="num">9</span>, <span class="num">5</span>])</code></pre>
+    </div>
+  </div>
+
+  <!-- ── 07. POO ── -->
+  <div class="section" id="poo">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="section-title">POO — Clases <span style="color:var(--muted);font-weight:400;font-size:15px">— Programación Orientada a Objetos</span></h2>
+    </div>
+    <p class="desc">En Python <strong style="color:var(--text)">todo es un objeto</strong>. Saber definir clases es obligatorio para el nivel Junior y para trabajar con librerías de AI donde todo el tiempo heredas de clases base.</p>
+
+    <div class="code-wrap">
+      <div class="code-bar"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="code-lang">python</span></div>
+      <pre><code><span class="kw">class</span> <span class="fn">Persona</span>:
+    <span class="cmt"># Variable de clase — compartida por todas las instancias</span>
+    <span class="var">especie</span> <span class="op">=</span> <span class="str">'Homo sapiens'</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, <span class="var">nombre</span>, <span class="var">edad</span>):
+        <span class="cmt"># Variables de instancia — únicas por objeto</span>
+        <span class="kw">self</span>.<span class="var">nombre</span> <span class="op">=</span> <span class="var">nombre</span>
+        <span class="kw">self</span>.<span class="var">edad</span>   <span class="op">=</span> <span class="var">edad</span>
+
+    <span class="kw">def</span> <span class="fn">presentarse</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="str">f'Soy <span class="var">{self.nombre}</span>, tengo <span class="var">{self.edad}</span> años'</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="kw">self</span>):       <span class="cmt"># lo que print() muestra</span>
+        <span class="kw">return</span> <span class="str">f'Persona(<span class="var">{self.nombre}</span>)'</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="kw">self</span>):      <span class="cmt"># representación técnica</span>
+        <span class="kw">return</span> <span class="str">f'Persona(nombre=<span class="var">{self.nombre!r}</span>, edad=<span class="var">{self.edad}</span>)'</span>
+
+
+<span class="cmt"># Herencia</span>
+<span class="kw">class</span> <span class="fn">Desarrollador</span>(<span class="fn">Persona</span>):   <span class="cmt"># Persona es el padre</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, <span class="var">nombre</span>, <span class="var">edad</span>, <span class="var">lenguaje</span>):
+        <span class="bi">super</span>().<span class="fn">__init__</span>(<span class="var">nombre</span>, <span class="var">edad</span>)  <span class="cmt"># llama al __init__ del padre</span>
+        <span class="kw">self</span>.<span class="var">lenguaje</span> <span class="op">=</span> <span class="var">lenguaje</span>
+        <span class="kw">self</span>.<span class="var">proyectos</span> <span class="op">=</span> []
+
+    <span class="kw">def</span> <span class="fn">presentarse</span>(<span class="kw">self</span>):  <span class="cmt"># override del método padre</span>
+        <span class="var">base</span> <span class="op">=</span> <span class="bi">super</span>().<span class="fn">presentarse</span>()
+        <span class="kw">return</span> <span class="str">f'<span class="var">{base}</span> y programo en <span class="var">{self.lenguaje}</span>'</span>
+
+    <span class="kw">def</span> <span class="fn">agregar_proyecto</span>(<span class="kw">self</span>, <span class="var">nombre</span>):
+        <span class="kw">self</span>.<span class="var">proyectos</span>.<span class="fn">append</span>(<span class="var">nombre</span>)
+        <span class="kw">return</span> <span class="kw">self</span>   <span class="cmt"># permite encadenamiento</span>
+
+
+<span class="cmt"># Usar las clases</span>
+<span class="var">lian</span> <span class="op">=</span> <span class="fn">Desarrollador</span>(<span class="str">'Lian'</span>, <span class="num">26</span>, <span class="str">'Python'</span>)
+<span class="var">lian</span>.<span class="fn">agregar_proyecto</span>(<span class="str">'GymTracker'</span>).<span class="fn">agregar_proyecto</span>(<span class="str">'AI API'</span>)
+
+<span class="bi">print</span>(<span class="var">lian</span>.<span class="fn">presentarse</span>())
+<span class="cmt"># 'Soy Lian, tengo 26 años y programo en Python'</span>
+
+<span class="bi">print</span>(<span class="bi">isinstance</span>(<span class="var">lian</span>, <span class="fn">Persona</span>))  <span class="cmt"># True — herencia verificada</span></code></pre>
+    </div>
+
+    <div class="info info-red">
+      <span class="info-icon">🔑</span>
+      <div class="info-content">
+        <div class="info-title">Dunder methods esenciales</div>
+        <code style="color:var(--accent4)">__init__</code> constructor · <code style="color:var(--accent4)">__str__</code> para print() · <code style="color:var(--accent4)">__repr__</code> representación técnica · <code style="color:var(--accent4)">__len__</code> para len() · <code style="color:var(--accent4)">__eq__</code> para == · <code style="color:var(--accent4)">__lt__</code> para &lt; — Con estos cubres el 90% de los casos.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHECKLIST ── -->
+  <div id="checklist" class="checklist">
+    <div class="checklist-header">
+      <span style="color:var(--accent);font-size:18px">✓</span>
+      <h2>Checklist — Básico Completo</h2>
+      <span id="counter">0 / 7</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="sets">
+      <div class="check-box">✓</div>
+      <span class="check-label">Sets y operaciones de conjuntos (add, discard, &amp;, |, -)</span>
+      <span class="check-tag">01 · sets</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="errores">
+      <div class="check-box">✓</div>
+      <span class="check-label">try / except / else / finally — y raise para lanzar errores propios</span>
+      <span class="check-tag">02 · errores</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="archivos">
+      <div class="check-box">✓</div>
+      <span class="check-label">Leer y escribir archivos con with open() — .txt y .json</span>
+      <span class="check-tag">03 · archivos</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="modulos">
+      <div class="check-box">✓</div>
+      <span class="check-label">import y librería estándar: os, math, datetime, random, json</span>
+      <span class="check-tag">04 · módulos</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="comprehensions">
+      <div class="check-box">✓</div>
+      <span class="check-label">List / dict / set comprehensions — con filtro y transformación</span>
+      <span class="check-tag">05 · comprehensions</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="funciones">
+      <div class="check-box">✓</div>
+      <span class="check-label">Funciones: defaults, *args, **kwargs, lambda, retorno múltiple</span>
+      <span class="check-tag">06 · funciones</span>
+    </div>
+    <div class="check-item" onclick="toggle(this)" data-tag="poo">
+      <div class="check-box">✓</div>
+      <span class="check-label">POO: clases, __init__, self, herencia, super(), dunder methods</span>
+      <span class="check-tag">07 · POO</span>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  Python Básico — Referencia · Lian Rojas · 2025 · Camino a AI Engineering
+</footer>
+
+<script>
+  function toggle(el) {
+    el.classList.toggle('done');
+    updateCounter();
+  }
+
+  function updateCounter() {
+    const total = document.querySelectorAll('.check-item').length;
+    const done  = document.querySelectorAll('.check-item.done').length;
+    document.getElementById('counter').textContent = `${done} / ${total}`;
+    if (done === total) {
+      document.getElementById('counter').style.color = 'var(--accent)';
+    }
+  }
+</script>
+</body>
+</html>

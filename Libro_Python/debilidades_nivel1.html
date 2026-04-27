@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debilidades — Nivel 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=DM+Sans:wght@300;400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0c0c10;
+    --surface: #111115;
+    --surface2: #17171d;
+    --border: #222228;
+    --border2: #2a2a34;
+    --text: #dddde8;
+    --muted: #52526a;
+    --faint: #2a2a38;
+
+    --sep: #3b82f6;       /* separación de responsabilidades — azul */
+    --sep-dim: #1e3a5f;
+    --sep-soft: #0f1e30;
+
+    --ind: #a855f7;       /* indentación lógica — violeta */
+    --ind-dim: #3b1f5e;
+    --ind-soft: #1a0f2e;
+
+    --bor: #22c55e;       /* bordes de condición — verde */
+    --bor-dim: #14532d;
+    --bor-soft: #0a1f0f;
+
+    --done: #f59e0b;
+    --done-soft: #1a1200;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 52px 20px 80px;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  .header {
+    margin-bottom: 52px;
+  }
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1px;
+  }
+  .header h1 em { font-style: normal; color: var(--done); }
+  .header-sub {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 44px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .l-sep { background: var(--sep-soft); border: 1px solid var(--sep-dim); color: var(--sep); }
+  .l-sep .legend-dot { background: var(--sep); }
+  .l-ind { background: var(--ind-soft); border: 1px solid var(--ind-dim); color: var(--ind); }
+  .l-ind .legend-dot { background: var(--ind); }
+  .l-bor { background: var(--bor-soft); border: 1px solid var(--bor-dim); color: var(--bor); }
+  .l-bor .legend-dot { background: var(--bor); }
+
+  /* ── PROGRESS ── */
+  .prog-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .prog-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-bottom: 44px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: var(--done);
+    width: 0%;
+    transition: width .4s ease;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    margin-top: 36px;
+  }
+  .section-divider:first-of-type { margin-top: 0; }
+  .section-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .badge-sep { background: var(--sep-soft); border: 1px solid var(--sep-dim); color: var(--sep); }
+  .badge-ind { background: var(--ind-soft); border: 1px solid var(--ind-dim); color: var(--ind); }
+  .badge-bor { background: var(--bor-soft); border: 1px solid var(--bor-dim); color: var(--bor); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border-radius: 5px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card.done { border-color: var(--done); }
+  .card.done .card-num { background: var(--done); color: #000; border-color: var(--done); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .num-sep { background: var(--sep-soft); border: 1px solid var(--sep-dim); color: var(--sep); }
+  .num-ind { background: var(--ind-soft); border: 1px solid var(--ind-dim); color: var(--ind); }
+  .num-bor { background: var(--bor-soft); border: 1px solid var(--bor-dim); color: var(--bor); }
+
+  .card-info { flex: 1; }
+  .card-title { font-size: 15px; font-weight: 700; line-height: 1.3; }
+  .card-focus {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .card-check {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--border2);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: transparent;
+    transition: all .2s;
+    margin-top: 4px;
+  }
+  .card.done .card-check { background: var(--done); border-color: var(--done); color: #000; }
+
+  /* ── CARD BODY ── */
+  .card-body { display: none; border-top: 1px solid var(--border); }
+  .card-body.open { display: block; }
+
+  .enunciado {
+    padding: 18px 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.85;
+    color: var(--text);
+  }
+  .enunciado code {
+    background: var(--faint);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+  .enunciado b { font-weight: 700; }
+
+  .focus-box {
+    margin: 14px 18px 18px;
+    padding: 12px 14px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+  }
+  .focus-sep { background: var(--sep-soft); border-left: 2px solid var(--sep); color: #7eb8ff; }
+  .focus-ind { background: var(--ind-soft); border-left: 2px solid var(--ind); color: #d4a8ff; }
+  .focus-bor { background: var(--bor-soft); border-left: 2px solid var(--bor); color: #7ee8a2; }
+  .focus-box .focus-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: .6;
+    margin-bottom: 5px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-eyebrow">Entrenamiento de debilidades · Nivel 1</div>
+    <h1>10 ejercicios<br><em>fáciles</em></h1>
+    <div class="header-sub">Separación de responsabilidades · Indentación lógica · Bordes de condición<br>Resuélvelos solo. Pide ayuda si te trabas.</div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item l-sep"><div class="legend-dot"></div>Separación de responsabilidades</div>
+    <div class="legend-item l-ind"><div class="legend-dot"></div>Indentación lógica</div>
+    <div class="legend-item l-bor"><div class="legend-dot"></div>Bordes de condición</div>
+  </div>
+
+  <div class="prog-row">
+    <span>Progreso</span>
+    <span id="prog-txt">0 / 10</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+
+  <!-- ══ SEPARACIÓN DE RESPONSABILIDADES ══ -->
+  <div class="section-divider">
+    <span class="section-badge badge-sep">Separación de responsabilidades</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- E1 -->
+  <div class="card" id="card-1">
+    <div class="card-top" onclick="toggle(1)">
+      <div class="card-num num-sep">01</div>
+      <div class="card-info">
+        <div class="card-title">Función que calcula el doble</div>
+        <div class="card-focus">función pura · sin print interno</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,1)">✓</div>
+    </div>
+    <div class="card-body" id="body-1">
+      <div class="enunciado">
+        Crea una función <code>doble(n)</code> que reciba un número y <b>retorne</b> su doble.<br>
+        Luego en el cuerpo principal, llama la función con el valor <code>7</code> e imprime el resultado.
+      </div>
+      <div class="focus-box focus-sep">
+        <div class="focus-label">Lo que entrena</div>
+        La función <b>solo calcula y retorna</b>. El <code>print</code> vive fuera, en el cuerpo principal.<br>
+        Pregúntate antes de escribir: ¿quién imprime — la función o quien la llama?
+      </div>
+    </div>
+  </div>
+
+  <!-- E2 -->
+  <div class="card" id="card-2">
+    <div class="card-top" onclick="toggle(2)">
+      <div class="card-num num-sep">02</div>
+      <div class="card-info">
+        <div class="card-title">Función que verifica mayoría de edad</div>
+        <div class="card-focus">función pura · retorna bool</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,2)">✓</div>
+    </div>
+    <div class="card-body" id="body-2">
+      <div class="enunciado">
+        Crea una función <code>es_mayor(edad)</code> que retorne <code>True</code> si la edad es 18 o más, <code>False</code> si no.<br>
+        En el cuerpo principal, pide la edad al usuario con <code>input()</code> y usa la función para mostrar <code>"Mayor de edad"</code> o <code>"Menor de edad"</code>.
+      </div>
+      <div class="focus-box focus-sep">
+        <div class="focus-label">Lo que entrena</div>
+        La función no sabe nada del usuario ni del mensaje — solo recibe un número y devuelve un booleano.<br>
+        El <code>input()</code>, el <code>if</code> sobre el resultado y el <code>print</code> van <b>fuera</b>.
+      </div>
+    </div>
+  </div>
+
+  <!-- E3 -->
+  <div class="card" id="card-3">
+    <div class="card-top" onclick="toggle(3)">
+      <div class="card-num num-sep">03</div>
+      <div class="card-info">
+        <div class="card-title">Función que convierte Celsius a Fahrenheit</div>
+        <div class="card-focus">función pura · retorna valor calculado</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,3)">✓</div>
+    </div>
+    <div class="card-body" id="body-3">
+      <div class="enunciado">
+        Crea una función <code>a_fahrenheit(c)</code> que reciba grados Celsius y retorne el equivalente en Fahrenheit.<br>
+        La fórmula es: <code>f = c * 9/5 + 32</code><br><br>
+        En el cuerpo principal, pide la temperatura al usuario y muestra el resultado con 1 decimal.
+      </div>
+      <div class="focus-box focus-sep">
+        <div class="focus-label">Lo que entrena</div>
+        La función no hace <code>input()</code> ni <code>print()</code>. Solo transforma un número y lo devuelve.<br>
+        El redondeo con <code>:.1f</code> va en el <code>print</code> del cuerpo principal.
+      </div>
+    </div>
+  </div>
+
+  <!-- E4 -->
+  <div class="card" id="card-4">
+    <div class="card-top" onclick="toggle(4)">
+      <div class="card-num num-sep">04</div>
+      <div class="card-info">
+        <div class="card-title">Función que clasifica una nota</div>
+        <div class="card-focus">función pura · retorna string · sin print</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,4)">✓</div>
+    </div>
+    <div class="card-body" id="body-4">
+      <div class="enunciado">
+        Crea una función <code>clasificar(nota)</code> que retorne:<br>
+        · <code>"Desaprobado"</code> si la nota es menor a 11<br>
+        · <code>"Aprobado"</code> si es 11 o más<br><br>
+        En el cuerpo principal, pide la nota con <code>input()</code>, llama la función e imprime el resultado.
+      </div>
+      <div class="focus-box focus-sep">
+        <div class="focus-label">Lo que entrena</div>
+        Un solo if/else con return en cada rama. Ningún print dentro de la función.<br>
+        El flujo es: pedir → convertir → llamar → imprimir lo que retornó.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INDENTACIÓN LÓGICA ══ -->
+  <div class="section-divider">
+    <span class="section-badge badge-ind">Indentación lógica</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- E5 -->
+  <div class="card" id="card-5">
+    <div class="card-top" onclick="toggle(5)">
+      <div class="card-num num-ind">05</div>
+      <div class="card-info">
+        <div class="card-title">Acumular solo números positivos</div>
+        <div class="card-focus">for + if · acumulador fuera del bucle</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,5)">✓</div>
+    </div>
+    <div class="card-body" id="body-5">
+      <div class="enunciado">
+        Dada la lista <code>[-2, 5, -1, 3, -4, 8, 0]</code>, recórrela con un <code>for</code>.<br>
+        Acumula en una variable <code>suma</code> solo los números positivos (mayores a 0).<br>
+        Al terminar el bucle, imprime la suma.
+      </div>
+      <div class="focus-box focus-ind">
+        <div class="focus-label">Lo que entrena</div>
+        El <code>print</code> va <b>fuera del for</b> (sin sangría extra).<br>
+        El <code>if n > 0</code> va <b>dentro del for</b>.<br>
+        La variable <code>suma = 0</code> se inicializa <b>antes del for</b>.<br>
+        Tres niveles distintos de indentación con tres roles distintos.
+      </div>
+    </div>
+  </div>
+
+  <!-- E6 -->
+  <div class="card" id="card-6">
+    <div class="card-top" onclick="toggle(6)">
+      <div class="card-num num-ind">06</div>
+      <div class="card-info">
+        <div class="card-title">Contar letras en una frase</div>
+        <div class="card-focus">for sobre string · contador · print al final</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,6)">✓</div>
+    </div>
+    <div class="card-body" id="body-6">
+      <div class="enunciado">
+        Dada la frase <code>"aprendiendo python"</code>, recórrela con un <code>for</code>.<br>
+        Cuenta cuántos caracteres son letras (ignora los espacios).<br>
+        Imprime el total al terminar.
+      </div>
+      <div class="focus-box focus-ind">
+        <div class="focus-label">Lo que entrena</div>
+        El contador se inicializa antes del bucle.<br>
+        El <code>if c != " "</code> va dentro del for, con un nivel de sangría.<br>
+        El <code>print</code> final va fuera del for, sin sangría extra.<br>
+        Antes de escribir, pregúntate: ¿este <code>print</code> se ejecuta una vez o en cada iteración?
+      </div>
+    </div>
+  </div>
+
+  <!-- E7 -->
+  <div class="card" id="card-7">
+    <div class="card-top" onclick="toggle(7)">
+      <div class="card-num num-ind">07</div>
+      <div class="card-info">
+        <div class="card-title">Recolectar 3 nombres y mostrarlos</div>
+        <div class="card-focus">while · append · print fuera del bucle</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,7)">✓</div>
+    </div>
+    <div class="card-body" id="body-7">
+      <div class="enunciado">
+        Crea una lista vacía <code>nombres</code>.<br>
+        Usa un <code>while</code> para pedir 3 nombres al usuario, uno por uno, y agrégalos a la lista.<br>
+        Cuando el while termine, imprime la lista completa.
+      </div>
+      <div class="focus-box focus-ind">
+        <div class="focus-label">Lo que entrena</div>
+        El <code>print(nombres)</code> va <b>fuera del while</b> — si lo pones adentro, imprimirá en cada iteración.<br>
+        Antes de escribirlo, pregúntate: ¿cuántas veces debe ejecutarse este print — 1 o 3?
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BORDES DE CONDICIÓN ══ -->
+  <div class="section-divider">
+    <span class="section-badge badge-bor">Bordes de condición</span>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- E8 -->
+  <div class="card" id="card-8">
+    <div class="card-top" onclick="toggle(8)">
+      <div class="card-num num-bor">08</div>
+      <div class="card-info">
+        <div class="card-title">Clasificar edad en tres rangos</div>
+        <div class="card-focus">if/elif/else · valores exactos en el límite</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,8)">✓</div>
+    </div>
+    <div class="card-body" id="body-8">
+      <div class="enunciado">
+        Pide una edad al usuario. Clasifícala así:<br>
+        · 0 a 17 → <code>"Menor"</code><br>
+        · 18 a 64 → <code>"Adulto"</code><br>
+        · 65 en adelante → <code>"Adulto mayor"</code><br><br>
+        Imprime la categoría correspondiente.
+      </div>
+      <div class="focus-box focus-bor">
+        <div class="focus-label">Lo que entrena</div>
+        Al terminar, prueba mentalmente: ¿qué pasa si ingreso exactamente <b>17</b>? ¿Y <b>18</b>? ¿Y <b>64</b>? ¿Y <b>65</b>?<br>
+        Cada valor límite debe caer en la categoría correcta, no en el hueco entre dos.
+      </div>
+    </div>
+  </div>
+
+  <!-- E9 -->
+  <div class="card" id="card-9">
+    <div class="card-top" onclick="toggle(9)">
+      <div class="card-num num-bor">09</div>
+      <div class="card-info">
+        <div class="card-title">Precio con descuento por cantidad</div>
+        <div class="card-focus">elif · límites exactos · sin huecos</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,9)">✓</div>
+    </div>
+    <div class="card-body" id="body-9">
+      <div class="enunciado">
+        Una tienda aplica descuento según la cantidad comprada:<br>
+        · 1 a 4 unidades → sin descuento<br>
+        · 5 a 9 unidades → 10% de descuento<br>
+        · 10 o más → 20% de descuento<br><br>
+        Pide cantidad y precio unitario. Muestra el total a pagar con el descuento aplicado.
+      </div>
+      <div class="focus-box focus-bor">
+        <div class="focus-label">Lo que entrena</div>
+        Prueba los límites: ¿qué pasa con cantidad = <b>4</b>? ¿Y <b>5</b>? ¿Y <b>9</b>? ¿Y <b>10</b>?<br>
+        El valor exacto del borde debe caer en el rango correcto, no en el anterior ni en el siguiente.
+      </div>
+    </div>
+  </div>
+
+  <!-- E10 -->
+  <div class="card" id="card-10">
+    <div class="card-top" onclick="toggle(10)">
+      <div class="card-num num-bor">10</div>
+      <div class="card-info">
+        <div class="card-title">Semáforo de notas</div>
+        <div class="card-focus">elif encadenado · cobertura total · sin huecos</div>
+      </div>
+      <div class="card-check" onclick="markDone(event,10)">✓</div>
+    </div>
+    <div class="card-body" id="body-10">
+      <div class="enunciado">
+        Pide una nota del 0 al 20. Muestra un color de semáforo:<br>
+        · 0 a 10 → <code>"🔴 Rojo"</code><br>
+        · 11 a 14 → <code>"🟡 Amarillo"</code><br>
+        · 15 a 20 → <code>"🟢 Verde"</code><br><br>
+        Si el número está fuera del rango 0–20, muestra <code>"Nota inválida"</code>.
+      </div>
+      <div class="focus-box focus-bor">
+        <div class="focus-label">Lo que entrena</div>
+        Este tiene dos trampas: los límites entre colores (<b>10 vs 11</b>, <b>14 vs 15</b>) y el caso fuera de rango.<br>
+        Prueba: ¿qué pasa con 10? ¿Con 11? ¿Con 14? ¿Con 15? ¿Con -1? ¿Con 21?<br>
+        Necesitas cubrir <b>todo</b> el espacio de valores posibles.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Debilidades · Nivel 1 · 10 ejercicios</span>
+    <span id="foot-count">0 / 10 completados</span>
+  </footer>
+
+</div>
+
+<script>
+  const KEY = 'deb_n1_done';
+  let done = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } })();
+
+  function save() { localStorage.setItem(KEY, JSON.stringify(done)); }
+
+  function render() {
+    for (let i = 1; i <= 10; i++) {
+      document.getElementById('card-' + i).classList.toggle('done', done.includes(i));
+    }
+    const pct = (done.length / 10) * 100;
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-txt').textContent = done.length + ' / 10';
+    document.getElementById('foot-count').textContent = done.length + ' / 10 completados';
+  }
+
+  function toggle(n) {
+    document.getElementById('body-' + n).classList.toggle('open');
+  }
+
+  function markDone(e, n) {
+    e.stopPropagation();
+    done = done.includes(n) ? done.filter(x => x !== n) : [...done, n];
+    save(); render();
+  }
+
+  render();
+</script>
+</body>
+</html>

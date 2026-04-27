@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Pensamiento Algorítmico</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --surface3: #212836;
+    --border: #2d3748;
+    --text: #e6edf3;
+    --muted: #8b9ab0;
+    --dim: #6e7f96;
+
+    /* Step colors - bright and distinct */
+    --c1: #38bdf8;   /* sky blue   - bucles for */
+    --c2: #4ade80;   /* green      - output/print */
+    --c3: #f97316;   /* orange     - while */
+    --c4: #e879f9;   /* pink/violet - condicionales */
+    --c5: #fbbf24;   /* amber       - funciones */
+    --c6: #34d399;   /* emerald     - listas */
+    --c7: #f87171;   /* red         - diccionarios */
+    --c8: #a78bfa;   /* purple      - variables */
+
+    --c1-bg: rgba(56,189,248,.14);
+    --c2-bg: rgba(74,222,128,.14);
+    --c3-bg: rgba(249,115,22,.14);
+    --c4-bg: rgba(232,121,249,.14);
+    --c5-bg: rgba(251,191,36,.14);
+    --c6-bg: rgba(52,211,153,.14);
+    --c7-bg: rgba(248,113,113,.14);
+    --c8-bg: rgba(167,139,250,.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 5% 5%,   rgba(56,189,248,.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 95% 95%,  rgba(74,222,128,.05) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,17,23,.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    height: 54px;
+    display: flex; align-items: center;
+    padding: 0 28px; gap: 0;
+  }
+
+  .nb {
+    font-family: 'Fira Code', monospace;
+    font-size: .82rem; font-weight: 700;
+    color: var(--c1);
+    margin-right: 28px; white-space: nowrap;
+  }
+
+  .nl { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .nl::-webkit-scrollbar { display: none; }
+
+  a.nl {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    text-decoration: none;
+    padding: 4px 10px; border-radius: 5px;
+    transition: all .2s; white-space: nowrap;
+  }
+
+  a.nl:hover { color: var(--c1); background: var(--c1-bg); }
+
+  /* LAYOUT */
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 84px 24px 80px;
+    position: relative; z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+
+  .tag {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; letter-spacing: 1.5px;
+    padding: 4px 12px; border-radius: 100px;
+    text-transform: uppercase;
+  }
+
+  .tag-1 { background: var(--c1-bg); border: 1px solid rgba(56,189,248,.3); color: var(--c1); }
+  .tag-2 { background: var(--c2-bg); border: 1px solid rgba(74,222,128,.3); color: var(--c2); }
+
+  h1 {
+    font-size: clamp(2.4rem, 5.5vw, 4rem);
+    font-weight: 800; letter-spacing: -2px;
+    line-height: 1.05; margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  h1 em { font-style: normal; color: var(--c1); }
+
+  .hero-lead {
+    color: var(--muted);
+    font-size: 1rem; font-weight: 300;
+    max-width: 580px; font-style: italic;
+  }
+
+  /* COLOR LEGEND */
+  .legend {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 60px;
+  }
+
+  .legend-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
+  .legend-num {
+    font-family: 'Fira Code', monospace;
+    font-size: .78rem; font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .legend-label { font-size: .82rem; color: var(--text); font-weight: 600; }
+  .legend-sub   { font-size: .75rem; color: var(--muted); }
+
+  /* PROBLEMS */
+  .problem {
+    margin-bottom: 64px;
+    scroll-margin-top: 64px;
+  }
+
+  .problem-header {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .problem-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 2.2rem; font-weight: 700;
+    color: var(--border); line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .problem-title { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+
+  .difficulty {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    padding: 3px 10px; border-radius: 100px;
+    text-transform: uppercase; margin-left: auto;
+  }
+
+  .d-med  { background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.28); color: #fbbf24; }
+  .d-hard { background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.28); color: #f97316; }
+  .d-adv  { background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.28); color: #f87171; }
+
+  /* ENUNCIADO */
+  .enunciado {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    font-size: .97rem;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+
+  .enunciado strong { color: var(--text); font-weight: 600; }
+
+  /* HIGHLIGHTED SPANS */
+  .h1 { background: var(--c1-bg); color: var(--c1); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c1); cursor: default; }
+  .h2 { background: var(--c2-bg); color: var(--c2); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c2); cursor: default; }
+  .h3 { background: var(--c3-bg); color: var(--c3); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c3); cursor: default; }
+  .h4 { background: var(--c4-bg); color: var(--c4); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c4); cursor: default; }
+  .h5 { background: var(--c5-bg); color: var(--c5); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c5); cursor: default; }
+  .h6 { background: var(--c6-bg); color: var(--c6); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c6); cursor: default; }
+  .h7 { background: var(--c7-bg); color: var(--c7); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c7); cursor: default; }
+  .h8 { background: var(--c8-bg); color: var(--c8); padding: 1px 5px; border-radius: 4px; font-weight: 600; border-bottom: 2px solid var(--c8); cursor: default; }
+
+  .step-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    font-family: 'Fira Code', monospace;
+    font-size: .7rem; font-weight: 700;
+    margin-right: 2px; vertical-align: middle;
+    position: relative; top: -1px;
+  }
+
+  .sb1 { background: var(--c1); color: #0d1117; }
+  .sb2 { background: var(--c2); color: #0d1117; }
+  .sb3 { background: var(--c3); color: #0d1117; }
+  .sb4 { background: var(--c4); color: #0d1117; }
+  .sb5 { background: var(--c5); color: #0d1117; }
+  .sb6 { background: var(--c6); color: #0d1117; }
+  .sb7 { background: var(--c7); color: #0d1117; }
+  .sb8 { background: var(--c8); color: #0d1117; }
+
+  /* STEPS */
+  .steps-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    transition: border-color .2s, transform .2s;
+  }
+
+  .step:hover { transform: translateX(4px); }
+
+  .step-n {
+    font-family: 'Fira Code', monospace;
+    font-size: .78rem; font-weight: 700;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
+  .step-content { flex: 1; }
+
+  .step-tool {
+    font-family: 'Fira Code', monospace;
+    font-size: .75rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .step-desc {
+    font-size: .88rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .step-desc strong { color: var(--text); font-weight: 600; }
+
+  /* Step color variants */
+  .step-1 { border-left: 3px solid var(--c1); }
+  .step-1 .step-n { background: var(--c1); color: #0d1117; }
+  .step-1 .step-tool { color: var(--c1); }
+  .step-1:hover { border-color: var(--c1); }
+
+  .step-2 { border-left: 3px solid var(--c2); }
+  .step-2 .step-n { background: var(--c2); color: #0d1117; }
+  .step-2 .step-tool { color: var(--c2); }
+  .step-2:hover { border-color: var(--c2); }
+
+  .step-3 { border-left: 3px solid var(--c3); }
+  .step-3 .step-n { background: var(--c3); color: #0d1117; }
+  .step-3 .step-tool { color: var(--c3); }
+  .step-3:hover { border-color: var(--c3); }
+
+  .step-4 { border-left: 3px solid var(--c4); }
+  .step-4 .step-n { background: var(--c4); color: #0d1117; }
+  .step-4 .step-tool { color: var(--c4); }
+  .step-4:hover { border-color: var(--c4); }
+
+  .step-5 { border-left: 3px solid var(--c5); }
+  .step-5 .step-n { background: var(--c5); color: #0d1117; }
+  .step-5 .step-tool { color: var(--c5); }
+  .step-5:hover { border-color: var(--c5); }
+
+  .step-6 { border-left: 3px solid var(--c6); }
+  .step-6 .step-n { background: var(--c6); color: #0d1117; }
+  .step-6 .step-tool { color: var(--c6); }
+  .step-6:hover { border-color: var(--c6); }
+
+  .step-7 { border-left: 3px solid var(--c7); }
+  .step-7 .step-n { background: var(--c7); color: #0d1117; }
+  .step-7 .step-tool { color: var(--c7); }
+  .step-7:hover { border-color: var(--c7); }
+
+  .step-8 { border-left: 3px solid var(--c8); }
+  .step-8 .step-n { background: var(--c8); color: #0d1117; }
+  .step-8 .step-tool { color: var(--c8); }
+  .step-8:hover { border-color: var(--c8); }
+
+  /* DECISION TABLE */
+  .decision-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 20px;
+  }
+
+  .decision-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .decision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .decision-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .82rem;
+  }
+
+  .decision-q { color: var(--muted); }
+  .decision-a { font-family: 'Fira Code', monospace; font-weight: 700; font-size: .8rem; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 10px; padding: 14px 18px;
+    margin: 16px 0;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+
+  .c-blue  { background: rgba(56,189,248,.07); border: 1px solid rgba(56,189,248,.2); }
+  .c-green { background: rgba(74,222,128,.07); border: 1px solid rgba(74,222,128,.2); }
+  .c-amber { background: rgba(251,191,36,.07); border: 1px solid rgba(251,191,36,.2); }
+
+  .callout-icon { font-size: 1rem; line-height: 1.7; flex-shrink: 0; }
+  .callout p { color: var(--text); font-size: .9rem; margin: 0; }
+  .callout strong { color: #38bdf8; }
+  .c-green .callout strong { color: #4ade80; }
+  .c-amber .callout strong { color: #fbbf24; }
+
+  /* PREGUNTAS CLAVE */
+  .questions {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 56px;
+  }
+
+  .questions-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .q-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: border-color .2s;
+  }
+
+  .q-card:hover { border-color: var(--c1); }
+
+  .q-question {
+    font-size: .88rem; color: var(--text);
+    font-weight: 600; margin-bottom: 6px;
+  }
+
+  .q-answer {
+    font-family: 'Fira Code', monospace;
+    font-size: .8rem; font-weight: 700;
+  }
+
+  .q-note { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
+
+  .footer {
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 10px; color: var(--dim);
+    letter-spacing: 2px; text-transform: uppercase;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+
+  @media (max-width: 600px) {
+    .decision-grid { grid-template-columns: 1fr; }
+    .problem-header { flex-wrap: wrap; }
+    .difficulty { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nb">think → code</span>
+  <div class="nl">
+    <a class="nl" href="#preguntas">Preguntas clave</a>
+    <a class="nl" href="#p1">Problema 1</a>
+    <a class="nl" href="#p2">Problema 2</a>
+    <a class="nl" href="#p3">Problema 3</a>
+    <a class="nl" href="#p4">Problema 4</a>
+    <a class="nl" href="#p5">Problema 5</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tags">
+      <span class="tag tag-1">Pensamiento Algorítmico</span>
+      <span class="tag tag-2">Enunciado → Pasos → Código</span>
+    </div>
+    <h1>Piensa primero,<br><em>luego codifica</em></h1>
+    <p class="hero-lead">Cada parte del enunciado está coloreada y numerada. Cada color corresponde a un paso y a una herramienta de Python. El objetivo es que aprendas a leer un problema y ya "ver" el código.</p>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-title">Leyenda de colores</div>
+    <div class="legend-grid">
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c1);color:#0d1117">1</div>
+        <div><div class="legend-label" style="color:var(--c1)">Bucle for</div><div class="legend-sub">Recorrer secuencia conocida</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c2);color:#0d1117">2</div>
+        <div><div class="legend-label" style="color:var(--c2)">Output / print</div><div class="legend-sub">Mostrar resultado al usuario</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c3);color:#0d1117">3</div>
+        <div><div class="legend-label" style="color:var(--c3)">Bucle while</div><div class="legend-sub">Repetir sin saber cuántas veces</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c4);color:#0d1117">4</div>
+        <div><div class="legend-label" style="color:var(--c4)">Condicional if/elif/else</div><div class="legend-sub">Tomar una decisión</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c5);color:#0d1117">5</div>
+        <div><div class="legend-label" style="color:var(--c5)">Función def</div><div class="legend-sub">Reutilizar lógica con nombre</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c6);color:#0d1117">6</div>
+        <div><div class="legend-label" style="color:var(--c6)">Lista / append</div><div class="legend-sub">Acumular múltiples valores</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c7);color:#0d1117">7</div>
+        <div><div class="legend-label" style="color:var(--c7)">Diccionario</div><div class="legend-sub">Datos con clave y valor</div></div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-num" style="background:var(--c8);color:#0d1117">8</div>
+        <div><div class="legend-label" style="color:var(--c8)">Variable / acumulador</div><div class="legend-sub">Guardar un dato que cambia</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREGUNTAS CLAVE -->
+  <div class="questions" id="preguntas">
+    <div class="questions-title">Preguntas que debes hacerte antes de escribir código</div>
+    <div class="q-grid">
+      <div class="q-card">
+        <div class="q-question">¿Necesito repetir algo?</div>
+        <div class="q-answer" style="color:var(--c1)">→ bucle</div>
+        <div class="q-note">Si sí: ¿sé cuántas veces? → for. ¿No sé? → while</div>
+      </div>
+      <div class="q-card">
+        <div class="q-question">¿Necesito tomar una decisión?</div>
+        <div class="q-answer" style="color:var(--c4)">→ if / elif / else</div>
+        <div class="q-note">¿Una condición? → if/else. ¿Varias? → elif</div>
+      </div>
+      <div class="q-card">
+        <div class="q-question">¿Necesito guardar varios valores?</div>
+        <div class="q-answer" style="color:var(--c6)">→ lista o diccionario</div>
+        <div class="q-note">¿Con nombre? → dict. ¿Solo valores? → list</div>
+      </div>
+      <div class="q-card">
+        <div class="q-question">¿Voy a reutilizar esta lógica?</div>
+        <div class="q-answer" style="color:var(--c5)">→ función def</div>
+        <div class="q-note">Si lo vas a llamar más de una vez, es una función</div>
+      </div>
+      <div class="q-card">
+        <div class="q-question">¿Necesito un contador o suma?</div>
+        <div class="q-answer" style="color:var(--c8)">→ variable acumuladora</div>
+        <div class="q-note">Inicializa en 0 antes del bucle, modifica dentro</div>
+      </div>
+      <div class="q-card">
+        <div class="q-question">¿El usuario puede meter datos inválidos?</div>
+        <div class="q-answer" style="color:#f87171">→ try / except</div>
+        <div class="q-note">Siempre que conviertas input a int o float</div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ════════════════════════════════════
+       PROBLEMA 1
+  ════════════════════════════════════ -->
+  <div class="problem" id="p1">
+    <div class="problem-header">
+      <div class="problem-num">01</div>
+      <div class="problem-title">Analizador de texto</div>
+      <span class="difficulty d-med">Intermedio</span>
+    </div>
+
+    <div class="enunciado">
+      <p>
+        Crea un programa que <span class="h8"><span class="step-badge sb8">8</span>pida al usuario un texto</span>.
+        Luego, <span class="h1"><span class="step-badge sb1">1</span>recorre cada carácter del texto</span>
+        y <span class="h4"><span class="step-badge sb4">4</span>clasifícalo como vocal, consonante, número o símbolo</span>.
+        <span class="h6"><span class="step-badge sb6">6</span>Guarda los resultados en cuatro listas separadas</span>.
+        Al finalizar, <span class="h2"><span class="step-badge sb2">2</span>muestra cuántos hay de cada tipo</span>
+        y <span class="h2"><span class="step-badge sb2">2</span>cuál es el carácter más frecuente</span> del texto.
+      </p>
+    </div>
+
+    <div class="steps-label">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step step-8">
+        <div class="step-n">8</div>
+        <div class="step-content">
+          <div class="step-tool">Variable / Input</div>
+          <div class="step-desc">Pedir el texto al usuario con <strong>input()</strong> y guardarlo en una variable. Normalizar con <strong>.lower().strip()</strong> para no distinguir mayúsculas.</div>
+        </div>
+      </div>
+      <div class="step step-6">
+        <div class="step-n">6</div>
+        <div class="step-content">
+          <div class="step-tool">Listas — inicializar</div>
+          <div class="step-desc">Crear cuatro listas vacías antes del bucle: <strong>vocales, consonantes, numeros, simbolos</strong>. Los acumuladores siempre van ANTES del bucle.</div>
+        </div>
+      </div>
+      <div class="step step-1">
+        <div class="step-n">1</div>
+        <div class="step-content">
+          <div class="step-tool">Bucle for</div>
+          <div class="step-desc">Usar <strong>for caracter in texto</strong>. Sabemos cuántos caracteres hay (la longitud del string), así que <strong>for</strong> es la elección correcta — no while.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">Condicional if / elif / else</div>
+          <div class="step-desc">Dentro del bucle, clasificar cada carácter con <strong>if/elif/else</strong>: ¿está en "aeiou"? → vocal. ¿es <strong>.isalpha()</strong>? → consonante. ¿es <strong>.isdigit()</strong>? → número. Si no → símbolo.</div>
+        </div>
+      </div>
+      <div class="step step-6">
+        <div class="step-n">6</div>
+        <div class="step-content">
+          <div class="step-tool">append() — acumular</div>
+          <div class="step-desc">En cada rama del if, hacer <strong>.append(caracter)</strong> a la lista correspondiente.</div>
+        </div>
+      </div>
+      <div class="step step-7">
+        <div class="step-n">7</div>
+        <div class="step-content">
+          <div class="step-tool">Diccionario — contar frecuencias</div>
+          <div class="step-desc">Para encontrar el carácter más frecuente, usar el patrón <strong>conteo[c] = conteo.get(c, 0) + 1</strong> dentro del bucle. Al salir, usar <strong>max(conteo, key=conteo.get)</strong>.</div>
+        </div>
+      </div>
+      <div class="step step-2">
+        <div class="step-n">2</div>
+        <div class="step-content">
+          <div class="step-tool">print() — mostrar resultados</div>
+          <div class="step-desc">Fuera del bucle, imprimir <strong>len()</strong> de cada lista y el carácter más frecuente. Todo el output va DESPUÉS de procesar, nunca dentro del bucle clasificador.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <div class="decision-title">¿Por qué estas herramientas?</div>
+      <div class="decision-grid">
+        <div class="decision-item"><div class="decision-q">¿Repetir?</div><div class="decision-a" style="color:var(--c1)">Sí → for (longitud conocida)</div></div>
+        <div class="decision-item"><div class="decision-q">¿Decidir?</div><div class="decision-a" style="color:var(--c4)">Sí → if/elif/else (4 casos)</div></div>
+        <div class="decision-item"><div class="decision-q">¿Guardar múltiples?</div><div class="decision-a" style="color:var(--c6)">Sí → 4 listas separadas</div></div>
+        <div class="decision-item"><div class="decision-q">¿Contar por clave?</div><div class="decision-a" style="color:var(--c7)">Sí → diccionario</div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ════════════════════════════════════
+       PROBLEMA 2
+  ════════════════════════════════════ -->
+  <div class="problem" id="p2">
+    <div class="problem-header">
+      <div class="problem-num">02</div>
+      <div class="problem-title">Sistema de votación</div>
+      <span class="difficulty d-med">Intermedio</span>
+    </div>
+
+    <div class="enunciado">
+      <p>
+        Crea un <span class="h5"><span class="step-badge sb5">5</span>programa con una función</span>
+        que simule un sistema de votación.
+        <span class="h3"><span class="step-badge sb3">3</span>El programa sigue pidiendo votos hasta que el usuario escriba "fin"</span>.
+        Cada voto es un nombre de candidato.
+        <span class="h7"><span class="step-badge sb7">7</span>Guarda los votos en un diccionario</span>
+        donde la clave es el candidato y el valor es la cantidad de votos.
+        <span class="h4"><span class="step-badge sb4">4</span>Si el candidato no existe en el diccionario, agrégalo</span>.
+        Al terminar,
+        <span class="h2"><span class="step-badge sb2">2</span>muestra los resultados ordenados de mayor a menor</span>
+        y <span class="h2"><span class="step-badge sb2">2</span>declara al ganador</span>.
+      </p>
+    </div>
+
+    <div class="steps-label">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step step-5">
+        <div class="step-n">5</div>
+        <div class="step-content">
+          <div class="step-tool">Función def</div>
+          <div class="step-desc">Separar en dos funciones: <strong>registrar_votos()</strong> que maneja el bucle de captura, y <strong>mostrar_resultados(votos)</strong> que muestra el reporte. El diccionario pasa como argumento.</div>
+        </div>
+      </div>
+      <div class="step step-7">
+        <div class="step-n">7</div>
+        <div class="step-content">
+          <div class="step-tool">Diccionario — inicializar</div>
+          <div class="step-desc">Crear <strong>votos = {}</strong> antes del bucle. Los diccionarios son la estructura correcta cuando necesitas relacionar una clave (nombre) con un valor (conteo).</div>
+        </div>
+      </div>
+      <div class="step step-3">
+        <div class="step-n">3</div>
+        <div class="step-content">
+          <div class="step-tool">Bucle while True</div>
+          <div class="step-desc">No sabemos cuántos votos habrá — el usuario decide cuándo parar. Eso significa <strong>while True</strong> con un <strong>break</strong> cuando detectes "fin". Nunca uses for aquí.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">Condicional — condición de salida</div>
+          <div class="step-desc">Lo primero dentro del while: <strong>if voto == "fin": break</strong>. La condición de salida siempre va al inicio del bucle, antes de procesar el dato.</div>
+        </div>
+      </div>
+      <div class="step step-7">
+        <div class="step-n">7</div>
+        <div class="step-content">
+          <div class="step-tool">Diccionario — patrón get()</div>
+          <div class="step-desc">Usar <strong>votos[candidato] = votos.get(candidato, 0) + 1</strong>. Esto agrega el candidato si no existe (con 0) y suma 1. No necesitas if para verificar si existe.</div>
+        </div>
+      </div>
+      <div class="step step-2">
+        <div class="step-n">2</div>
+        <div class="step-content">
+          <div class="step-tool">print() — resultados ordenados</div>
+          <div class="step-desc">Fuera del bucle, ordenar con <strong>sorted(votos.items(), key=lambda x: x[1], reverse=True)</strong> y recorrer con for para imprimir. El ganador es el primero de la lista ordenada.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-blue">
+      <span class="callout-icon">💡</span>
+      <p><strong>Clave mental:</strong> cuando el enunciado dice "hasta que el usuario escriba algo" o "hasta que ocurra una condición", siempre es <strong>while True + break</strong>. El for es para cuando sabes cuántas vueltas.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ════════════════════════════════════
+       PROBLEMA 3
+  ════════════════════════════════════ -->
+  <div class="problem" id="p3">
+    <div class="problem-header">
+      <div class="problem-num">03</div>
+      <div class="problem-title">Inventario de tienda</div>
+      <span class="difficulty d-hard">Avanzado</span>
+    </div>
+
+    <div class="enunciado">
+      <p>
+        Crea un sistema de inventario con un <span class="h7"><span class="step-badge sb7">7</span>diccionario de productos</span>
+        donde cada producto tiene nombre, precio y stock.
+        El sistema tiene un <span class="h3"><span class="step-badge sb3">3</span>menú que se repite hasta que el usuario elija salir</span>.
+        Las opciones son: ver inventario, <span class="h4"><span class="step-badge sb4">4</span>buscar producto y mostrar si existe o no</span>,
+        y registrar una venta
+        <span class="h4"><span class="step-badge sb4">4</span>validando que haya suficiente stock</span>.
+        Cada opción debe ser una <span class="h5"><span class="step-badge sb5">5</span>función separada</span>.
+        <span class="h1"><span class="step-badge sb1">1</span>Al ver el inventario, recorre todos los productos</span>
+        y <span class="h2"><span class="step-badge sb2">2</span>muéstralos en formato tabla</span>.
+        Al final de cada venta, <span class="h8"><span class="step-badge sb8">8</span>actualiza el stock</span> del producto.
+      </p>
+    </div>
+
+    <div class="steps-label">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step step-7">
+        <div class="step-n">7</div>
+        <div class="step-content">
+          <div class="step-tool">Diccionario anidado — estructura de datos</div>
+          <div class="step-desc">Lo primero es definir la estructura: <strong>inventario = {"producto": {"precio": x, "stock": y}}</strong>. Diseña la estructura antes de escribir cualquier función.</div>
+        </div>
+      </div>
+      <div class="step step-5">
+        <div class="step-n">5</div>
+        <div class="step-content">
+          <div class="step-tool">Funciones def — una por responsabilidad</div>
+          <div class="step-desc">Identificar las 3 funciones del menú: <strong>ver_inventario(inv)</strong>, <strong>buscar_producto(inv, nombre)</strong>, <strong>registrar_venta(inv)</strong>. Cada función hace UNA sola cosa.</div>
+        </div>
+      </div>
+      <div class="step step-3">
+        <div class="step-n">3</div>
+        <div class="step-content">
+          <div class="step-tool">while True — menú principal</div>
+          <div class="step-desc">El menú se repite indefinidamente — <strong>while True</strong>. Dentro, pedir la opción y llamar a la función correspondiente. La opción "salir" ejecuta <strong>break</strong>.</div>
+        </div>
+      </div>
+      <div class="step step-1">
+        <div class="step-n">1</div>
+        <div class="step-content">
+          <div class="step-tool">for — recorrer inventario</div>
+          <div class="step-desc">Para ver el inventario: <strong>for nombre, datos in inventario.items()</strong>. Sabemos cuántos productos hay — el for es correcto. Usar <strong>f-strings</strong> con alineación para simular tabla.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">if — validaciones</div>
+          <div class="step-desc">Dos validaciones en registrar_venta: <strong>if nombre not in inventario</strong> → "no existe". <strong>if cantidad > inventario[nombre]["stock"]</strong> → "stock insuficiente". Solo si pasa ambas → proceder.</div>
+        </div>
+      </div>
+      <div class="step step-8">
+        <div class="step-n">8</div>
+        <div class="step-content">
+          <div class="step-tool">Variable — actualizar stock</div>
+          <div class="step-desc">Después de validar: <strong>inventario[nombre]["stock"] -= cantidad</strong>. El operador <strong>-=</strong> es la forma corta de restar y guardar en la misma variable.</div>
+        </div>
+      </div>
+      <div class="step step-2">
+        <div class="step-n">2</div>
+        <div class="step-content">
+          <div class="step-tool">print() — output formateado</div>
+          <div class="step-desc">Usar <strong>f"{nombre:&lt;15} S/{precio:&gt;6.2f} {stock:&gt;6}"</strong> para alinear columnas. El <strong>:&lt;15</strong> alinea a la izquierda con 15 caracteres de ancho.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-green">
+      <span class="callout-icon">✅</span>
+      <p><strong>Patrón mental clave:</strong> cuando el enunciado dice "cada opción debe ser una función", primero lista las opciones del menú y crea una función por cada una. Luego el while solo llama funciones — nunca hace lógica directamente.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ════════════════════════════════════
+       PROBLEMA 4
+  ════════════════════════════════════ -->
+  <div class="problem" id="p4">
+    <div class="problem-header">
+      <div class="problem-num">04</div>
+      <div class="problem-title">Analizador de notas con estadísticas</div>
+      <span class="difficulty d-hard">Avanzado</span>
+    </div>
+
+    <div class="enunciado">
+      <p>
+        Crea un programa donde
+        <span class="h3"><span class="step-badge sb3">3</span>el usuario ingresa notas una por una hasta escribir "listo"</span>.
+        <span class="h6"><span class="step-badge sb6">6</span>Guarda todas las notas en una lista</span>.
+        Luego, usando <span class="h5"><span class="step-badge sb5">5</span>funciones separadas</span>, calcula:
+        <span class="h8"><span class="step-badge sb8">8</span>promedio</span>,
+        <span class="h1"><span class="step-badge sb1">1</span>nota más alta y más baja</span>,
+        y <span class="h4"><span class="step-badge sb4">4</span>clasifica cada nota como Aprobado (≥60) o Reprobado (&lt;60)</span>.
+        <span class="h2"><span class="step-badge sb2">2</span>Muestra un reporte final</span> con todos estos datos
+        y <span class="h4"><span class="step-badge sb4">4</span>si el promedio es ≥70, muestra un mensaje de felicitación</span>.
+      </p>
+    </div>
+
+    <div class="steps-label">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step step-6">
+        <div class="step-n">6</div>
+        <div class="step-content">
+          <div class="step-tool">Lista — inicializar</div>
+          <div class="step-desc">Crear <strong>notas = []</strong> antes del bucle. Todo lo que se acumula va en una lista vacía que se llena dentro del bucle.</div>
+        </div>
+      </div>
+      <div class="step step-3">
+        <div class="step-n">3</div>
+        <div class="step-content">
+          <div class="step-tool">while True — captura</div>
+          <div class="step-desc">No sabemos cuántas notas habrá → <strong>while True</strong>. Pedir input, verificar si es "listo" → <strong>break</strong>. Si no, convertir a float y hacer <strong>.append()</strong> a la lista.</div>
+        </div>
+      </div>
+      <div class="step step-5">
+        <div class="step-n">5</div>
+        <div class="step-content">
+          <div class="step-tool">Funciones def — separar cálculos</div>
+          <div class="step-desc">Una función por cálculo: <strong>calcular_promedio(notas)</strong>, <strong>clasificar(notas)</strong>. Reciben la lista como parámetro y retornan el resultado. No imprimen — solo calculan.</div>
+        </div>
+      </div>
+      <div class="step step-1">
+        <div class="step-n">1</div>
+        <div class="step-content">
+          <div class="step-tool">for + max/min</div>
+          <div class="step-desc">Para la nota más alta y más baja: usar directamente <strong>max(notas)</strong> y <strong>min(notas)</strong>. Para clasificar, recorrer la lista con <strong>for nota in notas</strong> y usar if/else.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">if/else — clasificar y felicitar</div>
+          <div class="step-desc">Dos condicionales independientes: uno para <strong>nota >= 60</strong> (dentro del for), otro para <strong>promedio >= 70</strong> (fuera del for, en el reporte final).</div>
+        </div>
+      </div>
+      <div class="step step-2">
+        <div class="step-n">2</div>
+        <div class="step-content">
+          <div class="step-tool">print() — reporte final</div>
+          <div class="step-desc">Todo el output va después de llamar las funciones. Llama cada función, guarda en variable, luego imprime. Nunca mezcles cálculo con output en la misma línea.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-amber">
+      <span class="callout-icon">💡</span>
+      <p><strong>Regla de oro:</strong> una función que calcula <strong>no imprime</strong>. Una función que imprime <strong>no calcula</strong>. Separar estas dos responsabilidades hace el código limpio y reutilizable.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ════════════════════════════════════
+       PROBLEMA 5
+  ════════════════════════════════════ -->
+  <div class="problem" id="p5">
+    <div class="problem-header">
+      <div class="problem-num">05</div>
+      <div class="problem-title">Gestor de contactos con búsqueda</div>
+      <span class="difficulty d-adv">Complejo</span>
+    </div>
+
+    <div class="enunciado">
+      <p>
+        Crea un gestor de contactos donde
+        <span class="h7"><span class="step-badge sb7">7</span>cada contacto es un diccionario con nombre, teléfono y email</span>,
+        y <span class="h6"><span class="step-badge sb6">6</span>todos los contactos se guardan en una lista</span>.
+        El sistema tiene un <span class="h3"><span class="step-badge sb3">3</span>menú que se repite indefinidamente</span>
+        con cuatro opciones, <span class="h5"><span class="step-badge sb5">5</span>cada una como función</span>:
+        agregar contacto,
+        <span class="h1"><span class="step-badge sb1">1</span>listar todos los contactos recorriendo la lista</span>,
+        <span class="h1"><span class="step-badge sb1">1</span>buscar por nombre recorriendo la lista</span>
+        y <span class="h4"><span class="step-badge sb4">4</span>comparando si el nombre coincide</span>,
+        y eliminar contacto
+        <span class="h4"><span class="step-badge sb4">4</span>verificando primero que exista</span>.
+        <span class="h2"><span class="step-badge sb2">2</span>Si la lista está vacía, avisa al usuario</span>
+        antes de intentar listar o buscar.
+      </p>
+    </div>
+
+    <div class="steps-label">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step step-6">
+        <div class="step-n">6</div>
+        <div class="step-content">
+          <div class="step-tool">Lista de diccionarios — estructura</div>
+          <div class="step-desc">La estructura es <strong>contactos = []</strong> donde cada elemento es <strong>{"nombre": x, "tel": y, "email": z}</strong>. Lista porque hay muchos contactos. Diccionario porque cada uno tiene campos con nombre.</div>
+        </div>
+      </div>
+      <div class="step step-5">
+        <div class="step-n">5</div>
+        <div class="step-content">
+          <div class="step-tool">Funciones def — mapear el menú</div>
+          <div class="step-desc">Antes de escribir código, listar las 4 funciones: <strong>agregar(contactos)</strong>, <strong>listar(contactos)</strong>, <strong>buscar(contactos, nombre)</strong>, <strong>eliminar(contactos, nombre)</strong>. La lista siempre va como parámetro.</div>
+        </div>
+      </div>
+      <div class="step step-3">
+        <div class="step-n">3</div>
+        <div class="step-content">
+          <div class="step-tool">while True — menú principal</div>
+          <div class="step-desc">El menú repite sin condición de fin predefinida → <strong>while True</strong>. Dentro: mostrar opciones, pedir opción, llamar función. La opción "4" o "salir" ejecuta break.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">if — guardia antes de procesar</div>
+          <div class="step-desc">En listar y buscar: <strong>if len(contactos) == 0: print("Lista vacía") return</strong>. El <strong>return</strong> sale de la función inmediatamente. Esta es la "guardia" — siempre va al inicio.</div>
+        </div>
+      </div>
+      <div class="step step-1">
+        <div class="step-n">1</div>
+        <div class="step-content">
+          <div class="step-tool">for — recorrer lista</div>
+          <div class="step-desc">Para listar: <strong>for c in contactos: print(c["nombre"], c["tel"])</strong>. Para buscar: <strong>for c in contactos: if c["nombre"].lower() == busqueda.lower()</strong>. El for es correcto porque sabemos cuántos hay.</div>
+        </div>
+      </div>
+      <div class="step step-4">
+        <div class="step-n">4</div>
+        <div class="step-content">
+          <div class="step-tool">if — validar antes de eliminar</div>
+          <div class="step-desc">Para eliminar: primero buscar si existe con el for. Si encontró, usar <strong>.remove()</strong>. Si no encontró, avisar. No intentes eliminar sin verificar primero — causa errores.</div>
+        </div>
+      </div>
+      <div class="step step-2">
+        <div class="step-n">2</div>
+        <div class="step-content">
+          <div class="step-tool">print() — feedback claro</div>
+          <div class="step-desc">Después de cada operación, confirmar qué pasó: "Contacto agregado", "Contacto no encontrado", "Contacto eliminado". El usuario siempre debe saber si su acción funcionó.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-box">
+      <div class="decision-title">Mapa mental del problema</div>
+      <div class="decision-grid">
+        <div class="decision-item"><div class="decision-q">¿Muchos contactos?</div><div class="decision-a" style="color:var(--c6)">→ lista principal</div></div>
+        <div class="decision-item"><div class="decision-q">¿Cada contacto con campos?</div><div class="decision-a" style="color:var(--c7)">→ diccionario dentro</div></div>
+        <div class="decision-item"><div class="decision-q">¿Menú infinito?</div><div class="decision-a" style="color:var(--c3)">→ while True</div></div>
+        <div class="decision-item"><div class="decision-q">¿4 acciones distintas?</div><div class="decision-a" style="color:var(--c5)">→ 4 funciones</div></div>
+        <div class="decision-item"><div class="decision-q">¿Recorrer contactos?</div><div class="decision-a" style="color:var(--c1)">→ for (cantidad conocida)</div></div>
+        <div class="decision-item"><div class="decision-q">¿Validar existencia?</div><div class="decision-a" style="color:var(--c4)">→ if + guardia al inicio</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">pensamiento_algoritmico.py · Python · CS50P</div>
+
+</div>
+</body>
+</html>

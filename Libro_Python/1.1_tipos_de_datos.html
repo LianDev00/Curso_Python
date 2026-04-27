@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tipos de Datos · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:       #090909;
+  --bg2:      #0f0f0f;
+  --bg3:      #141414;
+  --line:     #1c1c1c;
+  --line2:    #242424;
+  --text:     #d8d8d8;
+  --dim:      #484848;
+  --faint:    #1e1e1e;
+
+  /* type colors */
+  --int:      #38bdf8;
+  --int-bg:   #020d14;
+  --int-bd:   #0c2a3d;
+
+  --flt:      #fb923c;
+  --flt-bg:   #120800;
+  --flt-bd:   #3d1f06;
+
+  --boo:      #a78bfa;
+  --boo-bg:   #0c0814;
+  --boo-bd:   #2d1f4a;
+
+  --non:      #6b7280;
+  --non-bg:   #0d0d0d;
+  --non-bd:   #222222;
+
+  --conv:     #34d399;
+  --conv-bg:  #021208;
+  --conv-bd:  #0a3320;
+
+  --op:       #f472b6;
+  --op-bg:    #130510;
+  --op-bd:    #3d1030;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(9,9,9,0.94);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 44px;
+  overflow-x: auto;
+}
+nav::-webkit-scrollbar { display: none; }
+
+.nav-brand {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--dim);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  margin-right: 28px;
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.nav-links a {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  white-space: nowrap;
+  color: var(--dim);
+  transition: all .15s;
+}
+.nav-links a:hover { color: var(--text); background: var(--line); }
+.nav-links a.n-int  { color: var(--int); }
+.nav-links a.n-flt  { color: var(--flt); }
+.nav-links a.n-boo  { color: var(--boo); }
+.nav-links a.n-non  { color: var(--non); }
+.nav-links a.n-conv { color: var(--conv); }
+.nav-links a.n-op   { color: var(--op); }
+
+/* ── LAYOUT ── */
+.page { max-width: 900px; margin: 0 auto; padding: 60px 24px 100px; }
+
+/* ── HERO ── */
+.hero {
+  margin-bottom: 72px;
+}
+.hero-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: #fff;
+}
+.hero h1 span { color: var(--dim); }
+.hero-sub {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--dim);
+  max-width: 500px;
+  line-height: 1.8;
+}
+
+/* type pill in hero */
+.type-pills {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill {
+  font-size: 11px;
+  padding: 5px 14px;
+  border-radius: 2px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+.pill-int  { background: var(--int-bg);  border: 1px solid var(--int-bd);  color: var(--int);  }
+.pill-flt  { background: var(--flt-bg);  border: 1px solid var(--flt-bd);  color: var(--flt);  }
+.pill-boo  { background: var(--boo-bg);  border: 1px solid var(--boo-bd);  color: var(--boo);  }
+.pill-non  { background: var(--non-bg);  border: 1px solid var(--non-bd);  color: var(--non);  }
+.pill-conv { background: var(--conv-bg); border: 1px solid var(--conv-bd); color: var(--conv); }
+.pill-op   { background: var(--op-bg);   border: 1px solid var(--op-bd);   color: var(--op);   }
+
+/* ── SECTION ── */
+.section { margin-bottom: 64px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.section-icon {
+  width: 38px; height: 38px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.icon-int  { background: var(--int-bg);  border: 1px solid var(--int-bd);  color: var(--int);  }
+.icon-flt  { background: var(--flt-bg);  border: 1px solid var(--flt-bd);  color: var(--flt);  }
+.icon-boo  { background: var(--boo-bg);  border: 1px solid var(--boo-bd);  color: var(--boo);  }
+.icon-non  { background: var(--non-bg);  border: 1px solid var(--non-bd);  color: var(--non);  }
+.icon-conv { background: var(--conv-bg); border: 1px solid var(--conv-bd); color: var(--conv); }
+.icon-op   { background: var(--op-bg);   border: 1px solid var(--op-bd);   color: var(--op);   }
+
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.5px;
+}
+.section-type {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  margin-top: 2px;
+}
+
+/* ── PROSE ── */
+p { color: var(--text); font-size: 12.5px; line-height: 1.85; margin-bottom: 14px; }
+p:last-child { margin-bottom: 0; }
+
+/* ── CODE BLOCK ── */
+.cb {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  margin: 14px 0;
+  overflow: hidden;
+}
+.cb-label {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 14px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.cb pre {
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+.cb pre::-webkit-scrollbar { height: 4px; }
+.cb pre::-webkit-scrollbar-track { background: transparent; }
+.cb pre::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
+
+/* syntax colors */
+.k  { color: #7dd3fc; }   /* keyword / type */
+.n  { color: #c084fc; }   /* function/method name */
+.s  { color: #86efac; }   /* string */
+.nm { color: #fb923c; }   /* number */
+.c  { color: #404040; font-style: italic; }   /* comment */
+.op2{ color: #94a3b8; }   /* operator */
+.b  { color: #f472b6; }   /* bool/None */
+.v  { color: #d8d8d8; }   /* variable */
+
+/* ── METHOD TABLE ── */
+.mtable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 12px;
+}
+.mtable th {
+  text-align: left;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line2);
+  font-weight: 400;
+}
+.mtable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.mtable tr:last-child td { border-bottom: none; }
+.mtable tr:hover td { background: var(--faint); }
+.mtable .mname { color: #c084fc; font-weight: 700; white-space: nowrap; }
+.mtable .msig  { color: var(--dim); font-size: 11px; white-space: nowrap; }
+.mtable .mdesc { color: var(--text); }
+.mtable .mex   { color: #86efac; font-size: 11px; }
+
+/* ── CALLOUT ── */
+.callout {
+  padding: 14px 16px;
+  border-radius: 3px;
+  margin: 16px 0;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.callout-int  { background: var(--int-bg);  border-left: 2px solid var(--int);  color: #a8d8f0; }
+.callout-flt  { background: var(--flt-bg);  border-left: 2px solid var(--flt);  color: #f0c8a8; }
+.callout-boo  { background: var(--boo-bg);  border-left: 2px solid var(--boo);  color: #d0c0f8; }
+.callout-non  { background: var(--non-bg);  border-left: 2px solid var(--non);  color: #a0a0a8; }
+.callout-conv { background: var(--conv-bg); border-left: 2px solid var(--conv); color: #a8e8cc; }
+.callout-op   { background: var(--op-bg);   border-left: 2px solid var(--op);   color: #f0b0d0; }
+.callout b { font-weight: 700; color: #fff; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── OPERATOR GRID ── */
+.op-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+.op-card {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+.op-sym { font-size: 18px; font-weight: 700; color: var(--op); font-family: 'Unbounded', sans-serif; margin-bottom: 4px; }
+.op-name { font-size: 10px; color: var(--dim); letter-spacing: 1px; margin-bottom: 6px; }
+.op-ex { font-size: 11px; color: #86efac; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 24px 0 0;
+  margin-top: 24px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · Tipos</div>
+  <div class="nav-links">
+    <a href="#int"  class="n-int">int</a>
+    <a href="#flt"  class="n-flt">float</a>
+    <a href="#boo"  class="n-boo">bool</a>
+    <a href="#non"  class="n-non">None</a>
+    <a href="#conv" class="n-conv">conversión</a>
+    <a href="#op"   class="n-op">operadores</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Guía · Python · Tipos de datos numéricos</div>
+    <h1>Tipos<br><span>de datos</span></h1>
+    <p class="hero-sub">
+      int, float, bool y None — lo que está detrás de cada número y valor lógico que manejas en Python.
+    </p>
+    <div class="type-pills">
+      <span class="pill pill-int">int</span>
+      <span class="pill pill-flt">float</span>
+      <span class="pill pill-boo">bool</span>
+      <span class="pill pill-non">None</span>
+      <span class="pill pill-conv">conversión de tipos</span>
+      <span class="pill pill-op">operadores</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ INT ══════════════════════ -->
+  <div class="section" id="int">
+    <div class="section-header">
+      <div class="section-icon icon-int">int</div>
+      <div>
+        <div class="section-title">Enteros</div>
+        <div class="section-type">tipo · int · números sin decimales</div>
+      </div>
+    </div>
+
+    <p>Un <code>int</code> representa cualquier número entero — positivo, negativo o cero. No tiene límite de tamaño en Python (a diferencia de otros lenguajes). Se usa para contar, indexar, rangos, y cualquier cálculo que no necesite decimales.</p>
+
+    <div class="cb">
+      <div class="cb-label">Crear enteros</div>
+      <pre><span class="v">edad</span>       <span class="op2">=</span> <span class="nm">25</span>
+<span class="v">temperatura</span> <span class="op2">=</span> <span class="op2">-</span><span class="nm">8</span>
+<span class="v">cero</span>       <span class="op2">=</span> <span class="nm">0</span>
+<span class="v">millon</span>     <span class="op2">=</span> <span class="nm">1_000_000</span>     <span class="c"># el guión bajo es separador visual, válido en Python</span>
+<span class="v">binario</span>    <span class="op2">=</span> <span class="nm">0b1010</span>        <span class="c"># int en base 2 → 10</span>
+<span class="v">hexa</span>       <span class="op2">=</span> <span class="nm">0xFF</span>          <span class="c"># int en hexadecimal → 255</span>
+
+<span class="nb">print</span>(<span class="nb">type</span>(<span class="v">edad</span>))            <span class="c"># &lt;class 'int'&gt;</span></pre>
+    </div>
+
+    <div class="callout callout-int">
+      <b>A diferencia de otros lenguajes:</b> Python no tiene int32, int64, long, etc. Un solo tipo <code>int</code> que crece sin límite. <code>10 ** 1000</code> funciona perfectamente.
+    </div>
+
+    <table class="mtable">
+      <thead>
+        <tr>
+          <th>Método / Función</th>
+          <th>Descripción</th>
+          <th>Ejemplo → resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mname">abs(n)</span></td>
+          <td class="mdesc">Valor absoluto</td>
+          <td class="mex">abs(-7) → 7</td>
+        </tr>
+        <tr>
+          <td><span class="mname">pow(base, exp)</span></td>
+          <td class="mdesc">Potencia (igual que **)</td>
+          <td class="mex">pow(2, 8) → 256</td>
+        </tr>
+        <tr>
+          <td><span class="mname">divmod(a, b)</span></td>
+          <td class="mdesc">Retorna (cociente, resto) a la vez</td>
+          <td class="mex">divmod(17, 5) → (3, 2)</td>
+        </tr>
+        <tr>
+          <td><span class="mname">bin(n)</span></td>
+          <td class="mdesc">Convierte a string binario</td>
+          <td class="mex">bin(10) → '0b1010'</td>
+        </tr>
+        <tr>
+          <td><span class="mname">hex(n)</span></td>
+          <td class="mdesc">Convierte a string hexadecimal</td>
+          <td class="mex">hex(255) → '0xff'</td>
+        </tr>
+        <tr>
+          <td><span class="mname">oct(n)</span></td>
+          <td class="mdesc">Convierte a string octal</td>
+          <td class="mex">oct(8) → '0o10'</td>
+        </tr>
+        <tr>
+          <td><span class="mname">n.bit_length()</span></td>
+          <td class="mdesc">Cuántos bits necesita para representarse</td>
+          <td class="mex">(10).bit_length() → 4</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cb">
+      <div class="cb-label">Usos típicos</div>
+      <pre><span class="c"># contar</span>
+<span class="v">intentos</span> <span class="op2">=</span> <span class="nm">0</span>
+<span class="v">intentos</span> <span class="op2">+=</span> <span class="nm">1</span>
+
+<span class="c"># índice de lista</span>
+<span class="v">lista</span>[<span class="nm">0</span>]
+<span class="v">lista</span>[<span class="op2">-</span><span class="nm">1</span>]
+
+<span class="c"># rango</span>
+<span class="k">for</span> <span class="v">i</span> <span class="k">in</span> <span class="nb">range</span>(<span class="nm">0</span>, <span class="nm">10</span>, <span class="nm">2</span>):    <span class="c"># 0 2 4 6 8</span>
+    <span class="nb">print</span>(<span class="v">i</span>)
+
+<span class="c"># módulo (resto) — muy usado para par/impar o ciclos</span>
+<span class="nm">7</span> <span class="op2">%</span> <span class="nm">2</span>    <span class="c"># → 1  (impar)</span>
+<span class="nm">8</span> <span class="op2">%</span> <span class="nm">2</span>    <span class="c"># → 0  (par)</span>
+<span class="nm">10</span> <span class="op2">%</span> <span class="nm">3</span>   <span class="c"># → 1  (el resto de dividir 10 entre 3)</span>
+
+<span class="c"># división entera — retorna int, descarta decimales</span>
+<span class="nm">17</span> <span class="op2">//</span> <span class="nm">5</span>  <span class="c"># → 3   (no 3.4)</span></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ FLOAT ══════════════════════ -->
+  <div class="section" id="flt">
+    <div class="section-header">
+      <div class="section-icon icon-flt">flt</div>
+      <div>
+        <div class="section-title">Decimales</div>
+        <div class="section-type">tipo · float · números con punto decimal</div>
+      </div>
+    </div>
+
+    <p>Un <code>float</code> representa números con parte decimal. Internamente Python los almacena en formato IEEE 754 de 64 bits — esto tiene consecuencias importantes en precisión que conviene conocer desde el principio.</p>
+
+    <div class="cb">
+      <div class="cb-label">Crear floats</div>
+      <pre><span class="v">precio</span>   <span class="op2">=</span> <span class="nm">19.99</span>
+<span class="v">pi</span>       <span class="op2">=</span> <span class="nm">3.14159</span>
+<span class="v">negativo</span> <span class="op2">=</span> <span class="op2">-</span><span class="nm">0.5</span>
+<span class="v">grande</span>   <span class="op2">=</span> <span class="nm">1.5e6</span>      <span class="c"># notación científica → 1500000.0</span>
+<span class="v">chico</span>    <span class="op2">=</span> <span class="nm">2.3e-4</span>     <span class="c"># → 0.00023</span>
+<span class="v">forzado</span>  <span class="op2">=</span> <span class="nm">5.</span>         <span class="c"># el punto solo ya lo hace float → 5.0</span>
+
+<span class="nb">print</span>(<span class="nb">type</span>(<span class="v">precio</span>))       <span class="c"># &lt;class 'float'&gt;</span></pre>
+    </div>
+
+    <div class="callout callout-flt">
+      <b>El problema de precisión del float:</b> <code>0.1 + 0.2</code> en Python devuelve <code>0.30000000000000004</code>, no <code>0.3</code>. Esto no es un bug — es cómo funciona el estándar IEEE 754. Para dinero o comparaciones exactas, usa el módulo <code>decimal</code>.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Precisión y redondeo</div>
+      <pre><span class="c"># el problema</span>
+<span class="nm">0.1</span> <span class="op2">+</span> <span class="nm">0.2</span>              <span class="c"># → 0.30000000000000004</span>
+
+<span class="c"># round() — redondea a N decimales</span>
+<span class="nb">round</span>(<span class="nm">3.14159</span>, <span class="nm">2</span>)     <span class="c"># → 3.14</span>
+<span class="nb">round</span>(<span class="nm">2.675</span>, <span class="nm">2</span>)       <span class="c"># → 2.67  (sorpresa: IEEE 754)</span>
+<span class="nb">round</span>(<span class="nm">4.5</span>)            <span class="c"># → 4  (redondeo bancario: al par más cercano)</span>
+<span class="nb">round</span>(<span class="nm">5.5</span>)            <span class="c"># → 6</span>
+
+<span class="c"># comparar floats correctamente — nunca con ==</span>
+<span class="k">import</span> <span class="v">math</span>
+<span class="v">math</span>.<span class="n">isclose</span>(<span class="nm">0.1</span> <span class="op2">+</span> <span class="nm">0.2</span>, <span class="nm">0.3</span>)     <span class="c"># → True</span>
+
+<span class="c"># formato de salida con f-string</span>
+<span class="v">precio</span> <span class="op2">=</span> <span class="nm">19.9999</span>
+<span class="nb">print</span>(<span class="s">f"S/ {precio:.2f}"</span>)         <span class="c"># → S/ 20.00</span>
+<span class="nb">print</span>(<span class="s">f"{precio:.4f}"</span>)            <span class="c"># → 19.9999</span>
+<span class="nb">print</span>(<span class="s">f"{precio:10.2f}"</span>)          <span class="c"># → '     20.00'  (ancho 10)</span></pre>
+    </div>
+
+    <table class="mtable">
+      <thead>
+        <tr><th>Función</th><th>Descripción</th><th>Ejemplo → resultado</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="mname">round(n, d)</span></td>
+          <td class="mdesc">Redondea a d decimales</td>
+          <td class="mex">round(3.567, 2) → 3.57</td>
+        </tr>
+        <tr>
+          <td><span class="mname">abs(n)</span></td>
+          <td class="mdesc">Valor absoluto</td>
+          <td class="mex">abs(-3.14) → 3.14</td>
+        </tr>
+        <tr>
+          <td><span class="mname">math.floor(n)</span></td>
+          <td class="mdesc">Redondea hacia abajo → int</td>
+          <td class="mex">math.floor(3.9) → 3</td>
+        </tr>
+        <tr>
+          <td><span class="mname">math.ceil(n)</span></td>
+          <td class="mdesc">Redondea hacia arriba → int</td>
+          <td class="mex">math.ceil(3.1) → 4</td>
+        </tr>
+        <tr>
+          <td><span class="mname">math.sqrt(n)</span></td>
+          <td class="mdesc">Raíz cuadrada</td>
+          <td class="mex">math.sqrt(16) → 4.0</td>
+        </tr>
+        <tr>
+          <td><span class="mname">math.isclose(a, b)</span></td>
+          <td class="mdesc">Compara floats con tolerancia</td>
+          <td class="mex">math.isclose(0.1+0.2, 0.3) → True</td>
+        </tr>
+        <tr>
+          <td><span class="mname">n.is_integer()</span></td>
+          <td class="mdesc">True si el float no tiene parte decimal real</td>
+          <td class="mex">(4.0).is_integer() → True</td>
+        </tr>
+        <tr>
+          <td><span class="mname">float('inf')</span></td>
+          <td class="mdesc">Infinito positivo (válido en Python)</td>
+          <td class="mex">float('inf') > 10**100 → True</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="cb">
+      <div class="cb-label">Usos típicos</div>
+      <pre><span class="c"># precios y porcentajes</span>
+<span class="v">precio</span>    <span class="op2">=</span> <span class="nm">150.0</span>
+<span class="v">descuento</span> <span class="op2">=</span> <span class="v">precio</span> <span class="op2">*</span> <span class="nm">0.18</span>           <span class="c"># 18% de descuento</span>
+<span class="v">total</span>     <span class="op2">=</span> <span class="v">precio</span> <span class="op2">-</span> <span class="v">descuento</span>
+<span class="nb">print</span>(<span class="s">f"Total: S/ {total:.2f}"</span>)
+
+<span class="c"># IMC</span>
+<span class="v">peso</span>   <span class="op2">=</span> <span class="nm">70.0</span>
+<span class="v">altura</span> <span class="op2">=</span> <span class="nm">1.75</span>
+<span class="v">imc</span>    <span class="op2">=</span> <span class="v">peso</span> <span class="op2">/</span> (<span class="v">altura</span> <span class="op2">**</span> <span class="nm">2</span>)
+<span class="nb">print</span>(<span class="s">f"IMC: {imc:.2f}"</span>)
+
+<span class="c"># promedio — división siempre da float</span>
+<span class="v">notas</span>    <span class="op2">=</span> [<span class="nm">15</span>, <span class="nm">18</span>, <span class="nm">12</span>]
+<span class="v">promedio</span> <span class="op2">=</span> <span class="nb">sum</span>(<span class="v">notas</span>) <span class="op2">/</span> <span class="nb">len</span>(<span class="v">notas</span>)   <span class="c"># → 15.0 (float)</span></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ BOOL ══════════════════════ -->
+  <div class="section" id="boo">
+    <div class="section-header">
+      <div class="section-icon icon-boo">bool</div>
+      <div>
+        <div class="section-title">Booleanos</div>
+        <div class="section-type">tipo · bool · True / False</div>
+      </div>
+    </div>
+
+    <p>Un <code>bool</code> solo puede ser <code>True</code> o <code>False</code>. En Python, <code>bool</code> es subclase de <code>int</code> — <code>True</code> vale <code>1</code> y <code>False</code> vale <code>0</code>. Esto tiene implicaciones útiles: puedes sumar booleanos para contar cuántos son verdaderos.</p>
+
+    <div class="cb">
+      <div class="cb-label">Crear y usar booleanos</div>
+      <pre><span class="v">activo</span>   <span class="op2">=</span> <span class="b">True</span>
+<span class="v">enviado</span>  <span class="op2">=</span> <span class="b">False</span>
+
+<span class="c"># resultado de una comparación → siempre bool</span>
+<span class="nm">5</span> <span class="op2">></span> <span class="nm">3</span>          <span class="c"># → True</span>
+<span class="nm">5</span> <span class="op2">==</span> <span class="nm">3</span>         <span class="c"># → False</span>
+<span class="nm">10</span> <span class="op2">!=</span> <span class="nm">10</span>       <span class="c"># → False</span>
+<span class="nm">7</span> <span class="op2">>=</span> <span class="nm">7</span>         <span class="c"># → True</span>
+
+<span class="c"># bool es subclase de int</span>
+<span class="b">True</span> <span class="op2">+</span> <span class="b">True</span>    <span class="c"># → 2</span>
+<span class="b">True</span> <span class="op2">*</span> <span class="nm">5</span>      <span class="c"># → 5</span>
+<span class="b">False</span> <span class="op2">+</span> <span class="nm">1</span>     <span class="c"># → 1</span>
+
+<span class="c"># contar cuántos son verdaderos en una lista</span>
+<span class="v">aprobados</span> <span class="op2">=</span> [<span class="b">True</span>, <span class="b">False</span>, <span class="b">True</span>, <span class="b">True</span>]
+<span class="nb">sum</span>(<span class="v">aprobados</span>)     <span class="c"># → 3</span></pre>
+    </div>
+
+    <p><b>Valores truthy y falsy</b> — en Python cualquier objeto puede evaluarse como bool. No solo <code>True</code>/<code>False</code>:</p>
+
+    <div class="two-col">
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Falsy — se evalúan como False</div>
+        <pre><span class="b">False</span>
+<span class="nm">0</span>          <span class="c"># int cero</span>
+<span class="nm">0.0</span>        <span class="c"># float cero</span>
+<span class="s">""</span>         <span class="c"># string vacío</span>
+[]         <span class="c"># lista vacía</span>
+{}         <span class="c"># dict vacío</span>
+<span class="b">None</span>       <span class="c"># el tipo None</span></pre>
+      </div>
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Truthy — se evalúan como True</div>
+        <pre><span class="b">True</span>
+<span class="nm">1</span>          <span class="c"># cualquier int ≠ 0</span>
+<span class="nm">-3.14</span>      <span class="c"># cualquier float ≠ 0.0</span>
+<span class="s">"hola"</span>     <span class="c"># string no vacío</span>
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>]    <span class="c"># lista no vacía</span>
+{<span class="s">"a"</span>:<span class="nm">1</span>}    <span class="c"># dict no vacío</span></pre>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Operadores lógicos: and · or · not</div>
+      <pre><span class="c"># and — ambos deben ser True</span>
+<span class="b">True</span> <span class="k">and</span> <span class="b">True</span>     <span class="c"># → True</span>
+<span class="b">True</span> <span class="k">and</span> <span class="b">False</span>    <span class="c"># → False</span>
+
+<span class="c"># or — al menos uno True</span>
+<span class="b">False</span> <span class="k">or</span> <span class="b">True</span>     <span class="c"># → True</span>
+<span class="b">False</span> <span class="k">or</span> <span class="b">False</span>    <span class="c"># → False</span>
+
+<span class="c"># not — invierte</span>
+<span class="k">not</span> <span class="b">True</span>          <span class="c"># → False</span>
+<span class="k">not</span> <span class="b">False</span>         <span class="c"># → True</span>
+
+<span class="c"># uso real: validar múltiples condiciones</span>
+<span class="v">edad</span>   <span class="op2">=</span> <span class="nm">20</span>
+<span class="v">dinero</span> <span class="op2">=</span> <span class="nm">150</span>
+<span class="k">if</span> <span class="v">edad</span> <span class="op2">>=</span> <span class="nm">18</span> <span class="k">and</span> <span class="v">dinero</span> <span class="op2">>=</span> <span class="nm">100</span>:
+    <span class="nb">print</span>(<span class="s">"Puede comprar"</span>)
+
+<span class="c"># uso de truthy — si la lista no está vacía</span>
+<span class="v">nombres</span> <span class="op2">=</span> [<span class="s">"Ana"</span>, <span class="s">"Luis"</span>]
+<span class="k">if</span> <span class="v">nombres</span>:               <span class="c"># equivale a: if len(nombres) > 0</span>
+    <span class="nb">print</span>(<span class="s">"Hay nombres"</span>)
+
+<span class="c"># bool() — convertir cualquier valor a bool explícitamente</span>
+<span class="nb">bool</span>(<span class="nm">0</span>)       <span class="c"># → False</span>
+<span class="nb">bool</span>(<span class="nm">42</span>)      <span class="c"># → True</span>
+<span class="nb">bool</span>(<span class="s">""</span>)      <span class="c"># → False</span>
+<span class="nb">bool</span>(<span class="s">"hola"</span>) <span class="c"># → True</span></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ NONE ══════════════════════ -->
+  <div class="section" id="non">
+    <div class="section-header">
+      <div class="section-icon icon-non">—</div>
+      <div>
+        <div class="section-title">None</div>
+        <div class="section-type">tipo · NoneType · ausencia de valor</div>
+      </div>
+    </div>
+
+    <p><code>None</code> es el único valor del tipo <code>NoneType</code>. Representa la ausencia de valor — no es cero, no es string vacío, no es False. Es "nada". Lo verás mucho como valor por defecto de funciones que no retornan nada explícitamente, o para indicar que algo no fue encontrado.</p>
+
+    <div class="cb">
+      <div class="cb-label">Dónde aparece None</div>
+      <pre><span class="c"># una función sin return devuelve None</span>
+<span class="k">def</span> <span class="n">saludar</span>():
+    <span class="nb">print</span>(<span class="s">"Hola"</span>)            <span class="c"># imprime, pero no retorna nada</span>
+
+<span class="v">resultado</span> <span class="op2">=</span> <span class="n">saludar</span>()       <span class="c"># resultado es None</span>
+<span class="nb">print</span>(<span class="v">resultado</span>)             <span class="c"># → None</span>
+
+<span class="c"># como señal de "no encontrado"</span>
+<span class="k">def</span> <span class="n">buscar</span>(<span class="v">lista</span>, <span class="v">objetivo</span>):
+    <span class="k">for</span> <span class="v">item</span> <span class="k">in</span> <span class="v">lista</span>:
+        <span class="k">if</span> <span class="v">item</span> <span class="op2">==</span> <span class="v">objetivo</span>:
+            <span class="k">return</span> <span class="v">item</span>
+    <span class="k">return</span> <span class="b">None</span>              <span class="c"># no se encontró</span>
+
+<span class="c"># inicializar una variable sin valor aún</span>
+<span class="v">usuario</span> <span class="op2">=</span> <span class="b">None</span>
+<span class="c"># ... más adelante se asigna si se encuentra</span>
+
+<span class="c"># .get() de diccionario retorna None si la clave no existe</span>
+<span class="v">d</span> <span class="op2">=</span> {<span class="s">"a"</span>: <span class="nm">1</span>}
+<span class="v">d</span>.<span class="n">get</span>(<span class="s">"z"</span>)                  <span class="c"># → None</span></pre>
+    </div>
+
+    <div class="callout callout-non">
+      <b>Comparar None siempre con <code>is</code>, no con <code>==</code>:</b><br>
+      <code>x is None</code> → correcto<br>
+      <code>x == None</code> → funciona pero no es idiomático — algunos objetos pueden sobrecargar <code>==</code> y dar resultados inesperados.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Verificar None correctamente</div>
+      <pre><span class="v">valor</span> <span class="op2">=</span> <span class="b">None</span>
+
+<span class="c"># correcto</span>
+<span class="k">if</span> <span class="v">valor</span> <span class="k">is</span> <span class="b">None</span>:
+    <span class="nb">print</span>(<span class="s">"No hay valor"</span>)
+
+<span class="k">if</span> <span class="v">valor</span> <span class="k">is not</span> <span class="b">None</span>:
+    <span class="nb">print</span>(<span class="s">f"Valor: {valor}"</span>)
+
+<span class="c"># None es falsy — también funciona así</span>
+<span class="k">if</span> <span class="k">not</span> <span class="v">valor</span>:
+    <span class="nb">print</span>(<span class="s">"Falsy"</span>)
+
+<span class="c"># None en type()</span>
+<span class="nb">type</span>(<span class="b">None</span>)     <span class="c"># → &lt;class 'NoneType'&gt;</span></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ CONVERSIÓN ══════════════════════ -->
+  <div class="section" id="conv">
+    <div class="section-header">
+      <div class="section-icon icon-conv">⇄</div>
+      <div>
+        <div class="section-title">Conversión de tipos</div>
+        <div class="section-type">int · float · bool · str — casting explícito</div>
+      </div>
+    </div>
+
+    <p>Python no convierte tipos automáticamente (salvo en operaciones numéricas mixtas). Para cambiar de tipo usas funciones explícitas: <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>. Esto se llama <em>casting</em>.</p>
+
+    <div class="cb">
+      <div class="cb-label">Tabla de conversiones posibles</div>
+      <pre><span class="c"># → int</span>
+<span class="nb">int</span>(<span class="s">"42"</span>)          <span class="c"># → 42       ✓ string numérico</span>
+<span class="nb">int</span>(<span class="nm">3.9</span>)           <span class="c"># → 3        ✓ trunca (no redondea)</span>
+<span class="nb">int</span>(<span class="b">True</span>)          <span class="c"># → 1</span>
+<span class="nb">int</span>(<span class="b">False</span>)         <span class="c"># → 0</span>
+<span class="nb">int</span>(<span class="s">"3.14"</span>)        <span class="c"># ✗ ValueError — no acepta decimales en string</span>
+<span class="nb">int</span>(<span class="s">"hola"</span>)        <span class="c"># ✗ ValueError</span>
+
+<span class="c"># → float</span>
+<span class="nb">float</span>(<span class="s">"3.14"</span>)      <span class="c"># → 3.14</span>
+<span class="nb">float</span>(<span class="nm">7</span>)           <span class="c"># → 7.0</span>
+<span class="nb">float</span>(<span class="b">True</span>)        <span class="c"># → 1.0</span>
+<span class="nb">float</span>(<span class="s">"inf"</span>)       <span class="c"># → inf  (infinito)</span>
+
+<span class="c"># → str</span>
+<span class="nb">str</span>(<span class="nm">42</span>)            <span class="c"># → "42"</span>
+<span class="nb">str</span>(<span class="nm">3.14</span>)          <span class="c"># → "3.14"</span>
+<span class="nb">str</span>(<span class="b">True</span>)          <span class="c"># → "True"</span>
+<span class="nb">str</span>(<span class="b">None</span>)          <span class="c"># → "None"</span>
+
+<span class="c"># → bool</span>
+<span class="nb">bool</span>(<span class="nm">0</span>)            <span class="c"># → False</span>
+<span class="nb">bool</span>(<span class="nm">1</span>)            <span class="c"># → True</span>
+<span class="nb">bool</span>(<span class="s">""</span>)           <span class="c"># → False</span>
+<span class="nb">bool</span>(<span class="s">"cualquier"</span>) <span class="c"># → True</span></pre>
+    </div>
+
+    <div class="callout callout-conv">
+      <b>input() siempre devuelve str.</b> Si el usuario escribe <code>25</code>, Python lo recibe como <code>"25"</code>. Si intentas hacer aritmética directamente obtendrás un error. Siempre convierte: <code>edad = int(input("Edad: "))</code>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Conversiones mixtas automáticas en operaciones</div>
+      <pre><span class="c"># int + float → Python convierte el int a float automáticamente</span>
+<span class="nm">3</span> <span class="op2">+</span> <span class="nm">1.5</span>       <span class="c"># → 4.5  (float)</span>
+<span class="nm">10</span> <span class="op2">/</span> <span class="nm">2</span>        <span class="c"># → 5.0  (/ siempre devuelve float)</span>
+<span class="nm">10</span> <span class="op2">//</span> <span class="nm">2</span>       <span class="c"># → 5   (// devuelve int si ambos son int)</span>
+<span class="nm">10</span> <span class="op2">//</span> <span class="nm">2.0</span>     <span class="c"># → 5.0 (// devuelve float si hay algún float)</span>
+
+<span class="c"># str + str → concatena (no suma)</span>
+<span class="s">"3"</span> <span class="op2">+</span> <span class="s">"4"</span>     <span class="c"># → "34"   (¡no 7!)</span>
+<span class="c"># str + int → TypeError — Python no convierte automáticamente</span>
+<span class="s">"edad: "</span> <span class="op2">+</span> <span class="nm">25</span> <span class="c"># ✗ TypeError</span>
+<span class="s">"edad: "</span> <span class="op2">+</span> <span class="nb">str</span>(<span class="nm">25</span>)  <span class="c"># ✓ → "edad: 25"</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">type() e isinstance() — verificar el tipo</div>
+      <pre><span class="v">x</span> <span class="op2">=</span> <span class="nm">42</span>
+
+<span class="c"># type() — devuelve el tipo exacto</span>
+<span class="nb">type</span>(<span class="v">x</span>)                      <span class="c"># → &lt;class 'int'&gt;</span>
+<span class="nb">type</span>(<span class="v">x</span>) <span class="op2">==</span> <span class="nb">int</span>               <span class="c"># → True</span>
+
+<span class="c"># isinstance() — verifica tipo incluyendo herencia (más recomendado)</span>
+<span class="nb">isinstance</span>(<span class="v">x</span>, <span class="nb">int</span>)           <span class="c"># → True</span>
+<span class="nb">isinstance</span>(<span class="v">x</span>, (<span class="nb">int</span>, <span class="nb">float</span>))  <span class="c"># → True (cualquiera de los dos)</span>
+<span class="nb">isinstance</span>(<span class="b">True</span>, <span class="nb">int</span>)        <span class="c"># → True  (bool hereda de int)</span></pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ OPERADORES ══════════════════════ -->
+  <div class="section" id="op">
+    <div class="section-header">
+      <div class="section-icon icon-op">±</div>
+      <div>
+        <div class="section-title">Operadores numéricos</div>
+        <div class="section-type">aritméticos · comparación · asignación</div>
+      </div>
+    </div>
+
+    <div class="op-grid">
+      <div class="op-card">
+        <div class="op-sym">+</div>
+        <div class="op-name">SUMA</div>
+        <div class="op-ex">3 + 4 → 7</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">-</div>
+        <div class="op-name">RESTA</div>
+        <div class="op-ex">10 - 3 → 7</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">*</div>
+        <div class="op-name">MULTIPLICACIÓN</div>
+        <div class="op-ex">4 * 3 → 12</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">/</div>
+        <div class="op-name">DIVISIÓN REAL</div>
+        <div class="op-ex">7 / 2 → 3.5</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">//</div>
+        <div class="op-name">DIV. ENTERA</div>
+        <div class="op-ex">7 // 2 → 3</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">%</div>
+        <div class="op-name">MÓDULO</div>
+        <div class="op-ex">7 % 2 → 1</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">**</div>
+        <div class="op-name">POTENCIA</div>
+        <div class="op-ex">2 ** 8 → 256</div>
+      </div>
+      <div class="op-card">
+        <div class="op-sym">-n</div>
+        <div class="op-name">NEGACIÓN</div>
+        <div class="op-ex">-(-5) → 5</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Operadores de asignación compuesta</div>
+      <pre><span class="v">n</span> <span class="op2">=</span> <span class="nm">10</span>
+
+<span class="v">n</span> <span class="op2">+=</span> <span class="nm">3</span>    <span class="c"># n = n + 3  → 13</span>
+<span class="v">n</span> <span class="op2">-=</span> <span class="nm">2</span>    <span class="c"># n = n - 2  → 11</span>
+<span class="v">n</span> <span class="op2">*=</span> <span class="nm">2</span>    <span class="c"># n = n * 2  → 22</span>
+<span class="v">n</span> <span class="op2">/=</span> <span class="nm">4</span>    <span class="c"># n = n / 4  → 5.5   (siempre float)</span>
+<span class="v">n</span> <span class="op2">//=</span> <span class="nm">2</span>   <span class="c"># n = n // 2 → 2</span>
+<span class="v">n</span> <span class="op2">%=</span> <span class="nm">3</span>    <span class="c"># n = n % 3  → 2</span>
+<span class="v">n</span> <span class="op2">**=</span> <span class="nm">3</span>   <span class="c"># n = n ** 3 → 8</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Operadores de comparación — siempre retornan bool</div>
+      <pre><span class="nm">5</span> <span class="op2">==</span> <span class="nm">5</span>     <span class="c"># igualdad        → True</span>
+<span class="nm">5</span> <span class="op2">!=</span> <span class="nm">3</span>     <span class="c"># distinto        → True</span>
+<span class="nm">7</span> <span class="op2">></span> <span class="nm">3</span>      <span class="c"># mayor           → True</span>
+<span class="nm">3</span> <span class="op2"><</span> <span class="nm">7</span>      <span class="c"># menor           → True</span>
+<span class="nm">5</span> <span class="op2">>=</span> <span class="nm">5</span>     <span class="c"># mayor o igual   → True</span>
+<span class="nm">4</span> <span class="op2"><=</span> <span class="nm">3</span>     <span class="c"># menor o igual   → False</span>
+
+<span class="c"># Python permite encadenar comparaciones (muy útil)</span>
+<span class="nm">0</span> <span class="op2"><</span> <span class="nm">5</span> <span class="op2"><</span> <span class="nm">10</span>       <span class="c"># → True  (5 está entre 0 y 10)</span>
+<span class="nm">18</span> <span class="op2"><=</span> <span class="nm">25</span> <span class="op2"><</span> <span class="nm">65</span>     <span class="c"># → True  (25 es adulto)</span>
+<span class="c"># equivale a: 18 <= 25 and 25 < 65 — más legible</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Precedencia de operadores (de mayor a menor)</div>
+      <pre><span class="c"># 1. Paréntesis         ()</span>
+<span class="c"># 2. Potencia            **</span>
+<span class="c"># 3. Negación unaria     -n</span>
+<span class="c"># 4. *, /, //, %</span>
+<span class="c"># 5. +, -</span>
+<span class="c"># 6. Comparaciones       ==, !=, >, <, >=, <=</span>
+<span class="c"># 7. not</span>
+<span class="c"># 8. and</span>
+<span class="c"># 9. or</span>
+
+<span class="c"># ejemplos</span>
+<span class="nm">2</span> <span class="op2">+</span> <span class="nm">3</span> <span class="op2">*</span> <span class="nm">4</span>        <span class="c"># → 14   (no 20 — * antes que +)</span>
+(<span class="nm">2</span> <span class="op2">+</span> <span class="nm">3</span>) <span class="op2">*</span> <span class="nm">4</span>      <span class="c"># → 20   (paréntesis primero)</span>
+<span class="nm">2</span> <span class="op2">**</span> <span class="nm">3</span> <span class="op2">**</span> <span class="nm">2</span>      <span class="c"># → 512  (** asocia de derecha a izquierda: 2**(3**2))</span>
+<span class="op2">-</span><span class="nm">2</span> <span class="op2">**</span> <span class="nm">2</span>          <span class="c"># → -4   (** antes de negación: -(2**2))</span>
+(<span class="op2">-</span><span class="nm">2</span>) <span class="op2">**</span> <span class="nm">2</span>        <span class="c"># → 4    (negación dentro del paréntesis)</span></pre>
+    </div>
+
+    <div class="callout callout-op">
+      <b>Regla práctica:</b> cuando tengas duda sobre precedencia, usa paréntesis. No solo resuelven la ambigüedad — hacen el código más legible para cualquiera que lo lea después.
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · Tipos de datos numéricos</span>
+    <span>int · float · bool · None · conversión · operadores</span>
+  </footer>
+
+</div>
+</body>
+</html>

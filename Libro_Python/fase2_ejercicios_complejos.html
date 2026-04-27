@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fase 2 — 5 Ejercicios Complejos Python</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #131316;
+    --border: #1e1e24;
+    --accent: #f59e0b;
+    --accent-dim: #92400e;
+    --text: #e8e8f0;
+    --muted: #5a5a72;
+    --solved: #10b981;
+    --tag-bg: #1a1a22;
+    --piece-bg: #0a0a0c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* HEADER */
+  header {
+    margin-bottom: 56px;
+    border-left: 3px solid var(--solved);
+    padding-left: 20px;
+  }
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--solved);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  header p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 2px;
+    height: 3px;
+    margin-bottom: 48px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--solved);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* EXERCISE CARD */
+  .exercise-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .exercise-card:hover { border-color: var(--accent-dim); }
+  .exercise-card.done { border-color: var(--solved); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .ex-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--solved);
+    background: #0a1f14;
+    border: 1px solid var(--solved);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .exercise-card.done .ex-number {
+    background: var(--solved);
+    color: #000;
+  }
+
+  .card-meta {
+    flex: 1;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .card-check {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: transparent;
+    color: transparent;
+    font-size: 13px;
+  }
+  .exercise-card.done .card-check {
+    border-color: var(--solved);
+    background: var(--solved);
+    color: #000;
+  }
+
+  .card-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .card-body.open { display: block; }
+
+  /* PIECES MAP */
+  .pieces-map {
+    margin-top: 18px;
+    margin-bottom: 16px;
+  }
+  .pieces-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pieces-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .piece-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--piece-bg);
+    border: 1px solid var(--accent-dim);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .piece-chip .num {
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  .enunciado {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.9;
+    background: #0a0a0c;
+    border-left: 2px solid var(--solved);
+    padding: 14px 16px;
+    border-radius: 0 3px 3px 0;
+  }
+  .enunciado b { color: var(--accent); font-weight: 700; }
+
+  .hint-btn {
+    margin-top: 12px;
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .hint-btn:hover { color: var(--accent); }
+
+  .hint-box {
+    display: none;
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: #0e0e12;
+    border: 1px dashed var(--border);
+    padding: 12px 14px;
+    border-radius: 3px;
+    line-height: 1.7;
+  }
+  .hint-box.open { display: block; }
+  .hint-box li { margin-left: 16px; margin-bottom: 4px; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="phase-label">Fase 2 / Combinación de habilidades</div>
+    <h1>5 Ejercicios<br>Complejos</h1>
+    <p>Cada uno es combinación de ejercicios que ya resolviste en Fase 1.<br>Identifica las piezas antes de escribir código.</p>
+  </header>
+
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="progress-text">0 / 5</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar"></div>
+  </div>
+
+  <!-- EJERCICIO COMPLEJO 1 -->
+  <div class="exercise-card" id="card-c1">
+    <div class="card-header" onclick="toggleCard('c1')">
+      <div class="ex-number">C1</div>
+      <div class="card-meta">
+        <div class="card-title">Analizador de lista de números</div>
+        <div class="card-subtitle">Combina 3 habilidades de Fase 1</div>
+      </div>
+      <div class="card-check" onclick="toggleDone(event,'c1')">✓</div>
+    </div>
+    <div class="card-body" id="body-c1">
+      <div class="pieces-map">
+        <div class="pieces-label">Piezas que necesitas identificar →</div>
+        <div class="pieces-row">
+          <div class="piece-chip"><span class="num">#01</span>bucle for</div>
+          <div class="piece-chip"><span class="num">#05</span>if/else</div>
+          <div class="piece-chip"><span class="num">#17</span>acumulador promedio</div>
+        </div>
+      </div>
+      <div class="enunciado">
+        Dada la lista <b>[12, 7, 25, 3, 18, 9, 14]</b>, crea un programa que:<br>
+        · Calcule e imprima el promedio<br>
+        · Imprima cuántos números están <b>por encima</b> del promedio<br>
+        · Imprima cuántos están <b>por debajo o igual</b><br><br>
+        Ejemplo de salida:<br>
+        Promedio: 12.57<br>
+        Por encima: 3<br>
+        Por debajo o igual: 4
+      </div>
+      <button class="hint-btn" onclick="toggleHint('c1')">→ ver pistas de descomposición</button>
+      <div class="hint-box" id="hint-c1">
+        <ul>
+          <li>Paso 1: calcula el promedio (igual que ejercicio #17)</li>
+          <li>Paso 2: recorre la lista con for (igual que ejercicio #01)</li>
+          <li>Paso 3: por cada elemento, pregunta si supera el promedio (igual que ejercicio #05)</li>
+          <li>Paso 4: acumula los conteos en dos variables separadas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIO COMPLEJO 2 -->
+  <div class="exercise-card" id="card-c2">
+    <div class="card-header" onclick="toggleCard('c2')">
+      <div class="ex-number">C2</div>
+      <div class="card-meta">
+        <div class="card-title">Registro de palabras únicas</div>
+        <div class="card-subtitle">Combina 4 habilidades de Fase 1</div>
+      </div>
+      <div class="card-check" onclick="toggleDone(event,'c2')">✓</div>
+    </div>
+    <div class="card-body" id="body-c2">
+      <div class="pieces-map">
+        <div class="pieces-label">Piezas que necesitas identificar →</div>
+        <div class="pieces-row">
+          <div class="piece-chip"><span class="num">#19</span>validar input</div>
+          <div class="piece-chip"><span class="num">#09</span>list append</div>
+          <div class="piece-chip"><span class="num">#13</span>set duplicados</div>
+          <div class="piece-chip"><span class="num">#16</span>strings</div>
+        </div>
+      </div>
+      <div class="enunciado">
+        Pide al usuario palabras una por una. Si escribe <b>"fin"</b>, termina.<br>
+        Al terminar, muestra:<br>
+        · La lista completa de palabras ingresadas<br>
+        · Las palabras únicas (sin repetir)<br>
+        · Cuántas veces se repitió alguna palabra<br><br>
+        Ejemplo:<br>
+        Ingresa: casa / árbol / casa / mar / árbol / fin<br>
+        Todas: ['casa', 'árbol', 'casa', 'mar', 'árbol']<br>
+        Únicas: {'árbol', 'casa', 'mar'}<br>
+        Repetidas: 2
+      </div>
+      <button class="hint-btn" onclick="toggleHint('c2')">→ ver pistas de descomposición</button>
+      <div class="hint-box" id="hint-c2">
+        <ul>
+          <li>Paso 1: valida el input en un while (ejercicio #19 — pero la condición de salida es "fin")</li>
+          <li>Paso 2: agrega cada palabra a una lista con append (ejercicio #09)</li>
+          <li>Paso 3: convierte la lista a set para obtener únicas (ejercicio #13)</li>
+          <li>Paso 4: la diferencia de tamaños te da las repeticiones</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIO COMPLEJO 3 -->
+  <div class="exercise-card" id="card-c3">
+    <div class="card-header" onclick="toggleCard('c3')">
+      <div class="ex-number">C3</div>
+      <div class="card-meta">
+        <div class="card-title">Calculadora de calificaciones</div>
+        <div class="card-subtitle">Combina 4 habilidades de Fase 1</div>
+      </div>
+      <div class="card-check" onclick="toggleDone(event,'c3')">✓</div>
+    </div>
+    <div class="card-body" id="body-c3">
+      <div class="pieces-map">
+        <div class="pieces-label">Piezas que necesitas identificar →</div>
+        <div class="pieces-row">
+          <div class="piece-chip"><span class="num">#07</span>función return</div>
+          <div class="piece-chip"><span class="num">#06</span>elif clasificar</div>
+          <div class="piece-chip"><span class="num">#12</span>dict contar</div>
+          <div class="piece-chip"><span class="num">#17</span>acumulador</div>
+        </div>
+      </div>
+      <div class="enunciado">
+        Dada la lista de notas <b>[15, 18, 9, 12, 20, 7, 14, 11]</b>:<br><br>
+        · Crea una función que reciba una nota y retorne su categoría:<br>
+        &nbsp;&nbsp;0–10 → "Desaprobado" · 11–14 → "Regular" · 15–17 → "Bueno" · 18–20 → "Excelente"<br>
+        · Aplica la función a cada nota<br>
+        · Cuenta cuántos hay en cada categoría (usa diccionario)<br>
+        · Imprime el resumen y el promedio general
+      </div>
+      <button class="hint-btn" onclick="toggleHint('c3')">→ ver pistas de descomposición</button>
+      <div class="hint-box" id="hint-c3">
+        <ul>
+          <li>Paso 1: define la función clasificar(nota) con if/elif/else y return (ejercicios #07 + #06)</li>
+          <li>Paso 2: recorre la lista con for, llama la función por cada nota</li>
+          <li>Paso 3: acumula en un dict usando .get() (ejercicio #12)</li>
+          <li>Paso 4: calcula el promedio con acumulador (ejercicio #17)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIO COMPLEJO 4 -->
+  <div class="exercise-card" id="card-c4">
+    <div class="card-header" onclick="toggleCard('c4')">
+      <div class="ex-number">C4</div>
+      <div class="card-meta">
+        <div class="card-title">Mini agenda de contactos</div>
+        <div class="card-subtitle">Combina 5 habilidades de Fase 1</div>
+      </div>
+      <div class="card-check" onclick="toggleDone(event,'c4')">✓</div>
+    </div>
+    <div class="card-body" id="body-c4">
+      <div class="pieces-map">
+        <div class="pieces-label">Piezas que necesitas identificar →</div>
+        <div class="pieces-row">
+          <div class="piece-chip"><span class="num">#20</span>validar respuesta</div>
+          <div class="piece-chip"><span class="num">#08</span>función saludo</div>
+          <div class="piece-chip"><span class="num">#11</span>dict .get()</div>
+          <div class="piece-chip"><span class="num">#15</span>strings</div>
+          <div class="piece-chip"><span class="num">#03</span>while</div>
+        </div>
+      </div>
+      <div class="enunciado">
+        Crea una mini agenda que funcione en un menú de consola:<br><br>
+        <b>Opciones:</b> "agregar", "buscar", "salir"<br><br>
+        · <b>agregar</b>: pide nombre y teléfono, los guarda en un diccionario<br>
+        · <b>buscar</b>: pide un nombre, lo busca con .get() y muestra "Hola, {nombre}: {tel}" o "No encontrado"<br>
+        · <b>salir</b>: termina el programa<br><br>
+        El bucle while continúa hasta que el usuario escriba "salir". Valida que la opción sea una de las tres válidas.
+      </div>
+      <button class="hint-btn" onclick="toggleHint('c4')">→ ver pistas de descomposición</button>
+      <div class="hint-box" id="hint-c4">
+        <ul>
+          <li>Paso 1: el bucle principal es un while (ejercicio #03) con condición de salida "salir"</li>
+          <li>Paso 2: valida que la opción ingresada sea válida (ejercicio #20 — in con opciones)</li>
+          <li>Paso 3: el dict almacena contactos, accedes con .get() (ejercicio #11)</li>
+          <li>Paso 4: el mensaje de búsqueda usa f-string (ejercicio #08)</li>
+          <li>Paso 5: usa .lower() en el nombre para no distinguir mayúsculas (ejercicio #15)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIO COMPLEJO 5 -->
+  <div class="exercise-card" id="card-c5">
+    <div class="card-header" onclick="toggleCard('c5')">
+      <div class="ex-number">C5</div>
+      <div class="card-meta">
+        <div class="card-title">Analizador de texto completo</div>
+        <div class="card-subtitle">Combina 5 habilidades de Fase 1</div>
+      </div>
+      <div class="card-check" onclick="toggleDone(event,'c5')">✓</div>
+    </div>
+    <div class="card-body" id="body-c5">
+      <div class="pieces-map">
+        <div class="pieces-label">Piezas que necesitas identificar →</div>
+        <div class="pieces-row">
+          <div class="piece-chip"><span class="num">#16</span>contar vocales</div>
+          <div class="piece-chip"><span class="num">#12</span>dict frecuencia</div>
+          <div class="piece-chip"><span class="num">#10</span>filtrar con append</div>
+          <div class="piece-chip"><span class="num">#18</span>max acumulador</div>
+          <div class="piece-chip"><span class="num">#02</span>for + suma</div>
+        </div>
+      </div>
+      <div class="enunciado">
+        Dado el string:<br>
+        <b>"el sol sale siempre sobre el mismo suelo"</b><br><br>
+        Crea un programa que muestre:<br>
+        · Total de vocales en el texto completo<br>
+        · Frecuencia de cada palabra (cuántas veces aparece cada una)<br>
+        · La palabra que más se repite<br>
+        · Lista de palabras con más de 4 letras<br>
+        · Total de palabras en el texto
+      </div>
+      <button class="hint-btn" onclick="toggleHint('c5')">→ ver pistas de descomposición</button>
+      <div class="hint-box" id="hint-c5">
+        <ul>
+          <li>Paso 1: recorre el string letra por letra para contar vocales (ejercicio #16)</li>
+          <li>Paso 2: usa .split() para separar palabras, luego for + dict para frecuencias (ejercicio #12)</li>
+          <li>Paso 3: recorre el dict para encontrar la palabra con más ocurrencias — acumulador de máximo (ejercicio #18)</li>
+          <li>Paso 4: filtra palabras largas con for + if + append (ejercicio #10)</li>
+          <li>Paso 5: cuenta total de palabras con acumulador en for (ejercicio #02)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Fase 2 · 5 ejercicios complejos</span>
+    <span id="footer-count">0 / 5 resueltos</span>
+  </footer>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'fase2_done';
+  const CARDS = ['c1','c2','c3','c4','c5'];
+  const total = 5;
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveState(done) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+  }
+
+  let done = loadState();
+
+  function updateProgress() {
+    const pct = (done.length / total) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `${done.length} / ${total}`;
+    document.getElementById('footer-count').textContent = `${done.length} / ${total} resueltos`;
+  }
+
+  function applyState() {
+    for (const id of CARDS) {
+      const card = document.getElementById('card-' + id);
+      if (done.includes(id)) card.classList.add('done');
+      else card.classList.remove('done');
+    }
+    updateProgress();
+  }
+
+  function toggleCard(id) {
+    const body = document.getElementById('body-' + id);
+    body.classList.toggle('open');
+  }
+
+  function toggleDone(e, id) {
+    e.stopPropagation();
+    if (done.includes(id)) done = done.filter(x => x !== id);
+    else done.push(id);
+    saveState(done);
+    applyState();
+  }
+
+  function toggleHint(id) {
+    const hint = document.getElementById('hint-' + id);
+    hint.classList.toggle('open');
+    const btn = hint.previousElementSibling;
+    btn.textContent = hint.classList.contains('open') ? '→ ocultar pistas' : '→ ver pistas de descomposición';
+  }
+
+  applyState();
+</script>
+</body>
+</html>

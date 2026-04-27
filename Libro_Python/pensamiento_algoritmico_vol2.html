@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Pensamiento — Ejercicios</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #2d3748;
+    --text: #e6edf3;
+    --muted: #8b9ab0;
+    --dim: #6e7f96;
+    --c1: #38bdf8;
+    --c2: #4ade80;
+    --c3: #f97316;
+    --c4: #e879f9;
+    --c5: #fbbf24;
+    --c6: #34d399;
+    --c7: #f87171;
+    --c8: #a78bfa;
+    --c1-bg: rgba(56,189,248,.13);
+    --c2-bg: rgba(74,222,128,.13);
+    --c3-bg: rgba(249,115,22,.13);
+    --c4-bg: rgba(232,121,249,.13);
+    --c5-bg: rgba(251,191,36,.13);
+    --c6-bg: rgba(52,211,153,.13);
+    --c7-bg: rgba(248,113,113,.13);
+    --c8-bg: rgba(167,139,250,.13);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; line-height: 1.75; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 5% 5%, rgba(56,189,248,.05) 0%, transparent 40%), radial-gradient(ellipse at 95% 95%, rgba(74,222,128,.04) 0%, transparent 40%); pointer-events: none; z-index: 0; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(13,17,23,.93); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); height: 52px; display: flex; align-items: center; padding: 0 24px; gap: 0; }
+  .nb { font-family: 'Fira Code', monospace; font-size: .8rem; font-weight: 700; color: var(--c1); margin-right: 24px; white-space: nowrap; }
+  .nl { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .nl::-webkit-scrollbar { display: none; }
+  a.nl { font-family: 'Fira Code', monospace; font-size: 10px; color: var(--dim); text-decoration: none; padding: 4px 9px; border-radius: 5px; transition: all .2s; white-space: nowrap; }
+  a.nl:hover { color: var(--c1); background: var(--c1-bg); }
+
+  .container { max-width: 980px; margin: 0 auto; padding: 80px 24px 80px; position: relative; z-index: 1; }
+
+  .hero { margin-bottom: 52px; padding-bottom: 36px; border-bottom: 1px solid var(--border); }
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tag { font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 1.5px; padding: 4px 11px; border-radius: 100px; text-transform: uppercase; }
+  .tag-1 { background: var(--c1-bg); border: 1px solid rgba(56,189,248,.3); color: var(--c1); }
+  .tag-2 { background: var(--c2-bg); border: 1px solid rgba(74,222,128,.3); color: var(--c2); }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 12px; }
+  h1 em { font-style: normal; color: var(--c1); }
+  .hero-lead { color: var(--muted); font-size: .96rem; font-weight: 300; max-width: 560px; font-style: italic; }
+
+  /* LEGEND */
+  .legend { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; margin-bottom: 56px; }
+  .legend-title { font-family: 'Fira Code', monospace; font-size: 10px; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 14px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .leg-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); }
+  .leg-num { font-family: 'Fira Code', monospace; font-size: .76rem; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #0d1117; }
+  .leg-label { font-size: .82rem; font-weight: 600; }
+  .leg-sub { font-size: .74rem; color: var(--muted); }
+
+  /* PROBLEM */
+  .problem { margin-bottom: 60px; scroll-margin-top: 62px; }
+  .problem-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pnum { font-family: 'Fira Code', monospace; font-size: 2rem; font-weight: 700; color: var(--border); line-height: 1; flex-shrink: 0; }
+  .ptitle { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+  .diff { font-family: 'Fira Code', monospace; font-size: 10px; letter-spacing: 2px; padding: 3px 10px; border-radius: 100px; text-transform: uppercase; margin-left: auto; }
+  .d-med  { background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.28); color: #fbbf24; }
+  .d-hard { background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.28); color: #f97316; }
+  .d-adv  { background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.28); color: #f87171; }
+
+  /* ENUNCIADO */
+  .enunciado { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; font-size: .95rem; line-height: 1.85; color: var(--muted); }
+  .enunciado strong { color: var(--text); font-weight: 600; }
+
+  /* HIGHLIGHTS */
+  .h1,.h2,.h3,.h4,.h5,.h6,.h7,.h8 { padding: 1px 5px; border-radius: 4px; font-weight: 700; cursor: default; white-space: nowrap; }
+  .h1 { background: var(--c1-bg); color: var(--c1); border-bottom: 2px solid var(--c1); }
+  .h2 { background: var(--c2-bg); color: var(--c2); border-bottom: 2px solid var(--c2); }
+  .h3 { background: var(--c3-bg); color: var(--c3); border-bottom: 2px solid var(--c3); }
+  .h4 { background: var(--c4-bg); color: var(--c4); border-bottom: 2px solid var(--c4); }
+  .h5 { background: var(--c5-bg); color: var(--c5); border-bottom: 2px solid var(--c5); }
+  .h6 { background: var(--c6-bg); color: var(--c6); border-bottom: 2px solid var(--c6); }
+  .h7 { background: var(--c7-bg); color: var(--c7); border-bottom: 2px solid var(--c7); }
+  .h8 { background: var(--c8-bg); color: var(--c8); border-bottom: 2px solid var(--c8); }
+
+  .sb { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; font-family: 'Fira Code', monospace; font-size: .68rem; font-weight: 700; margin-right: 2px; vertical-align: middle; position: relative; top: -1px; color: #0d1117; }
+  .sb1{background:var(--c1)}.sb2{background:var(--c2)}.sb3{background:var(--c3)}.sb4{background:var(--c4)}.sb5{background:var(--c5)}.sb6{background:var(--c6)}.sb7{background:var(--c7)}.sb8{background:var(--c8)}
+
+  /* STEPS */
+  .steps-lbl { font-family: 'Fira Code', monospace; font-size: 10px; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; }
+  .steps { display: flex; flex-direction: column; gap: 9px; }
+  .step { display: flex; gap: 13px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 12px 16px; transition: border-color .2s, transform .2s; }
+  .step:hover { transform: translateX(4px); }
+  .step-n { font-family: 'Fira Code', monospace; font-size: .76rem; font-weight: 700; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; color: #0d1117; }
+  .step-tool { font-family: 'Fira Code', monospace; font-size: .73rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+  .step-desc { font-size: .86rem; color: var(--muted); line-height: 1.6; }
+  .step-desc strong { color: var(--text); font-weight: 600; }
+
+  .s1{border-left:3px solid var(--c1)}.s1 .step-n{background:var(--c1)}.s1 .step-tool{color:var(--c1)}.s1:hover{border-color:var(--c1)}
+  .s2{border-left:3px solid var(--c2)}.s2 .step-n{background:var(--c2)}.s2 .step-tool{color:var(--c2)}.s2:hover{border-color:var(--c2)}
+  .s3{border-left:3px solid var(--c3)}.s3 .step-n{background:var(--c3)}.s3 .step-tool{color:var(--c3)}.s3:hover{border-color:var(--c3)}
+  .s4{border-left:3px solid var(--c4)}.s4 .step-n{background:var(--c4)}.s4 .step-tool{color:var(--c4)}.s4:hover{border-color:var(--c4)}
+  .s5{border-left:3px solid var(--c5)}.s5 .step-n{background:var(--c5)}.s5 .step-tool{color:var(--c5)}.s5:hover{border-color:var(--c5)}
+  .s6{border-left:3px solid var(--c6)}.s6 .step-n{background:var(--c6)}.s6 .step-tool{color:var(--c6)}.s6:hover{border-color:var(--c6)}
+  .s7{border-left:3px solid var(--c7)}.s7 .step-n{background:var(--c7)}.s7 .step-tool{color:var(--c7)}.s7:hover{border-color:var(--c7)}
+  .s8{border-left:3px solid var(--c8)}.s8 .step-n{background:var(--c8)}.s8 .step-tool{color:var(--c8)}.s8:hover{border-color:var(--c8)}
+
+  /* KEY NOTE */
+  .key-note { border-radius: 10px; padding: 13px 18px; margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; }
+  .kn-blue  { background: rgba(56,189,248,.07); border: 1px solid rgba(56,189,248,.2); }
+  .kn-green { background: rgba(74,222,128,.07); border: 1px solid rgba(74,222,128,.2); }
+  .kn-amber { background: rgba(251,191,36,.07);  border: 1px solid rgba(251,191,36,.2); }
+  .kn-icon  { font-size: .95rem; line-height: 1.7; flex-shrink: 0; }
+  .key-note p { color: var(--text); font-size: .88rem; margin: 0; }
+  .kn-blue  strong { color: var(--c1); }
+  .kn-green strong { color: var(--c2); }
+  .kn-amber strong { color: var(--c5); }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+  .footer { text-align: center; font-family: 'Fira Code', monospace; font-size: 10px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; padding-top: 24px; border-top: 1px solid var(--border); margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nb">think → code · vol.2</span>
+  <div class="nl">
+    <a class="nl" href="#p2">Contador</a>
+    <a class="nl" href="#p3">Agenda</a>
+    <a class="nl" href="#p4">Notas</a>
+    <a class="nl" href="#p5">Inventario</a>
+    <a class="nl" href="#p7">Buscar</a>
+    <a class="nl" href="#p8">Traductor</a>
+    <a class="nl" href="#p9">Compras</a>
+    <a class="nl" href="#p10">Conversor</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-tags">
+      <span class="tag tag-1">Pensamiento Algorítmico · Vol. 2</span>
+      <span class="tag tag-2">8 problemas · sin código</span>
+    </div>
+    <h1>Enunciado →<br><em>pasos → código</em></h1>
+    <p class="hero-lead">Los ejercicios del documento de estructuras de datos, traducidos a pasos de pensamiento. Lee el enunciado anotado, entiende los pasos, luego programa.</p>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-title">Leyenda de colores</div>
+    <div class="legend-grid">
+      <div class="leg-item"><div class="leg-num" style="background:var(--c1)">1</div><div><div class="leg-label" style="color:var(--c1)">Bucle for</div><div class="leg-sub">Secuencia de longitud conocida</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c2)">2</div><div><div class="leg-label" style="color:var(--c2)">print / output</div><div class="leg-sub">Mostrar resultado al usuario</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c3)">3</div><div><div class="leg-label" style="color:var(--c3)">Bucle while</div><div class="leg-sub">Repetir sin saber cuántas veces</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c4)">4</div><div><div class="leg-label" style="color:var(--c4)">if / elif / else</div><div class="leg-sub">Tomar una decisión</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c5)">5</div><div><div class="leg-label" style="color:var(--c5)">Función def</div><div class="leg-sub">Reutilizar lógica con nombre</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c6)">6</div><div><div class="leg-label" style="color:var(--c6)">Lista / append</div><div class="leg-sub">Acumular múltiples valores</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c7)">7</div><div><div class="leg-label" style="color:var(--c7)">Diccionario</div><div class="leg-sub">Datos con clave y valor</div></div></div>
+      <div class="leg-item"><div class="leg-num" style="background:var(--c8)">8</div><div><div class="leg-label" style="color:var(--c8)">Variable / acumulador</div><div class="leg-sub">Guardar un dato que cambia</div></div></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- P2 -->
+  <div class="problem" id="p2">
+    <div class="problem-header">
+      <div class="pnum">02</div>
+      <div class="ptitle">Contador de palabras con diccionario</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p><span class="h8"><span class="sb sb8">8</span>Pide al usuario una frase</span>.
+      <span class="h1"><span class="sb sb1">1</span>Recorre cada palabra con un for</span>.
+      <span class="h7"><span class="sb sb7">7</span>Guárdala en un diccionario</span>
+      donde las claves son las palabras y los valores los conteos.
+      Al final <span class="h2"><span class="sb sb2">2</span>muestra las palabras ordenadas de mayor a menor frecuencia</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Variable / Input</div><div class="step-desc">Pedir la frase con <strong>input()</strong> y aplicar <strong>.lower().strip()</strong> para normalizar. Luego separar con <strong>.split()</strong> para obtener una lista de palabras.</div></div></div>
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario — inicializar</div><div class="step-desc">Crear <strong>conteo = {}</strong> antes del bucle. Todo acumulador va ANTES del bucle que lo llena.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">Bucle for</div><div class="step-desc">Recorrer cada palabra de la lista con <strong>for palabra in palabras</strong>. La cantidad es conocida → <strong>for</strong>, nunca while.</div></div></div>
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario — patrón get()</div><div class="step-desc">Dentro del for: <strong>conteo[palabra] = conteo.get(palabra, 0) + 1</strong>. No necesitas if para verificar si existe — <strong>.get()</strong> maneja el caso de clave nueva automáticamente.</div></div></div>
+      <div class="step s2"><div class="step-n">2</div><div><div class="step-tool">print — resultados ordenados</div><div class="step-desc">Fuera del bucle, ordenar con <strong>sorted(conteo.items(), key=lambda x: x[1], reverse=True)</strong> y recorrer con for para imprimir cada par.</div></div></div>
+    </div>
+    <div class="key-note kn-blue"><span class="kn-icon">💡</span><p><strong>Clave:</strong> el patrón <strong>dict.get(clave, 0) + 1</strong> es la forma estándar de contar en Python. Evita tener que escribir if para verificar si la clave existe.</p></div>
+  </div>
+
+  <hr>
+
+  <!-- P3 -->
+  <div class="problem" id="p3">
+    <div class="problem-header">
+      <div class="pnum">03</div>
+      <div class="ptitle">Agenda de contactos con diccionario</div>
+      <span class="diff d-hard">Avanzado</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea una agenda donde <span class="h7"><span class="sb sb7">7</span>cada contacto tiene nombre, teléfono y email en un diccionario anidado</span>.
+      <span class="h3"><span class="sb sb3">3</span>El menú se repite indefinidamente</span>.
+      <span class="h5"><span class="sb sb5">5</span>Cada opción es una función separada</span>: agregar,
+      <span class="h1"><span class="sb sb1">1</span>listar recorriendo todos los contactos</span>,
+      y <span class="h4"><span class="sb sb4">4</span>buscar comparando si el nombre coincide</span>.
+      Usa <strong>.get()</strong> para <span class="h4"><span class="sb sb4">4</span>verificar si existe sin KeyError</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario anidado — estructura</div><div class="step-desc">Primero diseña la estructura: <strong>agenda = {}</strong> donde cada clave es el nombre y el valor es <strong>{"tel": ..., "email": ...}</strong>. Diseña datos antes de funciones.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Funciones def — una por responsabilidad</div><div class="step-desc">Identificar las 3 funciones: <strong>agregar(agenda)</strong>, <strong>buscar(agenda, nombre)</strong>, <strong>listar(agenda)</strong>. Cada función hace UNA sola cosa y recibe la agenda como parámetro.</div></div></div>
+      <div class="step s3"><div class="step-n">3</div><div><div class="step-tool">while True — menú principal</div><div class="step-desc">No sabemos cuántas veces usará el menú → <strong>while True</strong>. Dentro: mostrar opciones, pedir opción, llamar función. La opción salir ejecuta <strong>break</strong>.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">Guardia al inicio de funciones</div><div class="step-desc">En listar y buscar: si <strong>len(agenda) == 0</strong> → imprimir "Agenda vacía" y <strong>return</strong>. La guardia sale de la función antes de procesar nada.</div></div></div>
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Agregar y buscar con .get()</div><div class="step-desc">Agregar: <strong>agenda[nombre] = {"tel": tel, "email": email}</strong>. Buscar: <strong>contacto = agenda.get(nombre)</strong> — si retorna None, no existe. Sin KeyError.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for — listar todos</div><div class="step-desc">En la función listar: <strong>for nombre, datos in agenda.items()</strong>. Cantidad conocida → for. Mostrar <strong>datos["tel"]</strong> y <strong>datos["email"]</strong>.</div></div></div>
+      <div class="step s2"><div class="step-n">2</div><div><div class="step-tool">print — confirmar cada acción</div><div class="step-desc">Después de agregar: "Contacto agregado". Después de buscar: mostrar datos o "No encontrado". El usuario siempre debe saber qué pasó.</div></div></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- P4 -->
+  <div class="problem" id="p4">
+    <div class="problem-header">
+      <div class="pnum">04</div>
+      <div class="ptitle">Estadísticas de notas con tuplas</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea una <span class="h5"><span class="sb sb5">5</span>función analizar(nombre, notas)</span> que reciba
+      <span class="h6"><span class="sb sb6">6</span>una lista de tuplas (nombre, notas_tupla)</span>.
+      Calcula <span class="h8"><span class="sb sb8">8</span>promedio</span>,
+      <span class="h8"><span class="sb sb8">8</span>nota máxima y mínima</span>,
+      y <span class="h4"><span class="sb sb4">4</span>si aprobó (promedio ≥ 60)</span>.
+      <span class="h1"><span class="sb sb1">1</span>Recorre la lista con for usando unpacking</span>
+      y llama a la función por cada alumno.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s6"><div class="step-n">6</div><div><div class="step-tool">Lista de tuplas — estructura</div><div class="step-desc">Definir <strong>alumnos = [("Ana", (85,90,78)), ("Luis", (70,65,80)), ...]</strong> directamente en el código. Lista porque hay varios. Tupla porque las notas son fijas e inmutables.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Función def — solo calcula</div><div class="step-desc"><strong>analizar(nombre, notas)</strong> recibe los dos valores. Solo calcula y muestra — no pide input. Esta separación es clave.</div></div></div>
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Variables de cálculo</div><div class="step-desc">Dentro de la función: <strong>promedio = sum(notas) / len(notas)</strong>. <strong>max(notas)</strong> y <strong>min(notas)</strong> funcionan directamente sobre la tupla sin necesitar un for.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">if — determinar estado</div><div class="step-desc"><strong>if promedio >= 60</strong> → "Aprobado". <strong>else</strong> → "Reprobado". Una sola condición, una sola decisión.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for con unpacking</div><div class="step-desc"><strong>for nombre, notas in alumnos</strong> — el unpacking extrae ambos valores de la tupla en una sola línea. Mucho más limpio que <strong>alumnos[i][0]</strong> y <strong>alumnos[i][1]</strong>.</div></div></div>
+      <div class="step s2"><div class="step-n">2</div><div><div class="step-tool">print — reporte</div><div class="step-desc">Mostrar todos los datos dentro de la función <strong>analizar()</strong>. El for solo llama a la función — no imprime directamente.</div></div></div>
+    </div>
+    <div class="key-note kn-amber"><span class="kn-icon">💡</span><p><strong>Unpacking:</strong> cuando una tupla tiene dos elementos, puedes asignarlos a dos variables en el mismo for: <strong>for a, b in lista_de_tuplas</strong>. Es más legible que acceder por índice.</p></div>
+  </div>
+
+  <hr>
+
+  <!-- P5 -->
+  <div class="problem" id="p5">
+    <div class="problem-header">
+      <div class="pnum">05</div>
+      <div class="ptitle">Inventario de tienda</div>
+      <span class="diff d-hard">Avanzado</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea un inventario usando un <span class="h7"><span class="sb sb7">7</span>diccionario donde cada producto tiene precio y stock</span>.
+      <span class="h3"><span class="sb sb3">3</span>El menú se repite hasta que el usuario salga</span>.
+      <span class="h5"><span class="sb sb5">5</span>Cada opción es una función</span>: ver inventario,
+      comprar <span class="h4"><span class="sb sb4">4</span>validando que haya suficiente stock</span>,
+      y calcular el valor total.
+      <span class="h1"><span class="sb sb1">1</span>Al ver inventario, recorre todos los productos</span>
+      y <span class="h8"><span class="sb sb8">8</span>actualiza el stock después de cada venta</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario anidado — diseñar primero</div><div class="step-desc"><strong>inventario = {"manzana": {"precio": 2.5, "stock": 100}, ...}</strong>. Diseña la estructura antes de escribir cualquier función. Todo lo demás depende de esto.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Funciones — una por opción del menú</div><div class="step-desc">Tres funciones: <strong>ver_inventario(inv)</strong>, <strong>comprar(inv)</strong>, <strong>valor_total(inv)</strong>. El while solo llama funciones — nunca hace lógica directamente.</div></div></div>
+      <div class="step s3"><div class="step-n">3</div><div><div class="step-tool">while True — menú principal</div><div class="step-desc">Menú infinito → <strong>while True</strong>. Pedir opción, llamar función. La opción "salir" ejecuta <strong>break</strong>. Sin <strong>else</strong> adicional.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for — ver inventario</div><div class="step-desc">En <strong>ver_inventario</strong>: <strong>for nombre, datos in inv.items()</strong>. Usar f-strings con alineación para simular tabla: <strong>f"{nombre:&lt;15} S/{datos['precio']:&gt;6.2f}"</strong>.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">if — dos validaciones en comprar</div><div class="step-desc">En <strong>comprar</strong>: primero <strong>if nombre not in inv</strong> → "no existe". Luego <strong>if cantidad > inv[nombre]["stock"]</strong> → "stock insuficiente". Solo si pasa ambas → proceder.</div></div></div>
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Variable — actualizar stock</div><div class="step-desc">Después de validar: <strong>inv[nombre]["stock"] -= cantidad</strong>. El operador <strong>-=</strong> resta y guarda en la misma línea.</div></div></div>
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Acumular valor total</div><div class="step-desc">En <strong>valor_total</strong>: <strong>total = sum(d["precio"] * d["stock"] for d in inv.values())</strong>. Generator expression — más eficiente que un for con append.</div></div></div>
+    </div>
+    <div class="key-note kn-green"><span class="kn-icon">✅</span><p><strong>Regla:</strong> cuando el enunciado dice "cada opción es una función", primero lista las opciones y crea una función por cada una. El while solo llama funciones — nunca tiene lógica propia.</p></div>
+  </div>
+
+  <hr>
+
+  <!-- P7 -->
+  <div class="problem" id="p7">
+    <div class="problem-header">
+      <div class="pnum">07</div>
+      <div class="ptitle">Buscar en lista con función</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea una <span class="h5"><span class="sb sb5">5</span>función buscar(lista, elemento)</span> que
+      <span class="h1"><span class="sb sb1">1</span>recorra la lista con un for</span> y
+      <span class="h4"><span class="sb sb4">4</span>retorne True si el elemento está, False si no</span>.
+      No puedes usar el operador <strong>in</strong> directamente —
+      <span class="h4"><span class="sb sb4">4</span>simula lo que hace in con un bucle manual</span>.
+      <span class="h2"><span class="sb sb2">2</span>Pruébala con una lista de nombres predefinida</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s6"><div class="step-n">6</div><div><div class="step-tool">Lista predefinida</div><div class="step-desc">Definir la lista de nombres directamente en el código. No se pide al usuario — los datos están en el programa.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Función def — recibe dos parámetros</div><div class="step-desc"><strong>buscar(lista, elemento)</strong>. Recibe ambos como parámetros. Solo retorna True o False — no imprime nada.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for — recorrer la lista</div><div class="step-desc"><strong>for item in lista</strong>. Cantidad conocida → for. Dentro, comparar cada elemento.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">if + return True — salida inmediata</div><div class="step-desc">Dentro del for: <strong>if elemento == item: return True</strong>. El return sale de la función inmediatamente — no sigue recorriendo. Esto es más eficiente.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">return False — fuera del for</div><div class="step-desc"><strong>return False</strong> va FUERA e INDENTADO AL MISMO NIVEL que el for — no dentro. Si el bucle terminó sin encontrar nada, recién retorna False.</div></div></div>
+      <div class="step s2"><div class="step-n">2</div><div><div class="step-tool">print en main</div><div class="step-desc">Llamar <strong>buscar()</strong>, guardar el resultado en variable, e imprimir mensaje según sea True o False. El mensaje va en main, no en la función.</div></div></div>
+    </div>
+    <div class="key-note kn-blue"><span class="kn-icon">💡</span><p><strong>Error clásico:</strong> poner el <strong>return False</strong> dentro del for. Si está dentro, retorna False en la primera iteración que no coincide, sin terminar de buscar. Debe estar fuera.</p></div>
+  </div>
+
+  <hr>
+
+  <!-- P8 -->
+  <div class="problem" id="p8">
+    <div class="problem-header">
+      <div class="pnum">08</div>
+      <div class="ptitle">Traductor simple con diccionario</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea un <span class="h7"><span class="sb sb7">7</span>diccionario con 8 palabras español→inglés</span>
+      definido fuera de cualquier función.
+      Crea una <span class="h5"><span class="sb sb5">5</span>función traducir(palabra)</span> que acceda al diccionario global y
+      <span class="h4"><span class="sb sb4">4</span>retorne la traducción o "Palabra no encontrada"</span>.
+      <span class="h3"><span class="sb sb3">3</span>El while True sigue pidiendo palabras</span>
+      <span class="h4"><span class="sb sb4">4</span>hasta que el usuario escriba "salir"</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario global</div><div class="step-desc">Definir <strong>diccionario = {"hola": "hello", ...}</strong> al nivel del módulo — fuera de toda función. Al estar fuera, todas las funciones pueden accederlo sin necesidad de pasarlo como parámetro.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Función traducir(palabra)</div><div class="step-desc">Solo recibe la palabra a buscar. Accede al diccionario directamente porque es global. Retorna la traducción — no imprime.</div></div></div>
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Normalizar entrada</div><div class="step-desc">Dentro de la función, aplicar <strong>.lower().strip()</strong> antes de buscar. Así "Hola", "HOLA" y "hola" funcionan igual.</div></div></div>
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">.get() con valor por defecto</div><div class="step-desc"><strong>return diccionario.get(palabra, "Palabra no encontrada")</strong>. Una sola línea que maneja el caso de clave existente y no existente.</div></div></div>
+      <div class="step s3"><div class="step-n">3</div><div><div class="step-tool">while True — bucle de consultas</div><div class="step-desc">No sabemos cuántas palabras buscará → <strong>while True</strong>. Pedir palabra, verificar si es "salir", si no → llamar traducir() e imprimir.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">Condición de salida — al inicio</div><div class="step-desc"><strong>if palabra == "salir": break</strong>. La condición de salida siempre va al inicio del while, antes de procesar el dato.</div></div></div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- P9 -->
+  <div class="problem" id="p9">
+    <div class="problem-header">
+      <div class="pnum">09</div>
+      <div class="ptitle">Lista de compras con presupuesto</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea un programa que
+      <span class="h3"><span class="sb sb3">3</span>pida productos y precios uno por uno hasta que el usuario escriba "listo"</span>.
+      <span class="h6"><span class="sb sb6">6</span>Guarda cada par en un diccionario dentro de una lista</span>.
+      Al final <span class="h2"><span class="sb sb2">2</span>muestra todos los productos, el total</span>
+      y <span class="h4"><span class="sb sb4">4</span>si supera el presupuesto de $50</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s6"><div class="step-n">6</div><div><div class="step-tool">Lista vacía — inicializar</div><div class="step-desc"><strong>compras = []</strong> antes del bucle. Todo acumulador va antes del bucle que lo llena.</div></div></div>
+      <div class="step s3"><div class="step-n">3</div><div><div class="step-tool">while True — capturar productos</div><div class="step-desc">No sabemos cuántos productos habrá → <strong>while True</strong>. Pedir el nombre, verificar si es "listo" → break. Si no, pedir precio.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">Condición de salida — al inicio</div><div class="step-desc"><strong>if entrada == "listo": break</strong>. Va al inicio del while antes de pedir el precio, para evitar pedir precio de "listo".</div></div></div>
+      <div class="step s7"><div class="step-n">7</div><div><div class="step-tool">Diccionario por producto + append</div><div class="step-desc">Crear <strong>{"producto": nombre, "precio": float(precio)}</strong> y hacer <strong>compras.append(...)</strong>. Cada producto es un diccionario. La lista los agrupa a todos.</div></div></div>
+      <div class="step s8"><div class="step-n">8</div><div><div class="step-tool">Acumulador total</div><div class="step-desc"><strong>total = 0</strong> antes del segundo bucle. Inicializar acumuladores justo antes del bucle que los usa.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for — calcular total y mostrar</div><div class="step-desc"><strong>for item in compras: total += item["precio"]</strong>. Ahora sí sabemos cuántos hay → for. Mostrar nombre y precio de cada uno.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">if — comparar con presupuesto</div><div class="step-desc"><strong>if total > 50</strong> → mensaje de advertencia. <strong>else</strong> → mensaje de aprobación. Va después de calcular el total, nunca dentro del bucle.</div></div></div>
+    </div>
+    <div class="key-note kn-blue"><span class="kn-icon">💡</span><p><strong>Patrón clave:</strong> usa <strong>while True</strong> para capturar (no sabes cuántos). Luego usa <strong>for</strong> para procesar (ya sabes cuántos hay). Son dos bucles con propósitos distintos.</p></div>
+  </div>
+
+  <hr>
+
+  <!-- P10 -->
+  <div class="problem" id="p10">
+    <div class="problem-header">
+      <div class="pnum">10</div>
+      <div class="ptitle">Conversor de unidades con tuplas</div>
+      <span class="diff d-med">Intermedio</span>
+    </div>
+    <div class="enunciado">
+      <p>Crea una <span class="h6"><span class="sb sb6">6</span>lista de tuplas (valor, unidad_origen)</span>.
+      Crea una <span class="h5"><span class="sb sb5">5</span>función convertir(valor, unidad)</span> que convierta:
+      <span class="h4"><span class="sb sb4">4</span>km→millas, kg→libras, °C→°F, o "Unidad desconocida"</span>.
+      <span class="h1"><span class="sb sb1">1</span>Recorre la lista con for usando unpacking</span>
+      y <span class="h2"><span class="sb sb2">2</span>muestra el resultado de cada conversión</span>.</p>
+    </div>
+    <div class="steps-lbl">Pasos — sin código</div>
+    <div class="steps">
+      <div class="step s6"><div class="step-n">6</div><div><div class="step-tool">Lista de tuplas — definir datos</div><div class="step-desc">Definir <strong>medidas = [(10, "km"), (5, "kg"), (100, "C"), ...]</strong> con al menos 6 tuplas usando las 3 unidades. Más de una por unidad para probar bien.</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">Función convertir(valor, unidad)</div><div class="step-desc">Recibe los dos valores desempacados. Solo calcula y retorna el resultado como string con unidad destino incluida. No imprime.</div></div></div>
+      <div class="step s4"><div class="step-n">4</div><div><div class="step-tool">if/elif/else — una rama por unidad</div><div class="step-desc"><strong>if unidad == "km"</strong> → valor × 0.621. <strong>elif unidad == "kg"</strong> → valor × 2.205. <strong>elif unidad == "C"</strong> → (valor × 9/5) + 32. <strong>else</strong> → "Unidad desconocida".</div></div></div>
+      <div class="step s5"><div class="step-n">5</div><div><div class="step-tool">return — resultado formateado</div><div class="step-desc">Retornar el resultado como string incluyendo la unidad destino: <strong>f"{valor} km = {resultado:.2f} millas"</strong>. El formato va dentro de la función.</div></div></div>
+      <div class="step s1"><div class="step-n">1</div><div><div class="step-tool">for con unpacking</div><div class="step-desc"><strong>for valor, unidad in medidas</strong>. El unpacking extrae ambos elementos de la tupla en una sola línea. Es la forma correcta — no uses índices.</div></div></div>
+      <div class="step s2"><div class="step-n">2</div><div><div class="step-tool">print — en cada vuelta del for</div><div class="step-desc">Dentro del for: <strong>print(convertir(valor, unidad))</strong>. La función retorna el string completo — solo necesitas imprimirlo.</div></div></div>
+    </div>
+    <div class="key-note kn-green"><span class="kn-icon">✅</span><p><strong>Regla de la función:</strong> una función que calcula no imprime. Por eso <strong>convertir()</strong> retorna el string y el <strong>print()</strong> está en el for — no dentro de la función.</p></div>
+  </div>
+
+  <div class="footer">pensamiento_algoritmico_vol2.py · Python · CS50P</div>
+</div>
+</body>
+</html>

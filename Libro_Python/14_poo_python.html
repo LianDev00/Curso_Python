@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO · Python</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Unbounded:wght@400;700;900&display=swap');
+
+:root {
+  --bg:     #09090b;
+  --bg2:    #0f0f12;
+  --bg3:    #141418;
+  --line:   #1d1d24;
+  --line2:  #252532;
+  --text:   #d0d0e0;
+  --dim:    #464660;
+  --faint:  #14141c;
+
+  --cls:   #38bdf8;   /* class */
+  --cls-bg:#020b14;
+  --cls-bd:#09283d;
+
+  --ini:   #4ade80;   /* __init__ / self */
+  --ini-bg:#021209;
+  --ini-bd:#0d3518;
+
+  --inh:   #fb923c;   /* herencia */
+  --inh-bg:#120700;
+  --inh-bd:#3d1f06;
+
+  --dun:   #e879f9;   /* dunder */
+  --dun-bg:#110514;
+  --dun-bd:#380d3f;
+
+  --prp:   #fbbf24;   /* property */
+  --prp-bg:#120d02;
+  --prp-bd:#3d2d06;
+
+  --sta:   #f87171;   /* staticmethod / classmethod */
+  --sta-bg:#120505;
+  --sta-bd:#3d1010;
+
+  --enc:   #60a5fa;   /* encapsulamiento */
+  --enc-bg:#020814;
+  --enc-bd:#0a1e3d;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── NAV ── */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(9,9,11,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  height:44px;
+  display:flex; align-items:center;
+  padding:0 24px; overflow-x:auto; gap:0;
+}
+nav::-webkit-scrollbar { display:none; }
+.nav-brand {
+  font-family:'Unbounded',sans-serif;
+  font-size:10px; font-weight:700;
+  color:var(--dim); letter-spacing:1px;
+  white-space:nowrap; margin-right:20px; flex-shrink:0;
+}
+.nav-links { display:flex; gap:2px; flex-shrink:0; }
+.nav-links a {
+  font-size:10px; letter-spacing:.5px;
+  text-decoration:none; padding:6px 10px;
+  border-radius:3px; white-space:nowrap;
+  color:var(--dim); transition:all .15s;
+}
+.nav-links a:hover { color:var(--text); background:var(--line); }
+.nc  { color:var(--cls) !important; }
+.ni  { color:var(--ini) !important; }
+.nh  { color:var(--inh) !important; }
+.nd  { color:var(--dun) !important; }
+.np  { color:var(--prp) !important; }
+.ns  { color:var(--sta) !important; }
+.ne  { color:var(--enc) !important; }
+
+/* ── LAYOUT ── */
+.page { max-width:900px; margin:0 auto; padding:60px 22px 100px; }
+
+/* ── HERO ── */
+.hero { margin-bottom:64px; }
+.hero-eyebrow {
+  font-size:10px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--dim); margin-bottom:16px;
+}
+.hero h1 {
+  font-family:'Unbounded',sans-serif;
+  font-size:clamp(32px,6vw,60px);
+  font-weight:900; line-height:1; letter-spacing:-2px; color:#fff;
+}
+.hero h1 em { font-style:normal; color:var(--cls); }
+.hero-sub {
+  margin-top:16px; font-size:12px;
+  color:var(--dim); max-width:540px; line-height:1.85;
+}
+.hero-analogy {
+  margin-top:24px;
+  display:inline-grid;
+  grid-template-columns:auto auto auto;
+  gap:6px 14px;
+  align-items:center;
+  font-size:11px;
+}
+.ha-label { color:var(--dim); font-size:9px; letter-spacing:2px; text-transform:uppercase; }
+.ha-val   { color:#fff; font-weight:700; padding:5px 12px; border-radius:3px; }
+.ha-cls   { background:var(--cls-bg); border:1px solid var(--cls-bd); color:var(--cls); }
+.ha-obj   { background:var(--ini-bg); border:1px solid var(--ini-bd); color:var(--ini); }
+.ha-arrow { color:var(--dim); font-size:16px; justify-self:center; }
+
+/* ── SECTION ── */
+.section { margin-bottom:64px; }
+.section-header {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:26px; padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.s-icon {
+  width:38px; height:38px; border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Unbounded',sans-serif; font-size:9px; font-weight:900;
+  flex-shrink:0; letter-spacing:.5px; text-align:center; line-height:1.2;
+}
+.i-cls { background:var(--cls-bg); border:1px solid var(--cls-bd); color:var(--cls); }
+.i-ini { background:var(--ini-bg); border:1px solid var(--ini-bd); color:var(--ini); }
+.i-inh { background:var(--inh-bg); border:1px solid var(--inh-bd); color:var(--inh); }
+.i-dun { background:var(--dun-bg); border:1px solid var(--dun-bd); color:var(--dun); }
+.i-prp { background:var(--prp-bg); border:1px solid var(--prp-bd); color:var(--prp); }
+.i-sta { background:var(--sta-bg); border:1px solid var(--sta-bd); color:var(--sta); }
+.i-enc { background:var(--enc-bg); border:1px solid var(--enc-bd); color:var(--enc); }
+
+.section-title {
+  font-family:'Unbounded',sans-serif;
+  font-size:19px; font-weight:700; color:#fff; letter-spacing:-.5px;
+}
+.section-type { font-size:10px; letter-spacing:2px; color:var(--dim); margin-top:2px; }
+
+/* ── PROSE ── */
+p { color:var(--text); font-size:12.5px; line-height:1.85; margin-bottom:14px; }
+p:last-child { margin-bottom:0; }
+p code { background:var(--faint); padding:1px 5px; border-radius:2px; font-size:12px; color:#c084fc; }
+
+/* ── CODE ── */
+.cb {
+  background:var(--bg2); border:1px solid var(--line2);
+  border-radius:4px; margin:14px 0; overflow:hidden;
+}
+.cb-label {
+  background:var(--bg3); border-bottom:1px solid var(--line);
+  padding:6px 14px; font-size:9px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim);
+}
+.cb pre {
+  padding:16px 18px; overflow-x:auto;
+  font-size:12.5px; line-height:1.8;
+}
+.cb pre::-webkit-scrollbar { height:4px; }
+.cb pre::-webkit-scrollbar-thumb { background:var(--line2); border-radius:2px; }
+
+/* syntax */
+.k  { color:var(--cls); }         /* keyword azul */
+.kd { color:var(--dun); }         /* dunder keyword */
+.ki { color:var(--ini); }         /* init/self verde */
+.kh { color:var(--inh); }         /* herencia naranja */
+.kp { color:var(--prp); }         /* property amarillo */
+.ks { color:var(--sta); }         /* static/class rojo */
+.n  { color:#c084fc; }            /* nombre de clase/método */
+.s  { color:#86efac; }            /* string */
+.nm { color:#fb923c; }            /* número */
+.c  { color:#303048; font-style:italic; } /* comentario */
+.b  { color:#f472b6; }            /* bool/None */
+.v  { color:var(--text); }        /* variable */
+.priv { color:#f87171; }          /* _privado */
+
+/* ── CALLOUT ── */
+.callout {
+  padding:13px 16px; border-radius:3px;
+  margin:14px 0; font-size:12px; line-height:1.8;
+}
+.ca { background:var(--cls-bg); border-left:2px solid var(--cls); color:#8dd4f8; }
+.cb2{ background:var(--ini-bg); border-left:2px solid var(--ini); color:#a8f0c0; }
+.cc { background:var(--inh-bg); border-left:2px solid var(--inh); color:#f0c8a8; }
+.cd { background:var(--dun-bg); border-left:2px solid var(--dun); color:#eeaaff; }
+.ce { background:var(--prp-bg); border-left:2px solid var(--prp); color:#f0d898; }
+.cf { background:var(--sta-bg); border-left:2px solid var(--sta); color:#f8aaaa; }
+.cg { background:var(--enc-bg); border-left:2px solid var(--enc); color:#a8c8f8; }
+.cw { background:#120c02;       border-left:2px solid #ca8a04;   color:#e8cc88; }
+.callout b { font-weight:700; color:#fff; }
+
+/* ── TABLE ── */
+.tbl {
+  width:100%; border-collapse:collapse; margin:14px 0; font-size:11.5px;
+}
+.tbl th {
+  text-align:left; font-size:9px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--dim);
+  padding:7px 12px; border-bottom:1px solid var(--line2); font-weight:400;
+}
+.tbl td {
+  padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top;
+}
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:var(--faint); }
+.tbl .tn { color:var(--dun); font-weight:700; white-space:nowrap; }
+.tbl .ts { color:var(--dim); font-size:11px; white-space:nowrap; }
+.tbl .td { color:var(--text); }
+.tbl .te { color:#86efac; font-size:11px; }
+
+/* ── TWO COL ── */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+@media(max-width:580px){ .two-col { grid-template-columns:1fr; } }
+
+/* ── DIAGRAM: class anatomy ── */
+.anatomy {
+  margin:18px 0;
+  background:var(--bg2); border:1px solid var(--line2);
+  border-radius:4px; overflow:hidden; font-size:12px;
+}
+.anat-header {
+  background:var(--cls-bg); border-bottom:1px solid var(--cls-bd);
+  padding:10px 16px; color:var(--cls); font-weight:700;
+  font-family:'Unbounded',sans-serif; font-size:11px;
+}
+.anat-row {
+  padding:9px 16px; border-bottom:1px solid var(--line);
+  display:flex; gap:14px; align-items:baseline;
+}
+.anat-row:last-child { border-bottom:none; }
+.anat-tag {
+  font-size:9px; letter-spacing:1.5px; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; white-space:nowrap; flex-shrink:0;
+}
+.tag-cls { background:var(--cls-bg); border:1px solid var(--cls-bd); color:var(--cls); }
+.tag-ini { background:var(--ini-bg); border:1px solid var(--ini-bd); color:var(--ini); }
+.tag-met { background:#1a0e28; border:1px solid #3a1f5e; color:#c084fc; }
+.tag-dun { background:var(--dun-bg); border:1px solid var(--dun-bd); color:var(--dun); }
+.tag-prp { background:var(--prp-bg); border:1px solid var(--prp-bd); color:var(--prp); }
+.tag-sta { background:var(--sta-bg); border:1px solid var(--sta-bd); color:var(--sta); }
+.tag-cls2{ background:var(--enc-bg); border:1px solid var(--enc-bd); color:var(--enc); }
+.anat-desc { color:var(--text); font-size:11.5px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top:1px solid var(--line); padding-top:22px; margin-top:20px;
+  font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--dim); display:flex; justify-content:space-between;
+  flex-wrap:wrap; gap:8px;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Python · POO</div>
+  <div class="nav-links">
+    <a href="#concepto" class="nc">concepto</a>
+    <a href="#clase"    class="nc">class</a>
+    <a href="#init"     class="ni">__init__ / self</a>
+    <a href="#metodos"  class="ni">métodos</a>
+    <a href="#enc"      class="ne">encapsulamiento</a>
+    <a href="#herencia" class="nh">herencia</a>
+    <a href="#dunder"   class="nd">dunder</a>
+    <a href="#property" class="np">@property</a>
+    <a href="#static"   class="ns">@classmethod / @staticmethod</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Guía · Python · Programación Orientada a Objetos</div>
+    <h1>Programación<br><em>Orientada</em><br>a Objetos</h1>
+    <p class="hero-sub">
+      La forma de organizar código en torno a <b>objetos</b> que tienen datos (atributos) y comportamiento (métodos). Desde <code>class</code> hasta dunder methods, <code>@property</code> y <code>@classmethod</code>.
+    </p>
+    <div class="hero-analogy">
+      <span class="ha-label">Molde</span>
+      <span class="ha-label">→</span>
+      <span class="ha-label">Instancias</span>
+      <div class="ha-val ha-cls">class Perro</div>
+      <span class="ha-arrow">→</span>
+      <div class="ha-val ha-obj">perro1, perro2, perro3...</div>
+    </div>
+  </div>
+
+  <!-- ══ CONCEPTO ══ -->
+  <div class="section" id="concepto">
+    <div class="section-header">
+      <div class="s-icon i-cls">POO</div>
+      <div>
+        <div class="section-title">¿Qué es un objeto?</div>
+        <div class="section-type">clase · instancia · atributo · método</div>
+      </div>
+    </div>
+
+    <p>En POO todo gira alrededor de dos ideas: <b>estado</b> (qué datos tiene algo) y <b>comportamiento</b> (qué puede hacer). Un objeto agrupa ambas cosas. Una <b>clase</b> es el molde o plantilla; una <b>instancia</b> es el objeto concreto creado a partir de ese molde.</p>
+
+    <div class="two-col">
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Sin POO — datos sueltos</div>
+        <pre><span class="c"># datos de un perro</span>
+<span class="v">nombre</span> <span class="op2">=</span> <span class="s">"Rex"</span>
+<span class="v">raza</span>   <span class="op2">=</span> <span class="s">"Labrador"</span>
+<span class="v">edad</span>   <span class="op2">=</span> <span class="nm">3</span>
+
+<span class="c"># otro perro → más variables sueltas</span>
+<span class="v">nombre2</span> <span class="op2">=</span> <span class="s">"Luna"</span>
+<span class="v">raza2</span>   <span class="op2">=</span> <span class="s">"Poodle"</span>
+<span class="v">edad2</span>   <span class="op2">=</span> <span class="nm">5</span>
+<span class="c"># escala muy mal</span></pre>
+      </div>
+      <div class="cb" style="margin:0">
+        <div class="cb-label">Con POO — datos agrupados</div>
+        <pre><span class="k">class</span> <span class="n">Perro</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, nombre, raza, edad):
+        <span class="ki">self</span>.nombre <span class="op2">=</span> nombre
+        <span class="ki">self</span>.raza   <span class="op2">=</span> raza
+        <span class="ki">self</span>.edad   <span class="op2">=</span> edad
+
+<span class="v">rex</span>  <span class="op2">=</span> <span class="n">Perro</span>(<span class="s">"Rex"</span>,  <span class="s">"Labrador"</span>, <span class="nm">3</span>)
+<span class="v">luna</span> <span class="op2">=</span> <span class="n">Perro</span>(<span class="s">"Luna"</span>, <span class="s">"Poodle"</span>,   <span class="nm">5</span>)
+<span class="c"># escala perfecto</span></pre>
+      </div>
+    </div>
+
+    <div class="anatomy">
+      <div class="anat-header">Anatomía de una clase</div>
+      <div class="anat-row"><span class="anat-tag tag-cls">class</span><span class="anat-desc">Define el molde — el nombre de la clase va en PascalCase por convención</span></div>
+      <div class="anat-row"><span class="anat-tag tag-ini">__init__</span><span class="anat-desc">Constructor — corre automáticamente cuando creas una instancia. Inicializa atributos.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-ini">self</span><span class="anat-desc">Referencia al objeto actual. Siempre es el primer parámetro de cualquier método de instancia.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-met">método</span><span class="anat-desc">Función definida dentro de una clase. Tiene acceso a self y por tanto a todos los atributos.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-dun">dunder</span><span class="anat-desc">Métodos especiales con doble guión bajo: __str__, __len__, __add__. Python los llama automáticamente.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-prp">@property</span><span class="anat-desc">Convierte un método en atributo de solo lectura (o lectura/escritura) sin cambiar la sintaxis de uso.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-cls2">@classmethod</span><span class="anat-desc">Método que recibe la clase en vez de la instancia. Útil para constructores alternativos.</span></div>
+      <div class="anat-row"><span class="anat-tag tag-sta">@staticmethod</span><span class="anat-desc">Función dentro de la clase que no recibe self ni cls. No necesita acceder al estado del objeto.</span></div>
+    </div>
+  </div>
+
+  <!-- ══ CLASS ══ -->
+  <div class="section" id="clase">
+    <div class="section-header">
+      <div class="s-icon i-cls">cls</div>
+      <div>
+        <div class="section-title">Definir una clase</div>
+        <div class="section-type">class · PascalCase · atributos de clase vs instancia</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Estructura mínima</div>
+      <pre><span class="k">class</span> <span class="n">Persona</span>:        <span class="c"># PascalCase — convención Python</span>
+    <span class="kp">pass</span>              <span class="c"># clase vacía válida</span>
+
+<span class="c"># crear instancia</span>
+<span class="v">p</span> <span class="op2">=</span> <span class="n">Persona</span>()
+<span class="nb">print</span>(<span class="nb">type</span>(<span class="v">p</span>))         <span class="c"># &lt;class '__main__.Persona'&gt;</span>
+<span class="nb">print</span>(<span class="nb">isinstance</span>(<span class="v">p</span>, <span class="n">Persona</span>))  <span class="c"># True</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Atributos de clase vs atributos de instancia</div>
+      <pre><span class="k">class</span> <span class="n">Perro</span>:
+    <span class="c"># atributo de CLASE — compartido por TODAS las instancias</span>
+    <span class="v">especie</span> <span class="op2">=</span> <span class="s">"Canis lupus familiaris"</span>
+    <span class="v">contador</span> <span class="op2">=</span> <span class="nm">0</span>
+
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">nombre</span>):
+        <span class="c"># atributo de INSTANCIA — único por objeto</span>
+        <span class="ki">self</span>.<span class="v">nombre</span> <span class="op2">=</span> <span class="v">nombre</span>
+        <span class="n">Perro</span>.<span class="v">contador</span> <span class="op2">+=</span> <span class="nm">1</span>      <span class="c"># modifica el atributo de clase</span>
+
+<span class="v">rex</span>  <span class="op2">=</span> <span class="n">Perro</span>(<span class="s">"Rex"</span>)
+<span class="v">luna</span> <span class="op2">=</span> <span class="n">Perro</span>(<span class="s">"Luna"</span>)
+
+<span class="nb">print</span>(<span class="v">rex</span>.<span class="v">especie</span>)     <span class="c"># Canis lupus familiaris — accede al de clase</span>
+<span class="nb">print</span>(<span class="v">luna</span>.<span class="v">especie</span>)    <span class="c"># mismo valor — compartido</span>
+<span class="nb">print</span>(<span class="n">Perro</span>.<span class="v">contador</span>) <span class="c"># 2 — cuántos perros se crearon</span>
+
+<span class="c"># si asignas a self.especie, crea un atributo de INSTANCIA que SOMBREA al de clase</span>
+<span class="v">rex</span>.<span class="v">especie</span> <span class="op2">=</span> <span class="s">"lobo"</span>      <span class="c"># solo cambia en rex</span>
+<span class="nb">print</span>(<span class="v">rex</span>.<span class="v">especie</span>)     <span class="c"># lobo</span>
+<span class="nb">print</span>(<span class="v">luna</span>.<span class="v">especie</span>)    <span class="c"># Canis lupus familiaris — sin cambio</span></pre>
+    </div>
+
+    <div class="callout ca">
+      <b>Regla de búsqueda de atributos:</b> Python busca primero en el objeto (instancia), luego en la clase, luego en las clases padre. Si lo encuentra en el objeto, usa ese; si no, sube a la clase.
+    </div>
+  </div>
+
+  <!-- ══ INIT / SELF ══ -->
+  <div class="section" id="init">
+    <div class="section-header">
+      <div class="s-icon i-ini">init</div>
+      <div>
+        <div class="section-title">__init__ y self</div>
+        <div class="section-type">constructor · inicialización · referencia al objeto</div>
+      </div>
+    </div>
+
+    <p><code>__init__</code> es el método que Python llama automáticamente al crear una instancia. No crea el objeto — eso lo hace <code>__new__</code> — pero lo <b>inicializa</b>: asigna los valores iniciales de sus atributos. <code>self</code> es simplemente el objeto que se acaba de crear, pasado como primer argumento.</p>
+
+    <div class="cb">
+      <div class="cb-label">__init__ con validación</div>
+      <pre><span class="k">class</span> <span class="n">CuentaBancaria</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">titular</span>, <span class="v">saldo_inicial</span><span class="op2">=</span><span class="nm">0</span>):
+        <span class="k">if</span> <span class="v">saldo_inicial</span> <span class="op2">&lt;</span> <span class="nm">0</span>:
+            <span class="k">raise</span> <span class="n">ValueError</span>(<span class="s">"El saldo inicial no puede ser negativo"</span>)
+        <span class="ki">self</span>.<span class="v">titular</span> <span class="op2">=</span> <span class="v">titular</span>
+        <span class="ki">self</span>.<span class="v">saldo</span>   <span class="op2">=</span> <span class="v">saldo_inicial</span>
+        <span class="ki">self</span>.<span class="v">movimientos</span> <span class="op2">=</span> []        <span class="c"># lista vacía — diferente por instancia</span>
+
+<span class="v">c1</span> <span class="op2">=</span> <span class="n">CuentaBancaria</span>(<span class="s">"Lian"</span>, <span class="nm">500</span>)
+<span class="v">c2</span> <span class="op2">=</span> <span class="n">CuentaBancaria</span>(<span class="s">"Ana"</span>)         <span class="c"># saldo_inicial=0 por defecto</span>
+
+<span class="nb">print</span>(<span class="v">c1</span>.<span class="v">titular</span>, <span class="v">c1</span>.<span class="v">saldo</span>)   <span class="c"># Lian 500</span>
+<span class="nb">print</span>(<span class="v">c2</span>.<span class="v">titular</span>, <span class="v">c2</span>.<span class="v">saldo</span>)   <span class="c"># Ana 0</span></pre>
+    </div>
+
+    <div class="callout cb2">
+      <b>self no es una palabra reservada</b> — podrías llamarlo <code>this</code> o <code>yo</code> y funcionaría. Pero <code>self</code> es la convención universal en Python. No la rompas.<br>
+      <b>self siempre es el primer parámetro</b> de cualquier método de instancia — Python lo pasa automáticamente cuando haces <code>objeto.metodo()</code>.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Cómo Python traduce obj.metodo() a la llamada real</div>
+      <pre><span class="c"># esto que escribes tú:</span>
+<span class="v">c1</span>.<span class="n">depositar</span>(<span class="nm">100</span>)
+
+<span class="c"># es exactamente igual a esto:</span>
+<span class="n">CuentaBancaria</span>.<span class="n">depositar</span>(<span class="v">c1</span>, <span class="nm">100</span>)
+<span class="c"># Python inyecta el objeto como primer argumento (self)</span></pre>
+    </div>
+  </div>
+
+  <!-- ══ MÉTODOS ══ -->
+  <div class="section" id="metodos">
+    <div class="section-header">
+      <div class="s-icon i-ini">def</div>
+      <div>
+        <div class="section-title">Métodos de instancia</div>
+        <div class="section-type">definir · llamar · acceder a self</div>
+      </div>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Clase completa con métodos</div>
+      <pre><span class="k">class</span> <span class="n">CuentaBancaria</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">titular</span>, <span class="v">saldo</span><span class="op2">=</span><span class="nm">0</span>):
+        <span class="ki">self</span>.<span class="v">titular</span>     <span class="op2">=</span> <span class="v">titular</span>
+        <span class="ki">self</span>.<span class="v">saldo</span>       <span class="op2">=</span> <span class="v">saldo</span>
+        <span class="ki">self</span>.<span class="v">movimientos</span> <span class="op2">=</span> []
+
+    <span class="k">def</span> <span class="n">depositar</span>(<span class="ki">self</span>, <span class="v">monto</span>):
+        <span class="k">if</span> <span class="v">monto</span> <span class="op2">&lt;=</span> <span class="nm">0</span>:
+            <span class="k">raise</span> <span class="n">ValueError</span>(<span class="s">"El monto debe ser positivo"</span>)
+        <span class="ki">self</span>.<span class="v">saldo</span> <span class="op2">+=</span> <span class="v">monto</span>
+        <span class="ki">self</span>.<span class="v">movimientos</span>.<span class="n">append</span>(<span class="s">f"+{monto}"</span>)
+
+    <span class="k">def</span> <span class="n">retirar</span>(<span class="ki">self</span>, <span class="v">monto</span>):
+        <span class="k">if</span> <span class="v">monto</span> <span class="op2">&gt;</span> <span class="ki">self</span>.<span class="v">saldo</span>:
+            <span class="k">raise</span> <span class="n">ValueError</span>(<span class="s">"Saldo insuficiente"</span>)
+        <span class="ki">self</span>.<span class="v">saldo</span> <span class="op2">-=</span> <span class="v">monto</span>
+        <span class="ki">self</span>.<span class="v">movimientos</span>.<span class="n">append</span>(<span class="s">f"-{monto}"</span>)
+
+    <span class="k">def</span> <span class="n">estado</span>(<span class="ki">self</span>):
+        <span class="nb">print</span>(<span class="s">f"Titular : {self.titular}"</span>)
+        <span class="nb">print</span>(<span class="s">f"Saldo   : S/ {self.saldo:.2f}"</span>)
+        <span class="nb">print</span>(<span class="s">f"Movs.   : {self.movimientos}"</span>)
+
+<span class="c"># uso</span>
+<span class="v">cuenta</span> <span class="op2">=</span> <span class="n">CuentaBancaria</span>(<span class="s">"Lian"</span>, <span class="nm">1000</span>)
+<span class="v">cuenta</span>.<span class="n">depositar</span>(<span class="nm">500</span>)
+<span class="v">cuenta</span>.<span class="n">retirar</span>(<span class="nm">200</span>)
+<span class="v">cuenta</span>.<span class="n">estado</span>()
+<span class="c"># Titular : Lian</span>
+<span class="c"># Saldo   : S/ 1300.00</span>
+<span class="c"># Movs.   : ['+500', '-200']</span></pre>
+    </div>
+  </div>
+
+  <!-- ══ ENCAPSULAMIENTO ══ -->
+  <div class="section" id="enc">
+    <div class="section-header">
+      <div class="s-icon i-enc">enc</div>
+      <div>
+        <div class="section-title">Encapsulamiento</div>
+        <div class="section-type">_ público · _ privado · __ name mangling</div>
+      </div>
+    </div>
+
+    <p>Encapsulamiento significa controlar qué partes internas de un objeto son accesibles desde afuera. Python no tiene modificadores como <code>private</code> o <code>protected</code> de Java — usa convenciones de nombres.</p>
+
+    <div class="cb">
+      <div class="cb-label">Convenciones de acceso en Python</div>
+      <pre><span class="k">class</span> <span class="n">Ejemplo</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>):
+        <span class="ki">self</span>.<span class="v">publico</span>      <span class="op2">=</span> <span class="s">"accesible desde cualquier lugar"</span>
+        <span class="ki">self</span>.<span class="priv">_protegido</span>   <span class="op2">=</span> <span class="s">"convención: no toques desde afuera"</span>
+        <span class="ki">self</span>.<span class="priv">__privado</span>    <span class="op2">=</span> <span class="s">"name mangling activo"</span>
+
+<span class="v">e</span> <span class="op2">=</span> <span class="n">Ejemplo</span>()
+<span class="nb">print</span>(<span class="v">e</span>.<span class="v">publico</span>)          <span class="c"># ✓ funciona</span>
+<span class="nb">print</span>(<span class="v">e</span>.<span class="priv">_protegido</span>)      <span class="c"># ✓ funciona, pero no deberías</span>
+<span class="nb">print</span>(<span class="v">e</span>.<span class="priv">__privado</span>)       <span class="c"># ✗ AttributeError</span>
+<span class="nb">print</span>(<span class="v">e</span>.<span class="priv">_Ejemplo__privado</span>) <span class="c"># ✓ así se llama realmente (name mangling)</span></pre>
+    </div>
+
+    <div class="callout cg">
+      <b>Name mangling:</b> cuando Python ve <code>self.__nombre</code> dentro de una clase <code>Foo</code>, lo renombra internamente a <code>_Foo__nombre</code>. Esto evita colisiones en herencia, no es verdadera privacidad. En Python "somos todos adultos" — la convención <code>_</code> es suficiente señal de "no toques esto".
+    </div>
+  </div>
+
+  <!-- ══ HERENCIA ══ -->
+  <div class="section" id="herencia">
+    <div class="section-header">
+      <div class="s-icon i-inh">inh</div>
+      <div>
+        <div class="section-title">Herencia</div>
+        <div class="section-type">clase padre · clase hija · super() · override · MRO</div>
+      </div>
+    </div>
+
+    <p>Herencia permite que una clase <b>hija</b> reutilice el código de una clase <b>padre</b>, pudiendo extenderlo o modificarlo. La hija hereda todos los métodos y atributos del padre automáticamente.</p>
+
+    <div class="cb">
+      <div class="cb-label">Herencia básica</div>
+      <pre><span class="k">class</span> <span class="n">Animal</span>:                           <span class="c"># padre / base</span>
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">nombre</span>, <span class="v">edad</span>):
+        <span class="ki">self</span>.<span class="v">nombre</span> <span class="op2">=</span> <span class="v">nombre</span>
+        <span class="ki">self</span>.<span class="v">edad</span>   <span class="op2">=</span> <span class="v">edad</span>
+
+    <span class="k">def</span> <span class="n">describir</span>(<span class="ki">self</span>):
+        <span class="nb">print</span>(<span class="s">f"{self.nombre}, {self.edad} años"</span>)
+
+    <span class="k">def</span> <span class="n">sonido</span>(<span class="ki">self</span>):
+        <span class="nb">print</span>(<span class="s">"..."</span>)                        <span class="c"># comportamiento base genérico</span>
+
+
+<span class="k">class</span> <span class="kh">Perro</span>(<span class="n">Animal</span>):                      <span class="c"># hija — hereda de Animal</span>
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">nombre</span>, <span class="v">edad</span>, <span class="v">raza</span>):
+        <span class="nb">super</span>().<span class="n">__init__</span>(<span class="v">nombre</span>, <span class="v">edad</span>)    <span class="c"># llama al __init__ del padre</span>
+        <span class="ki">self</span>.<span class="v">raza</span> <span class="op2">=</span> <span class="v">raza</span>                   <span class="c"># atributo propio de Perro</span>
+
+    <span class="k">def</span> <span class="n">sonido</span>(<span class="ki">self</span>):                      <span class="c"># override — reemplaza el del padre</span>
+        <span class="nb">print</span>(<span class="s">"¡Guau!"</span>)
+
+    <span class="k">def</span> <span class="n">info_raza</span>(<span class="ki">self</span>):                   <span class="c"># método nuevo — solo en Perro</span>
+        <span class="nb">print</span>(<span class="s">f"Raza: {self.raza}"</span>)
+
+
+<span class="k">class</span> <span class="kh">Gato</span>(<span class="n">Animal</span>):
+    <span class="k">def</span> <span class="n">sonido</span>(<span class="ki">self</span>):
+        <span class="nb">print</span>(<span class="s">"¡Miau!"</span>)
+
+
+<span class="c"># uso</span>
+<span class="v">rex</span>  <span class="op2">=</span> <span class="n">Perro</span>(<span class="s">"Rex"</span>, <span class="nm">3</span>, <span class="s">"Labrador"</span>)
+<span class="v">michi</span> <span class="op2">=</span> <span class="n">Gato</span>(<span class="s">"Michi"</span>, <span class="nm">2</span>)
+
+<span class="v">rex</span>.<span class="n">describir</span>()    <span class="c"># heredado de Animal → Rex, 3 años</span>
+<span class="v">rex</span>.<span class="n">sonido</span>()       <span class="c"># override en Perro  → ¡Guau!</span>
+<span class="v">rex</span>.<span class="n">info_raza</span>()    <span class="c"># propio de Perro    → Raza: Labrador</span>
+<span class="v">michi</span>.<span class="n">sonido</span>()    <span class="c"># override en Gato   → ¡Miau!</span>
+
+<span class="nb">isinstance</span>(<span class="v">rex</span>, <span class="n">Perro</span>)   <span class="c"># True</span>
+<span class="nb">isinstance</span>(<span class="v">rex</span>, <span class="n">Animal</span>)  <span class="c"># True — es instancia de la clase padre también</span>
+<span class="nb">issubclass</span>(<span class="n">Perro</span>, <span class="n">Animal</span>) <span class="c"># True</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">super() — extender en vez de reemplazar</div>
+      <pre><span class="k">class</span> <span class="n">Animal</span>:
+    <span class="k">def</span> <span class="n">describir</span>(<span class="ki">self</span>):
+        <span class="nb">print</span>(<span class="s">f"Animal: {self.nombre}"</span>)
+
+<span class="k">class</span> <span class="kh">Perro</span>(<span class="n">Animal</span>):
+    <span class="k">def</span> <span class="n">describir</span>(<span class="ki">self</span>):
+        <span class="nb">super</span>().<span class="n">describir</span>()         <span class="c"># llama el método del padre primero</span>
+        <span class="nb">print</span>(<span class="s">f"Raza: {self.raza}"</span>)  <span class="c"># luego agrega lo suyo</span>
+
+<span class="c"># resultado:</span>
+<span class="c"># Animal: Rex</span>
+<span class="c"># Raza: Labrador</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Herencia múltiple y MRO</div>
+      <pre><span class="k">class</span> <span class="n">A</span>:
+    <span class="k">def</span> <span class="n">metodo</span>(<span class="ki">self</span>): <span class="nb">print</span>(<span class="s">"A"</span>)
+
+<span class="k">class</span> <span class="kh">B</span>(<span class="n">A</span>):
+    <span class="k">def</span> <span class="n">metodo</span>(<span class="ki">self</span>): <span class="nb">print</span>(<span class="s">"B"</span>)
+
+<span class="k">class</span> <span class="kh">C</span>(<span class="n">A</span>):
+    <span class="k">def</span> <span class="n">metodo</span>(<span class="ki">self</span>): <span class="nb">print</span>(<span class="s">"C"</span>)
+
+<span class="k">class</span> <span class="kh">D</span>(<span class="n">B</span>, <span class="n">C</span>):      <span class="c"># herencia múltiple</span>
+    <span class="kp">pass</span>
+
+<span class="v">d</span> <span class="op2">=</span> <span class="n">D</span>()
+<span class="v">d</span>.<span class="n">metodo</span>()          <span class="c"># → B  (MRO: D → B → C → A)</span>
+
+<span class="c"># ver el MRO completo</span>
+<span class="nb">print</span>(<span class="n">D</span>.<span class="n">__mro__</span>)
+<span class="c"># (&lt;class 'D'&gt;, &lt;class 'B'&gt;, &lt;class 'C'&gt;, &lt;class 'A'&gt;, &lt;class 'object'&gt;)</span></pre>
+    </div>
+
+    <div class="callout cc">
+      <b>MRO (Method Resolution Order):</b> el orden en que Python busca un método en la cadena de herencia. Algoritmo C3 — busca de izquierda a derecha, depth-first, sin repetir. Toda clase hereda de <code>object</code> al final.
+    </div>
+  </div>
+
+  <!-- ══ DUNDER METHODS ══ -->
+  <div class="section" id="dunder">
+    <div class="section-header">
+      <div class="s-icon i-dun">__</div>
+      <div>
+        <div class="section-title">Dunder methods</div>
+        <div class="section-type">__str__ · __repr__ · __len__ · __eq__ · __add__ · __contains__</div>
+      </div>
+    </div>
+
+    <p>Los métodos con doble guión bajo se llaman <b>dunder</b> (double underscore) o <b>métodos mágicos</b>. Python los llama automáticamente cuando usas operadores (<code>+</code>, <code>==</code>, <code>len()</code>, <code>print()</code>, etc.) sobre tus objetos. Implementarlos hace que tus clases se comporten como tipos nativos de Python.</p>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Dunder</th><th>Cuándo se llama</th><th>Ejemplo de uso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="tn">__str__</td><td class="td">print(obj) · str(obj)</td><td class="te">print(cuenta) → "Cuenta de Lian"</td></tr>
+        <tr><td class="tn">__repr__</td><td class="td">repr(obj) · en el REPL</td><td class="te">Cuenta(titular='Lian', saldo=500)</td></tr>
+        <tr><td class="tn">__len__</td><td class="td">len(obj)</td><td class="te">len(mi_lista_custom) → 5</td></tr>
+        <tr><td class="tn">__eq__</td><td class="td">obj1 == obj2</td><td class="te">punto1 == punto2</td></tr>
+        <tr><td class="tn">__lt__</td><td class="td">obj1 &lt; obj2</td><td class="te">producto1 &lt; producto2 (por precio)</td></tr>
+        <tr><td class="tn">__add__</td><td class="td">obj1 + obj2</td><td class="te">vector1 + vector2</td></tr>
+        <tr><td class="tn">__sub__</td><td class="td">obj1 - obj2</td><td class="te">vector1 - vector2</td></tr>
+        <tr><td class="tn">__mul__</td><td class="td">obj * n</td><td class="te">vector * 3</td></tr>
+        <tr><td class="tn">__contains__</td><td class="td">item in obj</td><td class="te">"hola" in mi_objeto</td></tr>
+        <tr><td class="tn">__getitem__</td><td class="td">obj[key]</td><td class="te">mi_obj[0] · mi_obj["clave"]</td></tr>
+        <tr><td class="tn">__setitem__</td><td class="td">obj[key] = valor</td><td class="te">mi_obj[0] = 99</td></tr>
+        <tr><td class="tn">__iter__</td><td class="td">for x in obj</td><td class="te">for item in mi_coleccion</td></tr>
+        <tr><td class="tn">__bool__</td><td class="td">if obj: · bool(obj)</td><td class="te">if mi_cuenta: (truthy si saldo > 0)</td></tr>
+        <tr><td class="tn">__call__</td><td class="td">obj()</td><td class="te">instancia usada como función</td></tr>
+        <tr><td class="tn">__del__</td><td class="td">cuando el objeto es eliminado</td><td class="te">del obj</td></tr>
+      </tbody>
+    </table>
+
+    <div class="cb">
+      <div class="cb-label">Implementar dunders en una clase Vector2D</div>
+      <pre><span class="k">class</span> <span class="n">Vector2D</span>:
+    <span class="k">def</span> <span class="kd">__init__</span>(<span class="ki">self</span>, <span class="v">x</span>, <span class="v">y</span>):
+        <span class="ki">self</span>.<span class="v">x</span> <span class="op2">=</span> <span class="v">x</span>
+        <span class="ki">self</span>.<span class="v">y</span> <span class="op2">=</span> <span class="v">y</span>
+
+    <span class="k">def</span> <span class="kd">__str__</span>(<span class="ki">self</span>):
+        <span class="c"># legible para humanos</span>
+        <span class="k">return</span> <span class="s">f"({self.x}, {self.y})"</span>
+
+    <span class="k">def</span> <span class="kd">__repr__</span>(<span class="ki">self</span>):
+        <span class="c"># reproducible — cómo recrear el objeto</span>
+        <span class="k">return</span> <span class="s">f"Vector2D({self.x!r}, {self.y!r})"</span>
+
+    <span class="k">def</span> <span class="kd">__add__</span>(<span class="ki">self</span>, <span class="v">otro</span>):
+        <span class="c"># habilita: v1 + v2</span>
+        <span class="k">return</span> <span class="n">Vector2D</span>(<span class="ki">self</span>.<span class="v">x</span> <span class="op2">+</span> <span class="v">otro</span>.<span class="v">x</span>, <span class="ki">self</span>.<span class="v">y</span> <span class="op2">+</span> <span class="v">otro</span>.<span class="v">y</span>)
+
+    <span class="k">def</span> <span class="kd">__mul__</span>(<span class="ki">self</span>, <span class="v">escalar</span>):
+        <span class="c"># habilita: v * 3</span>
+        <span class="k">return</span> <span class="n">Vector2D</span>(<span class="ki">self</span>.<span class="v">x</span> <span class="op2">*</span> <span class="v">escalar</span>, <span class="ki">self</span>.<span class="v">y</span> <span class="op2">*</span> <span class="v">escalar</span>)
+
+    <span class="k">def</span> <span class="kd">__eq__</span>(<span class="ki">self</span>, <span class="v">otro</span>):
+        <span class="c"># habilita: v1 == v2</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="v">x</span> <span class="op2">==</span> <span class="v">otro</span>.<span class="v">x</span> <span class="k">and</span> <span class="ki">self</span>.<span class="v">y</span> <span class="op2">==</span> <span class="v">otro</span>.<span class="v">y</span>
+
+    <span class="k">def</span> <span class="kd">__abs__</span>(<span class="ki">self</span>):
+        <span class="c"># habilita: abs(v) — magnitud del vector</span>
+        <span class="k">return</span> (<span class="ki">self</span>.<span class="v">x</span><span class="op2">**</span><span class="nm">2</span> <span class="op2">+</span> <span class="ki">self</span>.<span class="v">y</span><span class="op2">**</span><span class="nm">2</span>) <span class="op2">**</span> <span class="nm">0.5</span>
+
+    <span class="k">def</span> <span class="kd">__bool__</span>(<span class="ki">self</span>):
+        <span class="c"># True si el vector no es el origen (0,0)</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="v">x</span> <span class="op2">!=</span> <span class="nm">0</span> <span class="k">or</span> <span class="ki">self</span>.<span class="v">y</span> <span class="op2">!=</span> <span class="nm">0</span>
+
+<span class="c"># uso</span>
+<span class="v">v1</span> <span class="op2">=</span> <span class="n">Vector2D</span>(<span class="nm">3</span>, <span class="nm">4</span>)
+<span class="v">v2</span> <span class="op2">=</span> <span class="n">Vector2D</span>(<span class="nm">1</span>, <span class="nm">2</span>)
+
+<span class="nb">print</span>(<span class="v">v1</span>)            <span class="c"># → (3, 4)         llama __str__</span>
+<span class="nb">repr</span>(<span class="v">v1</span>)             <span class="c"># → Vector2D(3, 4) llama __repr__</span>
+<span class="nb">print</span>(<span class="v">v1</span> <span class="op2">+</span> <span class="v">v2</span>)       <span class="c"># → (4, 6)         llama __add__</span>
+<span class="nb">print</span>(<span class="v">v1</span> <span class="op2">*</span> <span class="nm">3</span>)        <span class="c"># → (9, 12)        llama __mul__</span>
+<span class="nb">print</span>(<span class="v">v1</span> <span class="op2">==</span> <span class="v">v2</span>)      <span class="c"># → False          llama __eq__</span>
+<span class="nb">print</span>(<span class="nb">abs</span>(<span class="v">v1</span>))       <span class="c"># → 5.0            llama __abs__ (3²+4²=25, √25=5)</span>
+<span class="nb">print</span>(<span class="nb">bool</span>(<span class="v">v1</span>))      <span class="c"># → True           llama __bool__</span></pre>
+    </div>
+
+    <div class="callout cd">
+      <b>__str__ vs __repr__:</b><br>
+      <code>__str__</code> → para humanos, legible. Lo usa <code>print()</code> y f-strings.<br>
+      <code>__repr__</code> → para desarrolladores, debe ser "reproducible" — idealmente <code>eval(repr(obj)) == obj</code>.<br>
+      Si solo implementas uno, implementa <code>__repr__</code> — Python lo usará como fallback para <code>__str__</code>.
+    </div>
+  </div>
+
+  <!-- ══ @PROPERTY ══ -->
+  <div class="section" id="property">
+    <div class="section-header">
+      <div class="s-icon i-prp">@prop</div>
+      <div>
+        <div class="section-title">@property</div>
+        <div class="section-type">getter · setter · deleter · atributo controlado</div>
+      </div>
+    </div>
+
+    <p><code>@property</code> convierte un método en un atributo que se accede sin paréntesis. Permite agregar lógica de validación al leer o escribir un atributo, sin cambiar cómo se usa desde afuera. El código externo no nota la diferencia.</p>
+
+    <div class="cb">
+      <div class="cb-label">Sin @property — el problema</div>
+      <pre><span class="k">class</span> <span class="n">Persona</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">edad</span>):
+        <span class="ki">self</span>.<span class="v">edad</span> <span class="op2">=</span> <span class="v">edad</span>       <span class="c"># atributo público sin control</span>
+
+<span class="v">p</span> <span class="op2">=</span> <span class="n">Persona</span>(<span class="nm">25</span>)
+<span class="v">p</span>.<span class="v">edad</span> <span class="op2">=</span> <span class="op2">-</span><span class="nm">5</span>                <span class="c"># ← edad negativa, Python no protesta</span>
+<span class="v">p</span>.<span class="v">edad</span> <span class="op2">=</span> <span class="s">"hola"</span>            <span class="c"># ← string como edad, tampoco</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Con @property — getter y setter</div>
+      <pre><span class="k">class</span> <span class="n">Persona</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">nombre</span>, <span class="v">edad</span>):
+        <span class="ki">self</span>.<span class="v">nombre</span> <span class="op2">=</span> <span class="v">nombre</span>
+        <span class="ki">self</span>.<span class="v">edad</span>   <span class="op2">=</span> <span class="v">edad</span>        <span class="c"># esto llama al setter automáticamente</span>
+
+    <span class="kp">@property</span>
+    <span class="k">def</span> <span class="n">edad</span>(<span class="ki">self</span>):               <span class="c"># GETTER — se llama al leer p.edad</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="priv">_edad</span>
+
+    <span class="kp">@edad.setter</span>
+    <span class="k">def</span> <span class="n">edad</span>(<span class="ki">self</span>, <span class="v">valor</span>):        <span class="c"># SETTER — se llama al escribir p.edad = x</span>
+        <span class="k">if</span> <span class="k">not</span> <span class="nb">isinstance</span>(<span class="v">valor</span>, <span class="nb">int</span>):
+            <span class="k">raise</span> <span class="n">TypeError</span>(<span class="s">"La edad debe ser un entero"</span>)
+        <span class="k">if</span> <span class="v">valor</span> <span class="op2">&lt;</span> <span class="nm">0</span> <span class="k">or</span> <span class="v">valor</span> <span class="op2">&gt;</span> <span class="nm">130</span>:
+            <span class="k">raise</span> <span class="n">ValueError</span>(<span class="s">f"Edad inválida: {valor}"</span>)
+        <span class="ki">self</span>.<span class="priv">_edad</span> <span class="op2">=</span> <span class="v">valor</span>         <span class="c"># guarda en _edad (privado por conv.)</span>
+
+    <span class="kp">@edad.deleter</span>
+    <span class="k">def</span> <span class="n">edad</span>(<span class="ki">self</span>):               <span class="c"># DELETER — se llama al hacer del p.edad</span>
+        <span class="nb">print</span>(<span class="s">"Eliminando edad"</span>)
+        <span class="k">del</span> <span class="ki">self</span>.<span class="priv">_edad</span>
+
+    <span class="kp">@property</span>
+    <span class="k">def</span> <span class="n">es_mayor</span>(<span class="ki">self</span>):           <span class="c"># property de solo lectura (sin setter)</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="priv">_edad</span> <span class="op2">&gt;=</span> <span class="nm">18</span>
+
+<span class="c"># uso — idéntico al de un atributo normal</span>
+<span class="v">p</span> <span class="op2">=</span> <span class="n">Persona</span>(<span class="s">"Lian"</span>, <span class="nm">22</span>)
+<span class="nb">print</span>(<span class="v">p</span>.<span class="v">edad</span>)          <span class="c"># → 22      (llama getter, sin paréntesis)</span>
+<span class="v">p</span>.<span class="v">edad</span> <span class="op2">=</span> <span class="nm">23</span>            <span class="c"># llama setter, valida</span>
+<span class="v">p</span>.<span class="v">edad</span> <span class="op2">=</span> <span class="op2">-</span><span class="nm">5</span>            <span class="c"># → ValueError: Edad inválida: -5</span>
+<span class="nb">print</span>(<span class="v">p</span>.<span class="v">es_mayor</span>)      <span class="c"># → True    (property calculada, sin paréntesis)</span>
+<span class="k">del</span> <span class="v">p</span>.<span class="v">edad</span>             <span class="c"># llama deleter</span></pre>
+    </div>
+
+    <div class="callout ce">
+      <b>La magia de @property:</b> el código que usa la clase no cambia — sigue escribiendo <code>p.edad = 23</code>, no <code>p.set_edad(23)</code>. Esto respeta la interfaz pública mientras agrega validación internamente. Es la forma Pythónica de hacer getters/setters.
+    </div>
+  </div>
+
+  <!-- ══ @CLASSMETHOD / @STATICMETHOD ══ -->
+  <div class="section" id="static">
+    <div class="section-header">
+      <div class="s-icon i-sta">@cls</div>
+      <div>
+        <div class="section-title">@classmethod y @staticmethod</div>
+        <div class="section-type">métodos alternativos · métodos de utilidad · cls vs self</div>
+      </div>
+    </div>
+
+    <div class="callout cf">
+      <b>Tres tipos de métodos en una clase:</b><br>
+      · <b>Método de instancia</b> — recibe <code>self</code>. Accede al objeto y a la clase. El más común.<br>
+      · <b>@classmethod</b> — recibe <code>cls</code> (la clase, no el objeto). No accede a instancias individuales.<br>
+      · <b>@staticmethod</b> — no recibe <code>self</code> ni <code>cls</code>. Es una función normal dentro de la clase por organización.
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">@classmethod — constructores alternativos (uso más común)</div>
+      <pre><span class="k">class</span> <span class="n">Fecha</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">dia</span>, <span class="v">mes</span>, <span class="v">año</span>):
+        <span class="ki">self</span>.<span class="v">dia</span> <span class="op2">=</span> <span class="v">dia</span>
+        <span class="ki">self</span>.<span class="v">mes</span> <span class="op2">=</span> <span class="v">mes</span>
+        <span class="ki">self</span>.<span class="v">año</span> <span class="op2">=</span> <span class="v">año</span>
+
+    <span class="ks">@classmethod</span>
+    <span class="k">def</span> <span class="n">desde_string</span>(<span class="v">cls</span>, <span class="v">texto</span>):
+        <span class="c"># constructor alternativo — crea una Fecha desde "DD-MM-AAAA"</span>
+        <span class="v">dia</span>, <span class="v">mes</span>, <span class="v">año</span> <span class="op2">=</span> [<span class="nb">int</span>(<span class="v">n</span>) <span class="k">for</span> <span class="v">n</span> <span class="k">in</span> <span class="v">texto</span>.<span class="n">split</span>(<span class="s">"-"</span>)]
+        <span class="k">return</span> <span class="v">cls</span>(<span class="v">dia</span>, <span class="v">mes</span>, <span class="v">año</span>)   <span class="c"># cls() == Fecha() — funciona en subclases</span>
+
+    <span class="ks">@classmethod</span>
+    <span class="k">def</span> <span class="n">hoy</span>(<span class="v">cls</span>):
+        <span class="k">import</span> <span class="v">datetime</span>
+        <span class="v">h</span> <span class="op2">=</span> <span class="v">datetime</span>.<span class="v">date</span>.<span class="n">today</span>()
+        <span class="k">return</span> <span class="v">cls</span>(<span class="v">h</span>.<span class="v">day</span>, <span class="v">h</span>.<span class="v">month</span>, <span class="v">h</span>.<span class="v">year</span>)
+
+    <span class="k">def</span> <span class="kd">__str__</span>(<span class="ki">self</span>):
+        <span class="k">return</span> <span class="s">f"{self.dia:02d}/{self.mes:02d}/{self.año}"</span>
+
+<span class="c"># tres formas de crear una Fecha</span>
+<span class="v">f1</span> <span class="op2">=</span> <span class="n">Fecha</span>(<span class="nm">12</span>, <span class="nm">4</span>, <span class="nm">2026</span>)              <span class="c"># constructor normal</span>
+<span class="v">f2</span> <span class="op2">=</span> <span class="n">Fecha</span>.<span class="n">desde_string</span>(<span class="s">"12-04-2026"</span>) <span class="c"># classmethod</span>
+<span class="v">f3</span> <span class="op2">=</span> <span class="n">Fecha</span>.<span class="n">hoy</span>()                      <span class="c"># classmethod</span>
+<span class="nb">print</span>(<span class="v">f1</span>, <span class="v">f2</span>, <span class="v">f3</span>)   <span class="c"># 12/04/2026  12/04/2026  (hoy)</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">@staticmethod — función de utilidad relacionada con la clase</div>
+      <pre><span class="k">class</span> <span class="n">Temperatura</span>:
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">celsius</span>):
+        <span class="ki">self</span>.<span class="v">celsius</span> <span class="op2">=</span> <span class="v">celsius</span>
+
+    <span class="ks">@staticmethod</span>
+    <span class="k">def</span> <span class="n">celsius_a_fahrenheit</span>(<span class="v">c</span>):
+        <span class="c"># no necesita self ni cls — es una conversión pura</span>
+        <span class="k">return</span> <span class="v">c</span> <span class="op2">*</span> <span class="nm">9</span><span class="op2">/</span><span class="nm">5</span> <span class="op2">+</span> <span class="nm">32</span>
+
+    <span class="ks">@staticmethod</span>
+    <span class="k">def</span> <span class="n">es_caluroso</span>(<span class="v">celsius</span>):
+        <span class="k">return</span> <span class="v">celsius</span> <span class="op2">&gt;</span> <span class="nm">30</span>
+
+    <span class="k">def</span> <span class="n">en_fahrenheit</span>(<span class="ki">self</span>):
+        <span class="c"># método de instancia que usa el staticmethod internamente</span>
+        <span class="k">return</span> <span class="n">Temperatura</span>.<span class="n">celsius_a_fahrenheit</span>(<span class="ki">self</span>.<span class="v">celsius</span>)
+
+<span class="c"># se puede llamar desde la clase o desde una instancia</span>
+<span class="nb">print</span>(<span class="n">Temperatura</span>.<span class="n">celsius_a_fahrenheit</span>(<span class="nm">100</span>))  <span class="c"># → 212.0</span>
+
+<span class="v">t</span> <span class="op2">=</span> <span class="n">Temperatura</span>(<span class="nm">37</span>)
+<span class="nb">print</span>(<span class="v">t</span>.<span class="n">en_fahrenheit</span>())                       <span class="c"># → 98.6</span>
+<span class="nb">print</span>(<span class="n">Temperatura</span>.<span class="n">es_caluroso</span>(<span class="nm">37</span>))             <span class="c"># → True</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Cuándo usar cada uno — resumen visual</div>
+      <pre><span class="k">class</span> <span class="n">MiClase</span>:
+
+    <span class="k">def</span> <span class="n">metodo_instancia</span>(<span class="ki">self</span>):
+        <span class="c"># ✓ necesito acceder a self.atributo</span>
+        <span class="c"># ✓ necesito modificar el estado del objeto</span>
+        <span class="kp">pass</span>
+
+    <span class="ks">@classmethod</span>
+    <span class="k">def</span> <span class="n">metodo_clase</span>(<span class="v">cls</span>):
+        <span class="c"># ✓ necesito acceder a atributos de la CLASE (no del objeto)</span>
+        <span class="c"># ✓ quiero crear instancias con lógica diferente (constructor alternativo)</span>
+        <span class="c"># ✓ quiero que funcione bien en subclases (cls en vez de hardcodear la clase)</span>
+        <span class="kp">pass</span>
+
+    <span class="ks">@staticmethod</span>
+    <span class="k">def</span> <span class="n">funcion_utilitaria</span>():
+        <span class="c"># ✓ no necesito self ni cls</span>
+        <span class="c"># ✓ la función pertenece conceptualmente a la clase pero es independiente</span>
+        <span class="c"># ✓ podría ser una función suelta, pero la pongo aquí por organización</span>
+        <span class="kp">pass</span></pre>
+    </div>
+
+    <div class="cb">
+      <div class="cb-label">Ejemplo completo — todo junto en una clase real</div>
+      <pre><span class="k">class</span> <span class="n">Producto</span>:
+    <span class="v">_igv</span> <span class="op2">=</span> <span class="nm">0.18</span>                             <span class="c"># atributo de clase — IGV Perú</span>
+
+    <span class="k">def</span> <span class="n">__init__</span>(<span class="ki">self</span>, <span class="v">nombre</span>, <span class="v">precio</span>):
+        <span class="ki">self</span>.<span class="v">nombre</span> <span class="op2">=</span> <span class="v">nombre</span>
+        <span class="ki">self</span>.<span class="v">precio</span> <span class="op2">=</span> <span class="v">precio</span>                 <span class="c"># usa el setter</span>
+
+    <span class="kp">@property</span>
+    <span class="k">def</span> <span class="n">precio</span>(<span class="ki">self</span>):
+        <span class="k">return</span> <span class="ki">self</span>.<span class="priv">_precio</span>
+
+    <span class="kp">@precio.setter</span>
+    <span class="k">def</span> <span class="n">precio</span>(<span class="ki">self</span>, <span class="v">valor</span>):
+        <span class="k">if</span> <span class="v">valor</span> <span class="op2">&lt;</span> <span class="nm">0</span>:
+            <span class="k">raise</span> <span class="n">ValueError</span>(<span class="s">"Precio no puede ser negativo"</span>)
+        <span class="ki">self</span>.<span class="priv">_precio</span> <span class="op2">=</span> <span class="v">valor</span>
+
+    <span class="kp">@property</span>
+    <span class="k">def</span> <span class="n">precio_con_igv</span>(<span class="ki">self</span>):              <span class="c"># property calculada</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="priv">_precio</span> <span class="op2">*</span> (<span class="nm">1</span> <span class="op2">+</span> <span class="n">Producto</span>.<span class="v">_igv</span>)
+
+    <span class="ks">@classmethod</span>
+    <span class="k">def</span> <span class="n">cambiar_igv</span>(<span class="v">cls</span>, <span class="v">nuevo_igv</span>):       <span class="c"># modifica atributo de clase</span>
+        <span class="v">cls</span>.<span class="v">_igv</span> <span class="op2">=</span> <span class="v">nuevo_igv</span>
+
+    <span class="ks">@classmethod</span>
+    <span class="k">def</span> <span class="n">desde_dict</span>(<span class="v">cls</span>, <span class="v">datos</span>):           <span class="c"># constructor alternativo</span>
+        <span class="k">return</span> <span class="v">cls</span>(<span class="v">datos</span>[<span class="s">"nombre"</span>], <span class="v">datos</span>[<span class="s">"precio"</span>])
+
+    <span class="ks">@staticmethod</span>
+    <span class="k">def</span> <span class="n">es_precio_valido</span>(<span class="v">precio</span>):         <span class="c"># utilidad sin estado</span>
+        <span class="k">return</span> <span class="nb">isinstance</span>(<span class="v">precio</span>, (<span class="nb">int</span>, <span class="nb">float</span>)) <span class="k">and</span> <span class="v">precio</span> <span class="op2">&gt;=</span> <span class="nm">0</span>
+
+    <span class="k">def</span> <span class="kd">__str__</span>(<span class="ki">self</span>):
+        <span class="k">return</span> <span class="s">f"{self.nombre}: S/ {self.precio:.2f} (+ IGV: S/ {self.precio_con_igv:.2f})"</span>
+
+    <span class="k">def</span> <span class="kd">__repr__</span>(<span class="ki">self</span>):
+        <span class="k">return</span> <span class="s">f"Producto({self.nombre!r}, {self.precio!r})"</span>
+
+    <span class="k">def</span> <span class="kd">__lt__</span>(<span class="ki">self</span>, <span class="v">otro</span>):               <span class="c"># habilita sorted() y comparaciones</span>
+        <span class="k">return</span> <span class="ki">self</span>.<span class="priv">_precio</span> <span class="op2">&lt;</span> <span class="v">otro</span>.<span class="priv">_precio</span>
+
+<span class="c"># uso completo</span>
+<span class="v">p1</span> <span class="op2">=</span> <span class="n">Producto</span>(<span class="s">"Laptop"</span>, <span class="nm">3500</span>)
+<span class="v">p2</span> <span class="op2">=</span> <span class="n">Producto</span>.<span class="n">desde_dict</span>({<span class="s">"nombre"</span>: <span class="s">"Mouse"</span>, <span class="s">"precio"</span>: <span class="nm">80</span>})
+
+<span class="nb">print</span>(<span class="v">p1</span>)                      <span class="c"># Laptop: S/ 3500.00 (+ IGV: S/ 4130.00)</span>
+<span class="nb">print</span>(<span class="v">p1</span> <span class="op2">&lt;</span> <span class="v">p2</span>)                 <span class="c"># False (3500 no es menor que 80)</span>
+<span class="nb">print</span>(<span class="n">Producto</span>.<span class="n">es_precio_valido</span>(<span class="op2">-</span><span class="nm">10</span>))  <span class="c"># False</span>
+
+<span class="v">productos</span> <span class="op2">=</span> [<span class="n">Producto</span>(<span class="s">"C"</span>,<span class="nm">300</span>), <span class="n">Producto</span>(<span class="s">"A"</span>,<span class="nm">100</span>), <span class="n">Producto</span>(<span class="s">"B"</span>,<span class="nm">200</span>)]
+<span class="nb">print</span>(<span class="nb">sorted</span>(<span class="v">productos</span>))       <span class="c"># ordena por precio usando __lt__</span></pre>
+    </div>
+  </div>
+
+  <footer>
+    <span>Python · POO completo</span>
+    <span>class · __init__ · herencia · dunder · @property · @classmethod · @staticmethod</span>
+  </footer>
+
+</div>
+</body>
+</html>

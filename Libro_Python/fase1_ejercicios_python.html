@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fase 1 — 20 Ejercicios Python</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #131316;
+    --border: #1e1e24;
+    --accent: #f59e0b;
+    --accent-dim: #92400e;
+    --text: #e8e8f0;
+    --muted: #5a5a72;
+    --solved: #10b981;
+    --tag-bg: #1a1a22;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* HEADER */
+  header {
+    margin-bottom: 56px;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+  }
+  .phase-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  header p {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 2px;
+    height: 3px;
+    margin-bottom: 48px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* SKILL SECTION LABEL */
+  .skill-group {
+    margin-bottom: 12px;
+  }
+  .skill-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--tag-bg);
+    border: 1px solid var(--accent-dim);
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  /* EXERCISE CARD */
+  .exercise-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .exercise-card:hover { border-color: var(--accent-dim); }
+  .exercise-card.done { border-color: var(--solved); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .ex-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: #1a1500;
+    border: 1px solid var(--accent-dim);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    flex-shrink: 0;
+    font-weight: 700;
+  }
+  .exercise-card.done .ex-number {
+    color: var(--solved);
+    background: #0a1f14;
+    border-color: var(--solved);
+  }
+
+  .card-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .card-check {
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: transparent;
+    color: transparent;
+    font-size: 13px;
+  }
+  .exercise-card.done .card-check {
+    border-color: var(--solved);
+    background: var(--solved);
+    color: #000;
+  }
+
+  .card-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .card-body.open { display: block; }
+
+  .enunciado {
+    margin-top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.8;
+    background: #0a0a0c;
+    border-left: 2px solid var(--accent);
+    padding: 14px 16px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .constraint {
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .constraint span { color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="phase-label">Fase 1 / Descomposición de problemas</div>
+    <h1>20 Ejercicios<br>de habilidad única</h1>
+    <p>Un tema por ejercicio · máx. 10 líneas · sin combinar conceptos</p>
+  </header>
+
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="progress-text">0 / 20</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar"></div>
+  </div>
+
+  <!-- ===== BUCLES FOR ===== -->
+  <div class="skill-group">
+    <span class="skill-tag">Bucles for</span>
+  </div>
+
+  <div class="exercise-card" id="card-1">
+    <div class="card-header" onclick="toggleCard(1)">
+      <div class="ex-number">01</div>
+      <div class="card-title">Contar del 1 al 10</div>
+      <div class="card-check" onclick="toggleDone(event,1)">✓</div>
+    </div>
+    <div class="card-body" id="body-1">
+      <div class="enunciado">Imprime los números del 1 al 10, uno por línea, usando un bucle for.</div>
+      <div class="constraint"><span>Restricción:</span> no uses while · no hardcodees los prints</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-2">
+    <div class="card-header" onclick="toggleCard(2)">
+      <div class="ex-number">02</div>
+      <div class="card-title">Suma de una lista</div>
+      <div class="card-check" onclick="toggleDone(event,2)">✓</div>
+    </div>
+    <div class="card-body" id="body-2">
+      <div class="enunciado">Dada la lista <code>[4, 7, 2, 9, 1]</code>, recórrela con for y suma todos sus elementos. Imprime el total al final.</div>
+      <div class="constraint"><span>Restricción:</span> no uses sum() · solo for</div>
+    </div>
+  </div>
+
+  <!-- ===== BUCLES WHILE ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Bucles while</span>
+  </div>
+
+  <div class="exercise-card" id="card-3">
+    <div class="card-header" onclick="toggleCard(3)">
+      <div class="ex-number">03</div>
+      <div class="card-title">Cuenta regresiva</div>
+      <div class="card-check" onclick="toggleDone(event,3)">✓</div>
+    </div>
+    <div class="card-body" id="body-3">
+      <div class="enunciado">Partiendo de 10, imprime cada número hasta llegar a 1 usando while. Al final imprime "¡Despegue!".</div>
+      <div class="constraint"><span>Restricción:</span> solo while · sin range()</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-4">
+    <div class="card-header" onclick="toggleCard(4)">
+      <div class="ex-number">04</div>
+      <div class="card-title">Duplicar hasta el límite</div>
+      <div class="card-check" onclick="toggleDone(event,4)">✓</div>
+    </div>
+    <div class="card-body" id="body-4">
+      <div class="enunciado">Empieza con n = 1. Mientras n sea menor que 100, duplícalo e imprímelo. ¿Cuántas veces se duplicó?</div>
+      <div class="constraint"><span>Restricción:</span> usa while · imprime el conteo al final</div>
+    </div>
+  </div>
+
+  <!-- ===== IF / ELIF / ELSE ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">if / elif / else</span>
+  </div>
+
+  <div class="exercise-card" id="card-5">
+    <div class="card-header" onclick="toggleCard(5)">
+      <div class="ex-number">05</div>
+      <div class="card-title">Par o impar</div>
+      <div class="card-check" onclick="toggleDone(event,5)">✓</div>
+    </div>
+    <div class="card-body" id="body-5">
+      <div class="enunciado">Dado un número hardcodeado (ej: 47), imprime si es "par" o "impar".</div>
+      <div class="constraint"><span>Restricción:</span> solo if/else · sin funciones propias</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-6">
+    <div class="card-header" onclick="toggleCard(6)">
+      <div class="ex-number">06</div>
+      <div class="card-title">Clasificar temperatura</div>
+      <div class="card-check" onclick="toggleDone(event,6)">✓</div>
+    </div>
+    <div class="card-body" id="body-6">
+      <div class="enunciado">Dado un valor de temperatura hardcodeado, clasifícala:<br>
+        · menos de 0 → "helada"<br>
+        · 0–15 → "fría"<br>
+        · 16–30 → "agradable"<br>
+        · más de 30 → "calurosa"
+      </div>
+      <div class="constraint"><span>Restricción:</span> usa if / elif / else</div>
+    </div>
+  </div>
+
+  <!-- ===== FUNCIONES CON RETURN ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Funciones con return</span>
+  </div>
+
+  <div class="exercise-card" id="card-7">
+    <div class="card-header" onclick="toggleCard(7)">
+      <div class="ex-number">07</div>
+      <div class="card-title">Calcular área de rectángulo</div>
+      <div class="card-check" onclick="toggleDone(event,7)">✓</div>
+    </div>
+    <div class="card-body" id="body-7">
+      <div class="enunciado">Crea una función que reciba base y altura, y retorne el área. Llámala con dos valores y muestra el resultado.</div>
+      <div class="constraint"><span>Restricción:</span> debe usar return · no imprimas dentro de la función</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-8">
+    <div class="card-header" onclick="toggleCard(8)">
+      <div class="ex-number">08</div>
+      <div class="card-title">Saludar por nombre</div>
+      <div class="card-check" onclick="toggleDone(event,8)">✓</div>
+    </div>
+    <div class="card-body" id="body-8">
+      <div class="enunciado">Crea una función que reciba un nombre y retorne el string "Hola, {nombre}!". Llámala e imprime el resultado.</div>
+      <div class="constraint"><span>Restricción:</span> usa return · f-string obligatorio</div>
+    </div>
+  </div>
+
+  <!-- ===== LISTAS CON APPEND ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Listas con .append()</span>
+  </div>
+
+  <div class="exercise-card" id="card-9">
+    <div class="card-header" onclick="toggleCard(9)">
+      <div class="ex-number">09</div>
+      <div class="card-title">Construir lista de cuadrados</div>
+      <div class="card-check" onclick="toggleDone(event,9)">✓</div>
+    </div>
+    <div class="card-body" id="body-9">
+      <div class="enunciado">Empieza con una lista vacía. Usando un for del 1 al 5, agrega el cuadrado de cada número a la lista. Imprime la lista final.</div>
+      <div class="constraint"><span>Restricción:</span> usa .append() · sin list comprehension</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-10">
+    <div class="card-header" onclick="toggleCard(10)">
+      <div class="ex-number">10</div>
+      <div class="card-title">Filtrar positivos</div>
+      <div class="card-check" onclick="toggleDone(event,10)">✓</div>
+    </div>
+    <div class="card-body" id="body-10">
+      <div class="enunciado">Dada la lista <code>[-3, 5, -1, 8, 0, 2]</code>, crea una nueva lista que solo contenga los números positivos usando append.</div>
+      <div class="constraint"><span>Restricción:</span> usa .append() e if · sin filter()</div>
+    </div>
+  </div>
+
+  <!-- ===== DICCIONARIOS CON .GET() ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Diccionarios con .get()</span>
+  </div>
+
+  <div class="exercise-card" id="card-11">
+    <div class="card-header" onclick="toggleCard(11)">
+      <div class="ex-number">11</div>
+      <div class="card-title">Buscar precio de producto</div>
+      <div class="card-check" onclick="toggleDone(event,11)">✓</div>
+    </div>
+    <div class="card-body" id="body-11">
+      <div class="enunciado">Tienes el diccionario <code>{"manzana": 1.5, "pan": 2.0, "leche": 3.2}</code>. Busca el precio de "pan" y de "arroz" usando .get(). Si no existe, muestra "no disponible".</div>
+      <div class="constraint"><span>Restricción:</span> usa .get() con valor por defecto · sin if</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-12">
+    <div class="card-header" onclick="toggleCard(12)">
+      <div class="ex-number">12</div>
+      <div class="card-title">Contar apariciones</div>
+      <div class="card-check" onclick="toggleDone(event,12)">✓</div>
+    </div>
+    <div class="card-body" id="body-12">
+      <div class="enunciado">Dada la lista <code>["a", "b", "a", "c", "b", "a"]</code>, usa un diccionario para contar cuántas veces aparece cada elemento. Usa .get() para no romper con KeyError.</div>
+      <div class="constraint"><span>Restricción:</span> solo .get() para acceder al dict · sin Counter</div>
+    </div>
+  </div>
+
+  <!-- ===== SETS ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Sets</span>
+  </div>
+
+  <div class="exercise-card" id="card-13">
+    <div class="card-header" onclick="toggleCard(13)">
+      <div class="ex-number">13</div>
+      <div class="card-title">Eliminar duplicados</div>
+      <div class="card-check" onclick="toggleDone(event,13)">✓</div>
+    </div>
+    <div class="card-body" id="body-13">
+      <div class="enunciado">Dada la lista <code>[1, 2, 2, 3, 1, 4, 3]</code>, usa un set para obtener los valores únicos. Muéstralos.</div>
+      <div class="constraint"><span>Restricción:</span> convierte a set · un par de líneas</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-14">
+    <div class="card-header" onclick="toggleCard(14)">
+      <div class="ex-number">14</div>
+      <div class="card-title">Elementos en común</div>
+      <div class="card-check" onclick="toggleDone(event,14)">✓</div>
+    </div>
+    <div class="card-body" id="body-14">
+      <div class="enunciado">Tienes <code>a = {1, 2, 3, 4}</code> y <code>b = {3, 4, 5, 6}</code>. Muestra la intersección (elementos que están en ambos sets).</div>
+      <div class="constraint"><span>Restricción:</span> usa operador de sets · una línea de lógica</div>
+    </div>
+  </div>
+
+  <!-- ===== MANEJO DE STRINGS ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Manejo de strings</span>
+  </div>
+
+  <div class="exercise-card" id="card-15">
+    <div class="card-header" onclick="toggleCard(15)">
+      <div class="ex-number">15</div>
+      <div class="card-title">Invertir una palabra</div>
+      <div class="card-check" onclick="toggleDone(event,15)">✓</div>
+    </div>
+    <div class="card-body" id="body-15">
+      <div class="enunciado">Dado el string <code>"python"</code>, imprímelo al revés usando slicing.</div>
+      <div class="constraint"><span>Restricción:</span> solo slicing [::-1] · sin reversed() · sin loops</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-16">
+    <div class="card-header" onclick="toggleCard(16)">
+      <div class="ex-number">16</div>
+      <div class="card-title">Contar vocales</div>
+      <div class="card-check" onclick="toggleDone(event,16)">✓</div>
+    </div>
+    <div class="card-body" id="body-16">
+      <div class="enunciado">Dado el string <code>"murciélago"</code>, cuenta cuántas vocales tiene (a, e, i, o, u). Imprime el total.</div>
+      <div class="constraint"><span>Restricción:</span> usa for sobre el string · acumulador simple</div>
+    </div>
+  </div>
+
+  <!-- ===== ACUMULADORES ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Acumuladores</span>
+  </div>
+
+  <div class="exercise-card" id="card-17">
+    <div class="card-header" onclick="toggleCard(17)">
+      <div class="ex-number">17</div>
+      <div class="card-title">Promedio de notas</div>
+      <div class="card-check" onclick="toggleDone(event,17)">✓</div>
+    </div>
+    <div class="card-body" id="body-17">
+      <div class="enunciado">Dada la lista <code>[15, 18, 12, 20, 14]</code>, calcula el promedio acumulando la suma en una variable y dividiendo al final.</div>
+      <div class="constraint"><span>Restricción:</span> sin sum() · sin mean() · solo acumulador + for</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-18">
+    <div class="card-header" onclick="toggleCard(18)">
+      <div class="ex-number">18</div>
+      <div class="card-title">Mayor valor de una lista</div>
+      <div class="card-check" onclick="toggleDone(event,18)">✓</div>
+    </div>
+    <div class="card-body" id="body-18">
+      <div class="enunciado">Dada la lista <code>[9, 3, 17, 5, 11]</code>, encuentra el número mayor recorriéndola con for y usando una variable acumuladora.</div>
+      <div class="constraint"><span>Restricción:</span> sin max() · sin sorted() · solo acumulador</div>
+    </div>
+  </div>
+
+  <!-- ===== VALIDACIÓN DE INPUT ===== -->
+  <div class="skill-group" style="margin-top:28px;">
+    <span class="skill-tag">Validación de input</span>
+  </div>
+
+  <div class="exercise-card" id="card-19">
+    <div class="card-header" onclick="toggleCard(19)">
+      <div class="ex-number">19</div>
+      <div class="card-title">Pedir un número positivo</div>
+      <div class="card-check" onclick="toggleDone(event,19)">✓</div>
+    </div>
+    <div class="card-body" id="body-19">
+      <div class="enunciado">Pide al usuario un número con input(). Si no es positivo, sigue pidiendo hasta que lo sea. Cuando lo ingrese correctamente, imprime "Válido: {número}".</div>
+      <div class="constraint"><span>Restricción:</span> usa while + int() + if · sin try/except</div>
+    </div>
+  </div>
+
+  <div class="exercise-card" id="card-20">
+    <div class="card-header" onclick="toggleCard(20)">
+      <div class="ex-number">20</div>
+      <div class="card-title">Respuesta sí o no</div>
+      <div class="card-check" onclick="toggleDone(event,20)">✓</div>
+    </div>
+    <div class="card-body" id="body-20">
+      <div class="enunciado">Pide al usuario que escriba "si" o "no". Si escribe otra cosa, vuelve a pedir. Cuando sea válido, imprime "Elegiste: {respuesta}".</div>
+      <div class="constraint"><span>Restricción:</span> usa while + .lower() + in · sin try/except</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Fase 1 · 20 ejercicios</span>
+    <span id="footer-count">0 / 20 resueltos</span>
+  </footer>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'fase1_done';
+  const total = 20;
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveState(done) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+  }
+
+  let done = loadState();
+
+  function updateProgress() {
+    const pct = (done.length / total) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-text').textContent = `${done.length} / ${total}`;
+    document.getElementById('footer-count').textContent = `${done.length} / ${total} resueltos`;
+  }
+
+  function applyState() {
+    for (let i = 1; i <= total; i++) {
+      const card = document.getElementById('card-' + i);
+      if (done.includes(i)) card.classList.add('done');
+      else card.classList.remove('done');
+    }
+    updateProgress();
+  }
+
+  function toggleCard(n) {
+    const body = document.getElementById('body-' + n);
+    body.classList.toggle('open');
+  }
+
+  function toggleDone(e, n) {
+    e.stopPropagation();
+    if (done.includes(n)) done = done.filter(x => x !== n);
+    else done.push(n);
+    saveState(done);
+    applyState();
+  }
+
+  applyState();
+</script>
+</body>
+</html>
