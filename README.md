@@ -9,8 +9,7 @@ Repositorio personal donde documento mi aprendizaje de **Python** desde cero, co
 ---
 
 ## Sobre mí
-
-Soy **Lian**, tengo 26 años y vivo en Callao, Perú. Estoy aprendiendo Python con un enfoque práctico: cada tema lo cubro con teoría breve y bastantes ejercicios para reforzar la idea. Mi objetivo a mediano plazo es usar Python para **automatización** y **análisis de datos**.
+Estoy aprendiendo Python con un enfoque práctico: cada tema lo cubro con teoría breve y bastantes ejercicios para reforzar la idea. Mi objetivo a mediano plazo es usar Python para **automatización** y **análisis de datos**.
 
 ---
 
