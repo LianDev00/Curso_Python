@@ -70,7 +70,7 @@ En paralelo estoy resolviendo los problem sets del curso **[CS50's Introduction 
 
 ```bash
 # Clonar el repositorio
-git clone <url-del-repo>
+git clone https://github.com/LianDev00/Curso_Python.git
 cd Curso_Python
 
 # (Opcional) crear entorno virtual
